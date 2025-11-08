@@ -39,7 +39,7 @@ struct PreviewUniforms {
     var colorA: SIMD4<Float>
     var colorB: SIMD4<Float>
     var edge: Float
-    var soft: Float
+    var contrast: Float  // Renamed from 'soft' - now controls image contrast (0..1)
     var jitter: Float
     var invert: Float
     var time: Float
@@ -500,7 +500,7 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
         let cellPixels = Int(8 + cellPercent * 24) // 8..32 pixels per cell
         let edgeFactor = Float(previewState.parameters.edge.rawValue / EffectParameterValue.range.upperBound)
         let jitterFactor = Float(previewState.parameters.jitter.rawValue / EffectParameterValue.range.upperBound)
-        let softyFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
+        let contrastFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
 
         let bgColor = previewState.palette.background
         let fgColor: ColorDescriptor
@@ -519,7 +519,7 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
             colorA: SIMD4<Float>(Float(bgColor.red), Float(bgColor.green), Float(bgColor.blue), Float(bgColor.alpha)),
             colorB: SIMD4<Float>(Float(fgColor.red), Float(fgColor.green), Float(fgColor.blue), Float(fgColor.alpha)),
             edge: 0.5 + edgeFactor * 0.3,
-            soft: 0.05 + softyFactor * 0.15,
+            contrast: contrastFactor, // Now controls image contrast (0..1)
             jitter: jitterFactor,
             invert: 0.0,
             time: previewState.time
@@ -629,7 +629,7 @@ struct PreviewUniforms {
     float4 colorA;
     float4 colorB;
     float  edge;
-    float  soft;
+    float  contrast;  // Renamed from 'soft' - now controls image contrast
     float  jitter;
     float  invert;
     float  time;
@@ -645,7 +645,8 @@ vertex VSOut previewVS(uint vertexID [[vertex_id]]) {
                         (vertexID == 1) ? 3.0 : -1.0);
     VSOut out;
     out.position = float4(pos, 0.0, 1.0);
-    out.uv = (pos * 0.5) + 0.5;
+    // Flip Y coordinate to fix upside-down camera
+    out.uv = float2((pos.x * 0.5) + 0.5, 1.0 - ((pos.y * 0.5) + 0.5));
     return out;
 }
 
@@ -682,6 +683,12 @@ fragment float4 previewFS(
     float2 videoUV = aspectFill(in.uv, uniforms.targetSize, uniforms.videoSize);
     float3 rgb = videoTexture.sample(videoSampler, videoUV).rgb;
     float luminance = dot(rgb, float3(0.2126, 0.7152, 0.0722));
+    
+    // Apply contrast adjustment (contrast range: 0.5 to 2.0, with 1.0 being neutral)
+    // Formula: output = (input - 0.5) * contrast + 0.5
+    float adjustedContrast = uniforms.contrast * 1.5 + 0.5; // Map 0..1 to 0.5..2.0
+    luminance = clamp((luminance - 0.5) * adjustedContrast + 0.5, 0.0, 1.0);
+    
     if (uniforms.invert > 0.5) {
         luminance = 1.0 - luminance;
     }
@@ -701,7 +708,8 @@ fragment float4 previewFS(
     float2 atlasUV = (float2(atlasX, atlasY) + local) / float2(uniforms.atlasGrid);
 
     float glyphSample = atlasTexture.sample(atlasSampler, atlasUV).r;
-    float alpha = smoothstep(uniforms.edge - uniforms.soft, uniforms.edge + uniforms.soft, glyphSample);
+    // Use fixed soft edge for glyph rendering
+    float alpha = smoothstep(uniforms.edge - 0.08, uniforms.edge + 0.08, glyphSample);
 
     return mix(uniforms.colorA, uniforms.colorB, alpha);
 }
