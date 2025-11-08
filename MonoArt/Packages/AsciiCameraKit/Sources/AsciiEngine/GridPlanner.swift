@@ -11,8 +11,9 @@ struct GridDescriptor {
 }
 
 enum GridPlanner {
-    // Fixed aspect ratio for consistent output (16:9 landscape)
-    private static let fixedAspectRatio: Double = 16.0 / 9.0
+    // Fixed aspect ratios for consistent output
+    private static let landscapeAspectRatio: Double = 16.0 / 9.0  // 1.78 (horizontal)
+    private static let portraitAspectRatio: Double = 9.0 / 16.0   // 0.56 (vertical)
     
     private static let minColumns = 40
     private static let maxColumns = 180
@@ -24,9 +25,14 @@ enum GridPlanner {
         parameters: EffectParameters,
         maxCells: Int
     ) -> GridDescriptor {
-        // Use fixed aspect ratio instead of input buffer aspect
+        // Detect orientation from input buffer to choose appropriate aspect ratio
+        let width = max(CVPixelBufferGetWidth(pixelBuffer), 1)
+        let height = max(CVPixelBufferGetHeight(pixelBuffer), 1)
+        let isLandscape = width > height
+        
+        // Use fixed aspect ratio based on orientation
         // This ensures the grid always maintains the same proportions regardless of cell size
-        let aspect = fixedAspectRatio
+        let aspect = isLandscape ? landscapeAspectRatio : portraitAspectRatio
 
         // Cell parameter now controls density (number of columns) while maintaining aspect ratio
         // Inverted logic: higher cell value = more columns = higher density
