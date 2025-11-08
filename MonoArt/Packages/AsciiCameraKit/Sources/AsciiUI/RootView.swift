@@ -36,8 +36,8 @@ public struct RootView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            // GPU Preview (if available) or fallback to text preview
+        ZStack {
+            // Background layer: Camera preview
             if useGPUPreview, let engine = engine {
                 MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
                     .ignoresSafeArea()
@@ -50,7 +50,9 @@ public struct RootView: View {
                 .ignoresSafeArea()
             }
 
+            // Bottom controls layer
             VStack(spacing: 12) {
+                Spacer() // Push controls to bottom
                 SettingsHandle { viewModel.presentSettingsSheet() }
                 ControlOverlay(
                     selectedEffect: viewModel.selectedEffect,
@@ -65,16 +67,22 @@ public struct RootView: View {
             .padding(.horizontal)
             .padding(.bottom, 24)
 
+            // Top notification layer
             if let status = viewModel.captureStatus {
-                CaptureConfirmationBanner(status: status, onDismiss: {
-                    viewModel.dismissCaptureStatus()
-                }, onShare: shareAction)
-                .padding()
-                .transition(.move(edge: .top).combined(with: .opacity))
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                VStack {
+                    CaptureConfirmationBanner(status: status, onDismiss: {
                         viewModel.dismissCaptureStatus()
+                    }, onShare: shareAction)
+                    .padding(.horizontal, 16) // 16px horizontal padding as requested
+                    .padding(.top, 16) // Top padding for safe area
+                    .transition(.move(edge: .top).combined(with: .opacity))
+                    .onAppear {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                            viewModel.dismissCaptureStatus()
+                        }
                     }
+                    
+                    Spacer() // Push banner to top
                 }
             }
         }
