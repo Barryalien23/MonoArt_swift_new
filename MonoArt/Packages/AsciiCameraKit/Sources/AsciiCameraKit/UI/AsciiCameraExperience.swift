@@ -10,11 +10,13 @@ import AsciiCamera
 @available(macOS 11.0, iOS 16.0, tvOS 16.0, *)
 public struct AsciiCameraExperience: View {
     @StateObject private var viewModel: AppViewModel
-    @State private var pipeline: PreviewPipeline?
+    @State private var gpuPipeline: GPUPreviewPipeline?
+    @State private var textPipeline: PreviewPipeline?
     @State private var isImportPickerPresented = false
     @State private var selectedPhotoItem: PhotosPickerItem?
     @State private var shareImage: UIImage?
     @State private var isShareSheetPresented = false
+    @State private var useGPUPreview: Bool = true
 
     @MainActor private let engineFactory: () -> AsciiEngineProtocol
     @MainActor private let cameraFactory: () -> CameraServiceProtocol
@@ -60,7 +62,9 @@ public struct AsciiCameraExperience: View {
             captureAction: captureTapped,
             flipAction: flipCamera,
             importAction: { isImportPickerPresented = true },
-            shareAction: shareImage == nil ? nil : { shareTapped() }
+            shareAction: shareImage == nil ? nil : { shareTapped() },
+            engine: gpuPipeline?.engine,
+            useGPUPreview: useGPUPreview
         )
     }
 
@@ -75,34 +79,57 @@ public struct AsciiCameraExperience: View {
 
     @MainActor
     private func startPipelineIfNeeded() {
-        guard pipeline == nil else { return }
+        guard gpuPipeline == nil && textPipeline == nil else { return }
 
         let engine = engineFactory()
         let camera = cameraFactory()
         let mediaCoordinator = mediaCoordinatorFactory()
         let renderer = frameRendererFactory()
 
-        let newPipeline = PreviewPipeline(
-            viewModel: viewModel,
-            engine: engine,
-            cameraService: camera,
-            configuration: EngineConfiguration(),
-            frameRenderer: renderer,
-            mediaCoordinator: mediaCoordinator
-        )
+        // Try to use GPU pipeline first
+        if useGPUPreview, let asciiEngine = engine as? AsciiEngine {
+            let newGPUPipeline = GPUPreviewPipeline(
+                viewModel: viewModel,
+                engine: asciiEngine,
+                cameraService: camera,
+                configuration: EngineConfiguration(),
+                frameRenderer: renderer,
+                mediaCoordinator: mediaCoordinator
+            )
 #if canImport(UIKit)
-        newPipeline.onCaptureSuccess = { image in
-            shareImage = image
-        }
+            newGPUPipeline.onCaptureSuccess = { image in
+                shareImage = image
+            }
 #endif
-        pipeline = newPipeline
-        newPipeline.start()
+            gpuPipeline = newGPUPipeline
+            newGPUPipeline.start()
+        } else {
+            // Fallback to text pipeline
+            useGPUPreview = false
+            let newTextPipeline = PreviewPipeline(
+                viewModel: viewModel,
+                engine: engine,
+                cameraService: camera,
+                configuration: EngineConfiguration(),
+                frameRenderer: renderer,
+                mediaCoordinator: mediaCoordinator
+            )
+#if canImport(UIKit)
+            newTextPipeline.onCaptureSuccess = { image in
+                shareImage = image
+            }
+#endif
+            textPipeline = newTextPipeline
+            newTextPipeline.start()
+        }
     }
 
     @MainActor
     private func teardownPipeline() {
-        pipeline?.stop()
-        pipeline = nil
+        gpuPipeline?.stop()
+        gpuPipeline = nil
+        textPipeline?.stop()
+        textPipeline = nil
         isImportPickerPresented = false
     }
 
@@ -126,7 +153,11 @@ public struct AsciiCameraExperience: View {
 
             await MainActor.run {
                 selectedPhotoItem = nil
-                pipeline?.processImportedImage(image)
+                if let gpuPipeline = gpuPipeline {
+                    gpuPipeline.processImportedImage(image)
+                } else if let textPipeline = textPipeline {
+                    textPipeline.processImportedImage(image)
+                }
             }
         } catch {
             await MainActor.run {
@@ -138,12 +169,18 @@ public struct AsciiCameraExperience: View {
 
     private func flipCamera() {
         viewModel.toggleCameraFacing()
-        pipeline?.switchCamera()
+        if let gpuPipeline = gpuPipeline {
+            gpuPipeline.switchCamera()
+        } else if let textPipeline = textPipeline {
+            textPipeline.switchCamera()
+        }
     }
 
     private func captureTapped() {
-        if let pipeline {
-            pipeline.capture()
+        if let gpuPipeline = gpuPipeline {
+            gpuPipeline.capture()
+        } else if let textPipeline = textPipeline {
+            textPipeline.capture()
         } else {
             viewModel.simulateCapture()
         }

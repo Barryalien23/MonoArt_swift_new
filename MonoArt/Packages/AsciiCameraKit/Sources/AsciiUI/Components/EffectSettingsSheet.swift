@@ -2,6 +2,7 @@
 import AsciiDomain
 import SwiftUI
 
+@available(iOS 16.0, *)
 public struct EffectSettingsSheet: View {
     @ObservedObject private var viewModel: AppViewModel
 

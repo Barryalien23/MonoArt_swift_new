@@ -10,11 +10,20 @@ public struct SettingsHandle: View {
 
     public var body: some View {
         Button(action: onTap) {
-            Capsule()
-                .fill(Color.white.opacity(0.5))
-                .frame(width: 56, height: 6)
-                .padding(8)
-                .background(.ultraThinMaterial, in: Capsule())
+            if #available(iOS 15.0, *) {
+                Capsule()
+                    .fill(Color.white.opacity(0.5))
+                    .frame(width: 56, height: 6)
+                    .padding(8)
+                    .background(.ultraThinMaterial, in: Capsule())
+            } else {
+                Capsule()
+                    .fill(Color.white.opacity(0.5))
+                    .frame(width: 56, height: 6)
+                    .padding(8)
+                    .background(Color.black.opacity(0.6))
+                    .clipShape(Capsule())
+            }
         }
         .buttonStyle(.plain)
         .accessibilityLabel("Open effect settings")

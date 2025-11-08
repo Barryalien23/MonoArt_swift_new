@@ -2,6 +2,7 @@
 import AsciiDomain
 import SwiftUI
 
+@available(iOS 15.0, *)
 public struct ControlOverlay: View {
     public let selectedEffect: EffectType
     public let availableEffects: [EffectType]
@@ -121,7 +122,7 @@ private struct ControlButtonStyle: ButtonStyle {
             .frame(height: 56)
             .frame(minWidth: 88)
             .background(primary ? Color.accentColor : Color.white.opacity(0.1))
-            .foregroundStyle(primary ? Color.white : Color.white)
+            .foregroundColor(primary ? Color.white : Color.white)
             .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)

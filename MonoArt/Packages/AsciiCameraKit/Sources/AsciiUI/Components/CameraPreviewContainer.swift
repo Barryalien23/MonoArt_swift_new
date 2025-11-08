@@ -3,6 +3,7 @@ import AsciiDomain
 import SwiftUI
 import UIKit
 
+@available(iOS 15.0, *)
 public struct CameraPreviewContainer: View {
     public let status: PreviewStatus
     public let frame: PreviewFrame?

@@ -1,8 +1,10 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiEngine
 import Dispatch
 import SwiftUI
 
+@available(iOS 16.0, *)
 public struct RootView: View {
     @StateObject private var viewModel: AppViewModel
     private let useDemoPreviewOnAppear: Bool
@@ -10,6 +12,8 @@ public struct RootView: View {
     private let flipAction: () -> Void
     private let importAction: () -> Void
     private let shareAction: (() -> Void)?
+    private let engine: AsciiEngine?
+    private let useGPUPreview: Bool
 
     public init(
         viewModel: AppViewModel = AppViewModel(),
@@ -17,7 +21,9 @@ public struct RootView: View {
         captureAction: (() -> Void)? = nil,
         flipAction: (() -> Void)? = nil,
         importAction: (() -> Void)? = nil,
-        shareAction: (() -> Void)? = nil
+        shareAction: (() -> Void)? = nil,
+        engine: AsciiEngine? = nil,
+        useGPUPreview: Bool = true
     ) {
         _viewModel = StateObject(wrappedValue: viewModel)
         self.useDemoPreviewOnAppear = useDemoPreviewOnAppear
@@ -25,16 +31,24 @@ public struct RootView: View {
         self.flipAction = flipAction ?? { viewModel.toggleCameraFacing() }
         self.importAction = importAction ?? { viewModel.presentColorPicker(for: .background) }
         self.shareAction = shareAction
+        self.engine = engine
+        self.useGPUPreview = useGPUPreview && engine != nil
     }
 
     public var body: some View {
         ZStack(alignment: .bottom) {
-            CameraPreviewContainer(
-                status: viewModel.previewStatus,
-                frame: viewModel.previewFrame,
-                palette: viewModel.palette
-            )
-            .ignoresSafeArea()
+            // GPU Preview (if available) or fallback to text preview
+            if useGPUPreview, let engine = engine {
+                MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
+                    .ignoresSafeArea()
+            } else {
+                CameraPreviewContainer(
+                    status: viewModel.previewStatus,
+                    frame: viewModel.previewFrame,
+                    palette: viewModel.palette
+                )
+                .ignoresSafeArea()
+            }
 
             VStack(spacing: 12) {
                 SettingsHandle { viewModel.presentSettingsSheet() }
@@ -70,12 +84,20 @@ public struct RootView: View {
             }
         }
         .sheet(isPresented: $viewModel.isSettingsPresented) {
-            EffectSettingsSheet(viewModel: viewModel)
-                .presentationDetents([.medium, .large])
+            if #available(iOS 16.0, *) {
+                EffectSettingsSheet(viewModel: viewModel)
+                    .presentationDetents([.medium, .large])
+            } else {
+                EffectSettingsSheet(viewModel: viewModel)
+            }
         }
         .sheet(isPresented: $viewModel.isColorPickerPresented) {
-            ColorPickerSheet(viewModel: viewModel)
-                .presentationDetents([.medium, .large])
+            if #available(iOS 16.0, *) {
+                ColorPickerSheet(viewModel: viewModel)
+                    .presentationDetents([.medium, .large])
+            } else {
+                ColorPickerSheet(viewModel: viewModel)
+            }
         }
     }
 

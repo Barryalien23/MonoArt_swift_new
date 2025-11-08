@@ -2,6 +2,7 @@ import CoreImage
 import CoreVideo
 import Foundation
 @preconcurrency import Metal
+import MetalKit
 import AsciiDomain
 
 /// Shared configuration object controlling how the ASCII engine allocates GPU resources.
@@ -30,6 +31,20 @@ public struct AsciiFrame {
     }
 }
 
+struct PreviewUniforms {
+    var targetSize: SIMD2<Float>
+    var videoSize: SIMD2<Float>
+    var cellSize: SIMD2<UInt32>
+    var atlasGrid: SIMD2<UInt32>
+    var colorA: SIMD4<Float>
+    var colorB: SIMD4<Float>
+    var edge: Float
+    var soft: Float
+    var jitter: Float
+    var invert: Float
+    var time: Float
+}
+
 public enum AsciiEngineError: Error {
     case metalUnavailable
     case unsupportedPixelFormat
@@ -46,7 +61,19 @@ public protocol AsciiEngineProtocol: AnyObject {
 
 /// Production-ready ASCII engine built on Metal with a CPU fallback.
 @available(macOS 10.15, iOS 15.0, tvOS 15.0, *)
-public final class AsciiEngine: AsciiEngineProtocol {
+@MainActor
+private struct PreviewState {
+    var view: MTKView?
+    var grid: GridDescriptor?
+    var videoTexture: MTLTexture?
+    var effect: EffectType = .ascii
+    var parameters: EffectParameters = EffectParameters()
+    var palette: PaletteState = PaletteState()
+    var time: Float = 0
+}
+
+@available(macOS 10.15, iOS 15.0, tvOS 15.0, *)
+public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
     private let deviceProvider: () -> MTLDevice?
     private let processingQueue = DispatchQueue(label: "com.monoart.asciiengine.processing", qos: .userInitiated)
 
@@ -57,9 +84,18 @@ public final class AsciiEngine: AsciiEngineProtocol {
     private var textureCache: CVMetalTextureCache?
     private var ciContext: CIContext?
     private var isPrepared = false
+    private var library: MTLLibrary?
+
+    // GPU preview resources
+    private var previewPipelineState: MTLRenderPipelineState?
+    private var previewSamplerVideo: MTLSamplerState?
+    private var previewSamplerAtlas: MTLSamplerState?
+    private var atlasCache: [EffectType: GlyphAtlas] = [:]
+    @MainActor private var previewState = PreviewState()
 
     public init(deviceProvider: @escaping () -> MTLDevice? = { MTLCreateSystemDefaultDevice() }) {
         self.deviceProvider = deviceProvider
+        super.init()
     }
 
     public func prepare(configuration: EngineConfiguration) throws {
@@ -293,7 +329,7 @@ public final class AsciiEngine: AsciiEngineProtocol {
         edge: Double,
         palette: PaletteState
     ) -> String {
-        let glyphs = GlyphAtlas.glyphs(for: effect)
+        let glyphs = effect.characterSet
         guard !glyphs.isEmpty else { return "" }
 
         let jitterAmplitude = Int((jitter / EffectParameterValue.range.upperBound) * Double(max(1, glyphs.count / 4))).clamped(to: 0 ... max(1, glyphs.count - 1))
@@ -340,6 +376,166 @@ public final class AsciiEngine: AsciiEngineProtocol {
         guard isPrepared else {
             throw AsciiEngineError.configurationFailure("AsciiEngine.prepare(configuration:) was not called")
         }
+    }
+
+    // MARK: - GPU Preview Setup & Rendering
+
+    @MainActor
+    public func setupPreview(on mtkView: MTKView, effect: EffectType) throws {
+        guard let device = self.device else {
+            throw AsciiEngineError.metalUnavailable
+        }
+
+        mtkView.device = device
+        mtkView.colorPixelFormat = .bgra8Unorm
+        mtkView.framebufferOnly = false
+        mtkView.isPaused = false
+        mtkView.enableSetNeedsDisplay = false
+        mtkView.delegate = self
+        mtkView.preferredFramesPerSecond = 60
+
+        // Load Metal library from source (fallback if .metal compilation unavailable)
+        let previewLibrary: MTLLibrary
+        if let defaultLibrary = device.makeDefaultLibrary(),
+           defaultLibrary.functionNames.contains("previewVS") {
+            previewLibrary = defaultLibrary
+        } else {
+            // Compile from source if .metal file isn't available
+            do {
+                previewLibrary = try device.makeLibrary(source: previewShaderSource, options: nil)
+            } catch {
+                throw AsciiEngineError.configurationFailure("Unable to compile preview shaders: \(error)")
+            }
+        }
+        self.library = previewLibrary
+
+        guard let vertexFunction = previewLibrary.makeFunction(name: "previewVS"),
+              let fragmentFunction = previewLibrary.makeFunction(name: "previewFS") else {
+            throw AsciiEngineError.configurationFailure("Unable to load preview shader functions")
+        }
+
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat
+
+        do {
+            previewPipelineState = try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        } catch {
+            throw AsciiEngineError.configurationFailure("Unable to create preview render pipeline: \(error)")
+        }
+
+        // Create samplers
+        let videoSamplerDescriptor = MTLSamplerDescriptor()
+        videoSamplerDescriptor.minFilter = .linear
+        videoSamplerDescriptor.magFilter = .linear
+        videoSamplerDescriptor.sAddressMode = .clampToEdge
+        videoSamplerDescriptor.tAddressMode = .clampToEdge
+        previewSamplerVideo = device.makeSamplerState(descriptor: videoSamplerDescriptor)
+
+        let atlasSamplerDescriptor = MTLSamplerDescriptor()
+        atlasSamplerDescriptor.minFilter = .nearest
+        atlasSamplerDescriptor.magFilter = .nearest
+        atlasSamplerDescriptor.sAddressMode = .clampToEdge
+        atlasSamplerDescriptor.tAddressMode = .clampToEdge
+        previewSamplerAtlas = device.makeSamplerState(descriptor: atlasSamplerDescriptor)
+
+        // Generate atlas for the current effect
+        let atlas = GlyphAtlas.make(device: device, effect: effect)
+        atlasCache[effect] = atlas
+        previewState.view = mtkView
+        previewState.effect = effect
+    }
+
+    @MainActor
+    public func updatePreviewVideoTexture(_ texture: MTLTexture) {
+        previewState.videoTexture = texture
+    }
+
+    @MainActor
+    public func updatePreviewParameters(_ parameters: EffectParameters, palette: PaletteState, effect: EffectType) {
+        previewState.parameters = parameters
+        previewState.palette = palette
+
+        // Regenerate atlas if effect changed
+        if previewState.effect != effect, let device = self.device {
+            previewState.effect = effect
+            if atlasCache[effect] == nil {
+                atlasCache[effect] = GlyphAtlas.make(device: device, effect: effect)
+            }
+        }
+    }
+
+    // MARK: - MTKViewDelegate
+
+    @MainActor
+    public func draw(in view: MTKView) {
+        guard let renderPassDescriptor = view.currentRenderPassDescriptor,
+              let drawable = view.currentDrawable,
+              let commandQueue = self.commandQueue,
+              let pipelineState = self.previewPipelineState,
+              let videoTexture = previewState.videoTexture,
+              let atlas = atlasCache[previewState.effect] else {
+            return
+        }
+
+        previewState.time += 0.016
+
+        let commandBuffer = commandQueue.makeCommandBuffer()!
+        let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
+        renderEncoder.setRenderPipelineState(pipelineState)
+
+        renderEncoder.setFragmentTexture(videoTexture, index: 0)
+        renderEncoder.setFragmentTexture(atlas.texture, index: 1)
+
+        if let videoSampler = previewSamplerVideo {
+            renderEncoder.setFragmentSamplerState(videoSampler, index: 0)
+        }
+        if let atlasSampler = previewSamplerAtlas {
+            renderEncoder.setFragmentSamplerState(atlasSampler, index: 1)
+        }
+
+        // Compute uniforms from current state
+        let cellPercent = previewState.parameters.cell.rawValue / EffectParameterValue.range.upperBound
+        let cellPixels = Int(8 + cellPercent * 24) // 8..32 pixels per cell
+        let edgeFactor = Float(previewState.parameters.edge.rawValue / EffectParameterValue.range.upperBound)
+        let jitterFactor = Float(previewState.parameters.jitter.rawValue / EffectParameterValue.range.upperBound)
+        let softyFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
+
+        let bgColor = previewState.palette.background
+        let fgColor: ColorDescriptor
+        switch previewState.palette.symbols {
+        case .solid(let color):
+            fgColor = color
+        case .gradient(let stops):
+            fgColor = stops.first?.color ?? .preset(.white)
+        }
+
+        var uniforms = PreviewUniforms(
+            targetSize: SIMD2<Float>(Float(view.drawableSize.width), Float(view.drawableSize.height)),
+            videoSize: SIMD2<Float>(Float(videoTexture.width), Float(videoTexture.height)),
+            cellSize: SIMD2<UInt32>(UInt32(max(cellPixels, 1)), UInt32(max(cellPixels, 1))),
+            atlasGrid: SIMD2<UInt32>(UInt32(atlas.gridColumns), UInt32(atlas.gridRows)),
+            colorA: SIMD4<Float>(Float(bgColor.red), Float(bgColor.green), Float(bgColor.blue), Float(bgColor.alpha)),
+            colorB: SIMD4<Float>(Float(fgColor.red), Float(fgColor.green), Float(fgColor.blue), Float(fgColor.alpha)),
+            edge: 0.5 + edgeFactor * 0.3,
+            soft: 0.05 + softyFactor * 0.15,
+            jitter: jitterFactor,
+            invert: 0.0,
+            time: previewState.time
+        )
+
+        renderEncoder.setFragmentBytes(&uniforms, length: MemoryLayout<PreviewUniforms>.stride, index: 0)
+        renderEncoder.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        renderEncoder.endEncoding()
+
+        commandBuffer.present(drawable)
+        commandBuffer.commit()
+    }
+
+    @MainActor
+    public func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        // No-op: uniforms recalculated on each draw
     }
 }
 
@@ -418,6 +614,96 @@ kernel void asciiLuminanceDownsample(
     } else {
         luminanceBuffer[index] = luminance / float(count);
     }
+}
+"""
+
+private let previewShaderSource = """
+#include <metal_stdlib>
+using namespace metal;
+
+struct PreviewUniforms {
+    float2 targetSize;
+    float2 videoSize;
+    uint2  cellSize;
+    uint2  atlasGrid;
+    float4 colorA;
+    float4 colorB;
+    float  edge;
+    float  soft;
+    float  jitter;
+    float  invert;
+    float  time;
+};
+
+struct VSOut {
+    float4 position [[position]];
+    float2 uv;
+};
+
+vertex VSOut previewVS(uint vertexID [[vertex_id]]) {
+    float2 pos = float2((vertexID == 2) ? 3.0 : -1.0,
+                        (vertexID == 1) ? 3.0 : -1.0);
+    VSOut out;
+    out.position = float4(pos, 0.0, 1.0);
+    out.uv = (pos * 0.5) + 0.5;
+    return out;
+}
+
+inline float2 aspectFill(float2 uv, float2 targetSize, float2 sourceSize) {
+    float targetAR = targetSize.x / targetSize.y;
+    float sourceAR = sourceSize.x / sourceSize.y;
+    if (sourceAR > targetAR) {
+        float scale = sourceAR / targetAR;
+        uv.x = (uv.x - 0.5) * scale + 0.5;
+    } else {
+        float scale = targetAR / sourceAR;
+        uv.y = (uv.y - 0.5) * scale + 0.5;
+    }
+    return uv;
+}
+
+inline float rand21(float2 p) {
+    return fract(sin(dot(p, float2(12.9898, 78.233))) * 43758.5453);
+}
+
+fragment float4 previewFS(
+    VSOut in [[stage_in]],
+    texture2d<float> videoTexture [[texture(0)]],
+    texture2d<float> atlasTexture [[texture(1)]],
+    constant PreviewUniforms& uniforms [[buffer(0)]]
+) {
+    constexpr sampler videoSampler(filter::linear, address::clamp_to_edge);
+    constexpr sampler atlasSampler(filter::nearest, address::clamp_to_edge);
+
+    float2 fragmentPixel = in.uv * uniforms.targetSize;
+    float2 cell = floor(fragmentPixel / float2(uniforms.cellSize));
+    float2 local = fract(fragmentPixel / float2(uniforms.cellSize));
+
+    float2 videoUV = aspectFill(in.uv, uniforms.targetSize, uniforms.videoSize);
+    float3 rgb = videoTexture.sample(videoSampler, videoUV).rgb;
+    float luminance = dot(rgb, float3(0.2126, 0.7152, 0.0722));
+    if (uniforms.invert > 0.5) {
+        luminance = 1.0 - luminance;
+    }
+
+    uint glyphCount = uniforms.atlasGrid.x * uniforms.atlasGrid.y;
+    float glyphIndex = (1.0 - luminance) * float(glyphCount - 1);
+
+    float noise = rand21(cell + uniforms.time);
+    if (uniforms.jitter > 0.0) {
+        float delta = (noise < uniforms.jitter) ? (noise * 2.0 - 1.0) : 0.0;
+        glyphIndex = clamp(glyphIndex + delta, 0.0, float(glyphCount - 1));
+    }
+
+    uint idx = static_cast<uint>(glyphIndex);
+    uint atlasX = idx % uniforms.atlasGrid.x;
+    uint atlasY = idx / uniforms.atlasGrid.x;
+    float2 atlasUV = (float2(atlasX, atlasY) + local) / float2(uniforms.atlasGrid);
+
+    float glyphSample = atlasTexture.sample(atlasSampler, atlasUV).r;
+    float alpha = smoothstep(uniforms.edge - uniforms.soft, uniforms.edge + uniforms.soft, glyphSample);
+
+    return mix(uniforms.colorA, uniforms.colorB, alpha);
 }
 """
 

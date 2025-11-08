@@ -2,6 +2,7 @@
 import AsciiDomain
 import SwiftUI
 
+@available(iOS 15.0, *)
 public struct CaptureConfirmationBanner: View {
     public let status: CaptureStatus
     public let onDismiss: () -> Void

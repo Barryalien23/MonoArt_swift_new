@@ -19,8 +19,26 @@
 - Refactored `ColorPickerSheet` to incremental subviews to avoid Swift 6 type-checker blowups while maintaining accessibility hints.
 - Moved package tests under `.packageTests/` to keep Xcode targets clean and avoid recursion when embedding SwiftPM locally.
 
+## GPU Preview Implementation (Completed in Extended Session)
+
+✅ **GPU-accelerated preview via Metal**: Fully implemented
+- Metal shader-based rendering (fullscreen triangle, vertex + fragment)
+- Runtime glyph atlas generation (r8Unorm texture from UIFont)
+- `AsciiEngine` MTKViewDelegate integration with public API:
+  - `setupPreview(on:effect:)` - pipeline initialization
+  - `updatePreviewVideoTexture(_:)` - camera frame updates
+  - `updatePreviewParameters(_:palette:effect:)` - parameter updates
+  - `draw(in:)` - GPU rendering without readback
+- `MetalPreviewView` - SwiftUI wrapper for MTKView
+- `GPUPreviewCoordinator` - CVPixelBuffer → MTLTexture conversion
+- `GPUCameraPreviewContainer` - GPU-accelerated preview UI component
+- Text export path preserved via `renderCapture` (CPU/compute for ASCII saving)
+- See `Docs/Swift/GPUPreviewImplementation.md` and `GPUPreviewUsageExample.md`
+
 ## Next Steps
-- Add on-device performance profiling to tune glyph grid sizing heuristics.
-- Implement capture-to-photo-library export flow with privacy-safe logging.
-- Author DocC documentation bundles for public APIs before publishing wider preview builds.
+- Complete GPU preview integration: wire `GPUPreviewCoordinator` into existing `PreviewPipeline`
+- Add on-device performance profiling to tune glyph grid sizing heuristics
+- Implement YUV optimization: accept Y-plane directly for luminance (performance boost)
+- Author DocC documentation bundles for public APIs before publishing wider preview builds
+- Expand test coverage for GPU preview components
 
