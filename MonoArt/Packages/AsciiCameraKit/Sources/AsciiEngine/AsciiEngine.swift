@@ -504,7 +504,7 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
 
         // Compute uniforms from current state
         let cellPercent = previewState.parameters.cell.rawValue / EffectParameterValue.range.upperBound
-        let cellPixels = Int(8 + cellPercent * 24) // 8..32 pixels per cell
+        let cellPixels = Int(16 + cellPercent * 32) // 16..48 pixels per cell (increased for sharper glyphs)
         let edgeFactor = Float(previewState.parameters.edge.rawValue / EffectParameterValue.range.upperBound)
         let jitterFactor = Float(previewState.parameters.jitter.rawValue / EffectParameterValue.range.upperBound)
         let contrastFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
@@ -699,10 +699,13 @@ fragment float4 previewFS(
     float3 rgb = videoTexture.sample(videoSampler, videoUV).rgb;
     float luminance = dot(rgb, float3(0.2126, 0.7152, 0.0722));
     
-    // Apply contrast adjustment (contrast range: 0.5 to 2.0, with 1.0 being neutral)
-    // Formula: output = (input - 0.5) * contrast + 0.5
-    float adjustedContrast = uniforms.contrast * 1.5 + 0.5; // Map 0..1 to 0.5..2.0
-    luminance = clamp((luminance - 0.5) * adjustedContrast + 0.5, 0.0, 1.0);
+    // Apply contrast adjustment
+    // Map contrast 0..1 to multiplier 0.3..2.5 (wider range for more visible effect)
+    // At 0.0: very low contrast (0.3x)
+    // At 0.5: neutral (1.4x) 
+    // At 1.0: high contrast (2.5x)
+    float contrastMultiplier = 0.3 + uniforms.contrast * 2.2;
+    luminance = clamp((luminance - 0.5) * contrastMultiplier + 0.5, 0.0, 1.0);
     
     if (uniforms.invert > 0.5) {
         luminance = 1.0 - luminance;

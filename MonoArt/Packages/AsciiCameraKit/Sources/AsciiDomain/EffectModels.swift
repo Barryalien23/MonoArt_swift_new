@@ -40,7 +40,7 @@ public enum EffectParameter: String, CaseIterable, Codable, Sendable {
         switch self {
         case .cell: return "Cell"
         case .jitter: return "Jitter"
-        case .softy: return "Softy"
+        case .softy: return "Contrast"
         case .edge: return "Edge"
         }
     }

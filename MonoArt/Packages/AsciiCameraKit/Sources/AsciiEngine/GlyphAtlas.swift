@@ -15,8 +15,8 @@ struct GlyphAtlas {
     static func make(
         device: MTLDevice,
         effect: EffectType,
-        font: UIFont = .monospacedSystemFont(ofSize: 28, weight: .regular),
-        tileSize: CGSize = CGSize(width: 32, height: 32),
+        font: UIFont = .monospacedSystemFont(ofSize: 48, weight: .medium),
+        tileSize: CGSize = CGSize(width: 64, height: 64),
         columns: Int = 12
     ) -> GlyphAtlas {
         let characters = effect.characterSet
@@ -116,7 +116,7 @@ struct GlyphAtlas {
                     width: tileSize.width,
                     height: tileSize.height
                 )
-                rect = rect.insetBy(dx: tileSize.width * 0.15, dy: tileSize.height * 0.15)
+                rect = rect.insetBy(dx: tileSize.width * 0.05, dy: tileSize.height * 0.05)
 
                 (String(character) as NSString).draw(in: rect, withAttributes: attributes)
             }
