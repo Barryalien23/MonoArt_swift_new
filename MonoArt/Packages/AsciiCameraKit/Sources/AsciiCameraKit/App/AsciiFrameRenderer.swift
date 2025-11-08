@@ -10,7 +10,9 @@ public protocol AsciiFrameRendering {
 @available(iOS 15.0, tvOS 15.0, *)
 public struct AsciiFrameRenderer: AsciiFrameRendering {
     private struct RenderingConstants {
-        static let targetWidth: CGFloat = 2048
+        // Target dimensions for portrait 9:16 aspect ratio
+        static let targetWidth: CGFloat = 1080  // Standard portrait width
+        static let targetHeight: CGFloat = 1920 // Standard portrait height (9:16)
         static let charWidthFactor: CGFloat = 0.6
         static let lineHeightFactor: CGFloat = 1.1
     }
@@ -26,9 +28,15 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         let columns = max(frame.columns, 1)
         let rows = max(frame.rows, 1)
 
-        let fontSize = RenderingConstants.targetWidth / CGFloat(columns) / RenderingConstants.charWidthFactor
+        // Calculate font size to fit the target dimensions while maintaining aspect ratio
+        let fontSizeForWidth = RenderingConstants.targetWidth / CGFloat(columns) / RenderingConstants.charWidthFactor
+        let fontSizeForHeight = RenderingConstants.targetHeight / CGFloat(rows) / RenderingConstants.lineHeightFactor
+        let fontSize = min(fontSizeForWidth, fontSizeForHeight) // Use smaller to ensure fit
+        
         let lineHeight = fontSize * RenderingConstants.lineHeightFactor
-        let canvasSize = CGSize(width: RenderingConstants.targetWidth, height: lineHeight * CGFloat(rows))
+        let actualWidth = fontSize * RenderingConstants.charWidthFactor * CGFloat(columns)
+        let actualHeight = lineHeight * CGFloat(rows)
+        let canvasSize = CGSize(width: actualWidth, height: actualHeight)
 
         let renderer = UIGraphicsImageRenderer(size: canvasSize)
         return renderer.image { context in

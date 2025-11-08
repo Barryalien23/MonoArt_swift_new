@@ -492,7 +492,8 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
         // Compute uniforms from current state
         let cellPercent = previewState.parameters.cell.rawValue / EffectParameterValue.range.upperBound
         // Invert cell logic: higher cell value = smaller cell size = more symbols
-        let cellPixels = Int(48 - cellPercent * 32) // 48..16 pixels per cell (inverted for intuitive control)
+        // Reduced range for finer preview (4..12px instead of 48..16px)
+        let cellPixels = Int(12 - cellPercent * 8) // 12..4 pixels per cell (much finer for better preview quality)
         let jitterFactor = Float(previewState.parameters.jitter.rawValue / EffectParameterValue.range.upperBound)
         let contrastFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
 

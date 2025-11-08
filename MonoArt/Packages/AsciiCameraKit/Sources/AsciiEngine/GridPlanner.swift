@@ -25,14 +25,9 @@ enum GridPlanner {
         parameters: EffectParameters,
         maxCells: Int
     ) -> GridDescriptor {
-        // Detect orientation from input buffer to choose appropriate aspect ratio
-        let width = max(CVPixelBufferGetWidth(pixelBuffer), 1)
-        let height = max(CVPixelBufferGetHeight(pixelBuffer), 1)
-        let isLandscape = width > height
-        
-        // Use fixed aspect ratio based on orientation
+        // Always use portrait aspect ratio (9:16) since app is portrait-only
         // This ensures the grid always maintains the same proportions regardless of cell size
-        let aspect = isLandscape ? landscapeAspectRatio : portraitAspectRatio
+        let aspect = portraitAspectRatio
 
         // Cell parameter now controls density (number of columns) while maintaining aspect ratio
         // Inverted logic: higher cell value = more columns = higher density
