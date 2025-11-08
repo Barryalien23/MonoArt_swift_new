@@ -31,16 +31,16 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         // Always use fixed target dimensions (1080×1920) for consistent output
         let canvasSize = CGSize(width: RenderingConstants.targetWidth, height: RenderingConstants.targetHeight)
         
-        // Calculate font size to fill the canvas while maintaining aspect ratio
+        // Calculate font size to FILL the canvas (use max to ensure full coverage)
         let fontSizeForWidth = RenderingConstants.targetWidth / CGFloat(columns) / RenderingConstants.charWidthFactor
         let fontSizeForHeight = RenderingConstants.targetHeight / CGFloat(rows) / RenderingConstants.lineHeightFactor
-        let fontSize = min(fontSizeForWidth, fontSizeForHeight) // Use smaller to ensure fit within bounds
+        let fontSize = max(fontSizeForWidth, fontSizeForHeight) // Use LARGER to fill the entire canvas
         
         let lineHeight = fontSize * RenderingConstants.lineHeightFactor
         let contentWidth = fontSize * RenderingConstants.charWidthFactor * CGFloat(columns)
         let contentHeight = lineHeight * CGFloat(rows)
         
-        // Center content in canvas
+        // Center content (may overflow canvas slightly, but that's okay - it fills the screen)
         let offsetX = (RenderingConstants.targetWidth - contentWidth) / 2
         let offsetY = (RenderingConstants.targetHeight - contentHeight) / 2
 
@@ -49,6 +49,9 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
             let cgContext = context.cgContext
             cgContext.setFillColor(palette.background.uiColor.cgColor)
             cgContext.fill(CGRect(origin: .zero, size: canvasSize))
+            
+            // Clip to canvas bounds to prevent overflow
+            cgContext.clip(to: CGRect(origin: .zero, size: canvasSize))
 
             let paragraph = NSMutableParagraphStyle()
             paragraph.alignment = .left
