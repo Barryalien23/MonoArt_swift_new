@@ -1,0 +1,13 @@
+.DS_Store
+/.build
+/.swiftpm
+/SwiftStarterBundle/.build
+/SwiftStarterBundle/.swiftpm
+/DerivedData
+/xcuserdata
+*.xcodeproj/project.xcworkspace/xcuserdata
+*.xcodeproj/xcuserdata
+*.xcscmblueprint
+*.xcuserstate
+Package.resolved
+.idea/

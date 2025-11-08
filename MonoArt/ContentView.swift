@@ -6,56 +6,52 @@
 //
 
 import SwiftUI
-import SwiftData
+import AsciiCameraKit
 
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @Query private var items: [Item]
-
     var body: some View {
-        NavigationSplitView {
-            List {
-                ForEach(items) { item in
-                    NavigationLink {
-                        Text("Item at \(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))")
-                    } label: {
-                        Text(item.timestamp, format: Date.FormatStyle(date: .numeric, time: .standard))
-                    }
-                }
-                .onDelete(perform: deleteItems)
-            }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    EditButton()
-                }
-                ToolbarItem {
-                    Button(action: addItem) {
-                        Label("Add Item", systemImage: "plus")
-                    }
-                }
-            }
-        } detail: {
-            Text("Select an item")
-        }
-    }
-
-    private func addItem() {
-        withAnimation {
-            let newItem = Item(timestamp: Date())
-            modelContext.insert(newItem)
-        }
-    }
-
-    private func deleteItems(offsets: IndexSet) {
-        withAnimation {
-            for index in offsets {
-                modelContext.delete(items[index])
+        Group {
+            if #available(iOS 16.0, *) {
+                AsciiCameraExperience()
+            } else {
+                UnsupportedVersionView()
             }
         }
     }
 }
 
-#Preview {
-    ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+private struct UnsupportedVersionView: View {
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 48))
+            Text("MonoArt requires iOS 16 or newer")
+                .font(.headline)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.black.opacity(0.9))
+        .foregroundStyle(.white)
+    }
+}
+
+#Preview("ASCII Camera Experience") {
+    if #available(iOS 16.0, *) {
+        AsciiCameraExperience(
+            viewModel: AppViewModel(previewStatus: .running, previewFrame: PreviewFrame(
+                id: UUID(),
+                glyphText: "▒░▒░▒░\n░▒░▒░▒\n▒░▒░▒░",
+                columns: 6,
+                rows: 3,
+                renderedEffect: .ascii
+            )),
+            engineFactory: { StubAsciiEngine() },
+            cameraFactory: { StubCameraService() },
+            mediaCoordinatorFactory: { InMemoryMediaCoordinator() },
+            frameRendererFactory: { AsciiFrameRenderer() }
+        )
+    } else {
+        UnsupportedVersionView()
+    }
 }

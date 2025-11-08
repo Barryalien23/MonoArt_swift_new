@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6BEB61002EBE5400002BD1B0 /* AsciiCameraKit in Frameworks */ = {isa = PBXBuildFile; productRef = 6BEB61012EBE5400002BD1B0 /* AsciiCameraKit */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6BEB60DE2EBE53C6002BD1B0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6BEB61002EBE5400002BD1B0 /* AsciiCameraKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = MonoArt;
 			packageProductDependencies = (
+				6BEB61012EBE5400002BD1B0 /* AsciiCameraKit */,
 			);
 			productName = MonoArt;
 			productReference = 6BEB60CE2EBE53C3002BD1B0 /* MonoArt.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = 6BEB60C52EBE53C3002BD1B0;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6BEB61022EBE5400002BD1B0 /* XCLocalSwiftPackageReference "MonoArt/Packages/AsciiCameraKit" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6BEB60CF2EBE53C3002BD1B0 /* Products */;
 			projectDirPath = "";
@@ -399,12 +408,22 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 53V986CV97;
 				ENABLE_PREVIEWS = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.xcassets *.lproj build .build Packages .packageTests .swiftpm Docs";
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					Package.swift,
+					".packageTests/*",
+					".swiftpm/**",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "MonoArt requires the camera to render live ASCII visuals.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "MonoArt saves captured ASCII art to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MonoArt imports photos to convert them into ASCII art.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -431,12 +450,22 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 53V986CV97;
 				ENABLE_PREVIEWS = YES;
+				EXCLUDED_RECURSIVE_SEARCH_PATH_SUBDIRECTORIES = "*.xcassets *.lproj build .build Packages .packageTests .swiftpm Docs";
+				EXCLUDED_SOURCE_FILE_NAMES = (
+					Package.swift,
+					".packageTests/*",
+					".swiftpm/**",
+				);
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "MonoArt requires the camera to render live ASCII visuals.";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "MonoArt saves captured ASCII art to your photo library.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MonoArt imports photos to convert them into ASCII art.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -578,6 +607,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		6BEB61022EBE5400002BD1B0 /* XCLocalSwiftPackageReference "MonoArt/Packages/AsciiCameraKit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = MonoArt/Packages/AsciiCameraKit;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		6BEB61012EBE5400002BD1B0 /* AsciiCameraKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = AsciiCameraKit;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6BEB60C62EBE53C3002BD1B0 /* Project object */;
 }

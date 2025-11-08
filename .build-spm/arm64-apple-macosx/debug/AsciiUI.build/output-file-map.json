@@ -1,0 +1,54 @@
+{
+  "": {
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/master.swiftdeps"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CameraPreviewContainer.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CaptureConfirmationBanner.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ColorPickerSheet.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ControlOverlay.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/EffectSettingsSheet.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/SettingsHandle.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/RootView.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.dia"
+  }
+}

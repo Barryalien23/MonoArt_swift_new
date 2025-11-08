@@ -1,0 +1,2013 @@
+{
+  "builtTestProducts" : [
+    {
+      "binaryPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.xctest/Contents/MacOS/AsciiCameraKitPackageTests",
+      "packagePath" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit",
+      "productName" : "AsciiCameraKitPackageTests"
+    }
+  ],
+  "copyCommands" : {
+
+  },
+  "explicitTargetDependencyImportCheckingMode" : {
+    "none" : {
+
+    }
+  },
+  "generatedSourceTargetSet" : [
+
+  ],
+  "pluginDescriptions" : [
+
+  ],
+  "swiftCommands" : {
+    "C.AsciiCamera-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCamera/CameraService.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiDomain.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiCamera",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCamera.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/CameraService.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/include/AsciiCamera-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/CameraService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCamera.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCamera/CameraService.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiCameraKit-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/AsciiFrameRenderer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/MediaCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/ObservableStubs.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/PreviewPipeline.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/Exports.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/AsciiCameraExperience.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/ShareSheet.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiDomain.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiEngine.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCamera.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiUI.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiCameraKit",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKit.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/include/AsciiCameraKit-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKit.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/AsciiFrameRenderer.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/MediaCoordinator.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/ObservableStubs.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/PreviewPipeline.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/Exports.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/AsciiCameraExperience.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/ShareSheet.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiCameraKitPackageTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.derived/runner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKitTests.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiCameraKitPackageTests",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKitPackageTests.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/runner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/include/AsciiCameraKitPackageTests-Swift.h",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKitPackageTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.derived/runner.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiCameraKitTests-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AppViewModelTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AsciiEngineTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/EffectParametersTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/PreviewPipelineTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/TestSupport/PixelBufferFactory.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKit.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiCameraKitTests",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKitTests.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/AppViewModelTests.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/AsciiEngineTests.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/EffectParametersTests.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/PreviewPipelineTests.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/PixelBufferFactory.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx14.0",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-Xfrontend",
+        "-enable-cross-import-overlays",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/AppViewModelTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/AsciiEngineTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/EffectParametersTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/PreviewPipelineTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/PixelBufferFactory.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCameraKitTests.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AppViewModelTests.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AsciiEngineTests.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/EffectParametersTests.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/PreviewPipelineTests.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/TestSupport/PixelBufferFactory.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiDomain-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/AppViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/ColorModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/EffectModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiDomain",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiDomain.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/include/AsciiDomain-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiDomain.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/AppViewModel.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/ColorModels.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/EffectModels.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiEngine-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/AsciiEngine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GlyphAtlas.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GridPlanner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiDomain.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiEngine",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiEngine.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/include/AsciiEngine-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiEngine.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/AsciiEngine.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GlyphAtlas.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GridPlanner.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiSupport-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiSupport/Logging.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiSupport",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/Logging.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/include/AsciiSupport-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/Logging.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiSupport/Logging.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build",
+      "wholeModuleOptimization" : false
+    },
+    "C.AsciiUI-arm64-apple-macosx26.0-debug.module" : {
+      "executable" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "fileList" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/sources",
+      "importPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "inputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CameraPreviewContainer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CaptureConfirmationBanner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ColorPickerSheet.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ControlOverlay.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/EffectSettingsSheet.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/SettingsHandle.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/RootView.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiDomain.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiEngine.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiCamera.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiSupport.swiftmodule"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/sources"
+        }
+      ],
+      "isLibrary" : true,
+      "moduleName" : "AsciiUI",
+      "moduleOutputPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiUI.swiftmodule",
+      "objects" : [
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.swift.o",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.swift.o"
+      ],
+      "otherArguments" : [
+        "-target",
+        "arm64-apple-macosx10.13",
+        "-incremental",
+        "-enable-batch-mode",
+        "-serialize-diagnostics",
+        "-index-store-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+        "-Onone",
+        "-enable-testing",
+        "-j8",
+        "-DSWIFT_PACKAGE",
+        "-DDEBUG",
+        "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+        "-module-cache-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+        "-parseable-output",
+        "-parse-as-library",
+        "-emit-objc-header",
+        "-emit-objc-header-path",
+        "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/include/AsciiUI-Swift.h",
+        "-swift-version",
+        "5",
+        "-plugin-path",
+        "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+        "-sdk",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-F",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-I",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-L",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+        "-g",
+        "-Xcc",
+        "-isysroot",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+        "-Xcc",
+        "-F",
+        "-Xcc",
+        "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+        "-Xcc",
+        "-fPIC",
+        "-Xcc",
+        "-g",
+        "-package-name",
+        "asciicamerakit"
+      ],
+      "outputFileMapPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/output-file-map.json",
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules/AsciiUI.swiftmodule"
+        }
+      ],
+      "prepareForIndexing" : false,
+      "sources" : [
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CameraPreviewContainer.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CaptureConfirmationBanner.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ColorPickerSheet.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ControlOverlay.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/EffectSettingsSheet.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/SettingsHandle.swift",
+        "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/RootView.swift"
+      ],
+      "tempsPath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build",
+      "wholeModuleOptimization" : false
+    }
+  },
+  "swiftFrontendCommands" : {
+
+  },
+  "swiftTargetScanArgs" : {
+    "AsciiCamera" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiCamera",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCamera/CameraService.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/include/AsciiCamera-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiCameraKit" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiCameraKit",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/AsciiFrameRenderer.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/MediaCoordinator.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/ObservableStubs.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/PreviewPipeline.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/Exports.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/AsciiCameraExperience.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/ShareSheet.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/include/AsciiCameraKit-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiCameraKitPackageTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiCameraKitPackageTests",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.derived/runner.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/include/AsciiCameraKitPackageTests-Swift.h",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiCameraKitTests" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiCameraKitTests",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AppViewModelTests.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AsciiEngineTests.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/EffectParametersTests.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/PreviewPipelineTests.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/TestSupport/PixelBufferFactory.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx14.0",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-Xfrontend",
+      "-enable-cross-import-overlays",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiDomain" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiDomain",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/AppViewModel.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/ColorModels.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/EffectModels.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/include/AsciiDomain-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiEngine" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiEngine",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/AsciiEngine.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GlyphAtlas.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GridPlanner.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/include/AsciiEngine-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiSupport" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiSupport",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiSupport/Logging.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/include/AsciiSupport-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ],
+    "AsciiUI" : [
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc",
+      "-module-name",
+      "AsciiUI",
+      "-package-name",
+      "asciicamerakit",
+      "-c",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CameraPreviewContainer.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CaptureConfirmationBanner.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ColorPickerSheet.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ControlOverlay.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/EffectSettingsSheet.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/SettingsHandle.swift",
+      "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/RootView.swift",
+      "-I",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/Modules",
+      "-target",
+      "arm64-apple-macosx10.13",
+      "-incremental",
+      "-enable-batch-mode",
+      "-serialize-diagnostics",
+      "-index-store-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/index/store",
+      "-Onone",
+      "-enable-testing",
+      "-j8",
+      "-DSWIFT_PACKAGE",
+      "-DDEBUG",
+      "-DSWIFT_MODULE_RESOURCE_BUNDLE_UNAVAILABLE",
+      "-module-cache-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/ModuleCache",
+      "-parseable-output",
+      "-parse-as-library",
+      "-emit-objc-header",
+      "-emit-objc-header-path",
+      "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/include/AsciiUI-Swift.h",
+      "-swift-version",
+      "5",
+      "-plugin-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/host/plugins/testing",
+      "-sdk",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-F",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-I",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-L",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/usr/lib",
+      "-g",
+      "-Xcc",
+      "-isysroot",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/Frameworks",
+      "-Xcc",
+      "-F",
+      "-Xcc",
+      "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/Library/PrivateFrameworks",
+      "-Xcc",
+      "-fPIC",
+      "-Xcc",
+      "-g",
+      "-package-name",
+      "asciicamerakit",
+      "-driver-use-frontend-path",
+      "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+    ]
+  },
+  "targetDependencyMap" : {
+    "AsciiCamera" : [
+      "AsciiDomain",
+      "AsciiSupport"
+    ],
+    "AsciiCameraKit" : [
+      "AsciiUI",
+      "AsciiCamera",
+      "AsciiEngine",
+      "AsciiDomain",
+      "AsciiSupport"
+    ],
+    "AsciiCameraKitPackageTests" : [
+      "AsciiCameraKitTests",
+      "AsciiCameraKit",
+      "AsciiUI",
+      "AsciiCamera",
+      "AsciiEngine",
+      "AsciiDomain",
+      "AsciiSupport"
+    ],
+    "AsciiCameraKitTests" : [
+      "AsciiCameraKit",
+      "AsciiUI",
+      "AsciiCamera",
+      "AsciiEngine",
+      "AsciiDomain",
+      "AsciiSupport"
+    ],
+    "AsciiDomain" : [
+      "AsciiSupport"
+    ],
+    "AsciiEngine" : [
+      "AsciiDomain",
+      "AsciiSupport"
+    ],
+    "AsciiSupport" : [
+
+    ],
+    "AsciiUI" : [
+      "AsciiCamera",
+      "AsciiEngine",
+      "AsciiDomain",
+      "AsciiSupport"
+    ]
+  },
+  "testDiscoveryCommands" : {
+
+  },
+  "testEntryPointCommands" : {
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.derived/runner.swift" : {
+      "inputs" : [
+
+      ],
+      "outputs" : [
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.derived/runner.swift"
+        }
+      ]
+    }
+  },
+  "traitConfiguration" : {
+    "default" : {
+
+    }
+  },
+  "writeCommands" : {
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCamera/CameraService.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/AsciiFrameRenderer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/MediaCoordinator.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/ObservableStubs.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/PreviewPipeline.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/Exports.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/AsciiCameraExperience.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/ShareSheet.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.derived/runner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.product/Objects.LinkFileList" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<link-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/CameraService.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.build/runner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/AppViewModelTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/AsciiEngineTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/EffectParametersTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/PixelBufferFactory.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/PreviewPipelineTests.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/Logging.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CameraPreviewContainer.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/CaptureConfirmationBanner.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ColorPickerSheet.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/ControlOverlay.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/EffectSettingsSheet.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/RootView.swift.o"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/SettingsHandle.swift.o"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitPackageTests.product/Objects.LinkFileList"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AppViewModelTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/AsciiEngineTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/EffectParametersTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/PreviewPipelineTests.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.packageTests/AsciiCameraKitTests/TestSupport/PixelBufferFactory.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCameraKitTests.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/AppViewModel.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/ColorModels.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/EffectModels.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiDomain.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/AsciiEngine.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GlyphAtlas.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GridPlanner.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiEngine.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiSupport/Logging.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiSupport.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/sources" : {
+      "alwaysOutOfDate" : false,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<sources-file-list>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CameraPreviewContainer.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/CaptureConfirmationBanner.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ColorPickerSheet.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/ControlOverlay.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/EffectSettingsSheet.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/Components/SettingsHandle.swift"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiUI/RootView.swift"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiUI.build/sources"
+    },
+    "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt" : {
+      "alwaysOutOfDate" : true,
+      "inputs" : [
+        {
+          "kind" : "virtual",
+          "name" : "<swift-get-version>"
+        },
+        {
+          "kind" : "file",
+          "name" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/swiftc"
+        }
+      ],
+      "outputFilePath" : "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/swift-version--58304C5D6DBC2206.txt"
+    }
+  }
+}

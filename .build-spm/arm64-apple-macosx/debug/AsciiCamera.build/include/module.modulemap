@@ -1,0 +1,3 @@
+module AsciiCamera {
+    header "/Users/barryalien/Documents/code/MonoArt/.build-spm/arm64-apple-macosx/debug/AsciiCamera.build/include/AsciiCamera-Swift.h"
+}
