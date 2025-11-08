@@ -10,6 +10,7 @@ import AVFoundation
 public protocol CameraServiceProtocol: AnyObject {
     var framePublisher: AnyPublisher<FrameEnvelope, Never> { get }
     var authorizationStatus: AVAuthorizationStatus { get }
+    var currentCameraPosition: AVCaptureDevice.Position { get }
 
     func startSession() async throws
     func stopSession()
@@ -62,6 +63,10 @@ public final class CameraService: NSObject, CameraServiceProtocol, @unchecked Se
 
     public var authorizationStatus: AVAuthorizationStatus {
         AVCaptureDevice.authorizationStatus(for: .video)
+    }
+    
+    public var currentCameraPosition: AVCaptureDevice.Position {
+        desiredPosition
     }
 
     public func startSession() async throws {
@@ -225,6 +230,10 @@ public final class StubCameraService: CameraServiceProtocol {
 
     public var authorizationStatus: AVAuthorizationStatus {
         .authorized
+    }
+    
+    public var currentCameraPosition: AVCaptureDevice.Position {
+        .back
     }
 
     public func startSession() async throws {}

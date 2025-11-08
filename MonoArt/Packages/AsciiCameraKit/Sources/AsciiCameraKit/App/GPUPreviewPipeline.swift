@@ -102,6 +102,8 @@ public final class GPUPreviewPipeline {
         self.mtkView = view
         do {
             try engine.setupPreview(on: view, effect: viewModel.selectedEffect)
+            // Set initial camera position
+            updateCameraPosition()
         } catch {
             print("GPU Preview setup failed: \(error)")
         }
@@ -120,6 +122,7 @@ public final class GPUPreviewPipeline {
         viewModel.beginPreviewLoading()
         subscribeToCameraFrames()
         observeViewModelChanges()
+        updateCameraPosition()
 
         Task {
             do {
@@ -131,6 +134,11 @@ public final class GPUPreviewPipeline {
                 stop()
             }
         }
+    }
+    
+    private func updateCameraPosition() {
+        let isFront = cameraService.currentCameraPosition == .front
+        engine.updateCameraPosition(isFront: isFront)
     }
 
     public func stop() {
@@ -151,6 +159,9 @@ public final class GPUPreviewPipeline {
     public func switchCamera() {
         Task {
             try? await cameraService.switchCamera()
+            await MainActor.run {
+                self.updateCameraPosition()
+            }
         }
     }
 

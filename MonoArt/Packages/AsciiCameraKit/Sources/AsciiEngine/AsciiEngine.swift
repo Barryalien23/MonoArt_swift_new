@@ -43,6 +43,7 @@ struct PreviewUniforms {
     var jitter: Float
     var invert: Float
     var time: Float
+    var mirrorHorizontal: Float  // 1.0 for front camera (mirror), 0.0 for back camera
 }
 
 public enum AsciiEngineError: Error {
@@ -70,6 +71,7 @@ private struct PreviewState {
     var parameters: EffectParameters = EffectParameters()
     var palette: PaletteState = PaletteState()
     var time: Float = 0
+    var isFrontCamera: Bool = false
 }
 
 @available(macOS 10.15, iOS 15.0, tvOS 15.0, *)
@@ -451,6 +453,11 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
     public func updatePreviewVideoTexture(_ texture: MTLTexture) {
         previewState.videoTexture = texture
     }
+    
+    @MainActor
+    public func updateCameraPosition(isFront: Bool) {
+        previewState.isFrontCamera = isFront
+    }
 
     @MainActor
     public func updatePreviewParameters(_ parameters: EffectParameters, palette: PaletteState, effect: EffectType) {
@@ -522,7 +529,8 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
             contrast: contrastFactor, // Now controls image contrast (0..1)
             jitter: jitterFactor,
             invert: 0.0,
-            time: previewState.time
+            time: previewState.time,
+            mirrorHorizontal: previewState.isFrontCamera ? 1.0 : 0.0
         )
 
         renderEncoder.setFragmentBytes(&uniforms, length: MemoryLayout<PreviewUniforms>.stride, index: 0)
@@ -633,6 +641,7 @@ struct PreviewUniforms {
     float  jitter;
     float  invert;
     float  time;
+    float  mirrorHorizontal;  // 1.0 for front camera (mirror), 0.0 for back camera
 };
 
 struct VSOut {
@@ -680,7 +689,13 @@ fragment float4 previewFS(
     float2 cell = floor(fragmentPixel / float2(uniforms.cellSize));
     float2 local = fract(fragmentPixel / float2(uniforms.cellSize));
 
-    float2 videoUV = aspectFill(in.uv, uniforms.targetSize, uniforms.videoSize);
+    // Apply horizontal mirror for front camera
+    float2 adjustedUV = in.uv;
+    if (uniforms.mirrorHorizontal > 0.5) {
+        adjustedUV.x = 1.0 - adjustedUV.x;
+    }
+    
+    float2 videoUV = aspectFill(adjustedUV, uniforms.targetSize, uniforms.videoSize);
     float3 rgb = videoTexture.sample(videoSampler, videoUV).rgb;
     float luminance = dot(rgb, float3(0.2126, 0.7152, 0.0722));
     
