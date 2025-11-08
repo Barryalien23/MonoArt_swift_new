@@ -261,9 +261,6 @@ public final class AppViewModel: ObservableObject {
         if effect.supportedParameters.contains(.softy) {
             next.softy = defaults.softy
         }
-        if effect.supportedParameters.contains(.edge) {
-            next.edge = defaults.edge
-        }
         return next
     }
 

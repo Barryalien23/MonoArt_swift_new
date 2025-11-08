@@ -15,17 +15,17 @@ public enum EffectType: String, CaseIterable, Codable, Sendable {
     public var supportedParameters: Set<EffectParameter> {
         switch self {
         case .ascii:
-            return [.cell, .jitter, .softy, .edge]
+            return [.cell, .jitter, .softy]
         case .shapes:
             return [.cell, .jitter, .softy]
         case .circles:
             return [.cell, .jitter, .softy]
         case .squares:
-            return [.cell, .edge]
+            return [.cell, .softy]
         case .triangles:
-            return [.cell, .jitter]
+            return [.cell, .jitter, .softy]
         case .diamonds:
-            return [.cell, .softy, .edge]
+            return [.cell, .jitter, .softy]
         }
     }
 }
@@ -34,14 +34,12 @@ public enum EffectParameter: String, CaseIterable, Codable, Sendable {
     case cell
     case jitter
     case softy
-    case edge
 
     public var displayName: String {
         switch self {
         case .cell: return "Cell"
         case .jitter: return "Jitter"
         case .softy: return "Contrast"
-        case .edge: return "Edge"
         }
     }
 }
@@ -64,18 +62,15 @@ public struct EffectParameters: Codable, Hashable, Sendable {
     public var cell: EffectParameterValue
     public var jitter: EffectParameterValue
     public var softy: EffectParameterValue
-    public var edge: EffectParameterValue
 
     public init(
         cell: EffectParameterValue = EffectParameterValue(40),
         jitter: EffectParameterValue = EffectParameterValue(20),
-        softy: EffectParameterValue = EffectParameterValue(10),
-        edge: EffectParameterValue = EffectParameterValue(30)
+        softy: EffectParameterValue = EffectParameterValue(50)
     ) {
         self.cell = cell
         self.jitter = jitter
         self.softy = softy
-        self.edge = edge
     }
 
     public mutating func update(_ parameter: EffectParameter, value: Double) {
@@ -84,7 +79,6 @@ public struct EffectParameters: Codable, Hashable, Sendable {
         case .cell: cell = clamped
         case .jitter: jitter = clamped
         case .softy: softy = clamped
-        case .edge: edge = clamped
         }
     }
 }

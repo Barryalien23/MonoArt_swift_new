@@ -38,10 +38,8 @@ struct PreviewUniforms {
     var atlasGrid: SIMD2<UInt32>
     var colorA: SIMD4<Float>
     var colorB: SIMD4<Float>
-    var edge: Float
-    var contrast: Float  // Renamed from 'soft' - now controls image contrast (0..1)
+    var contrast: Float  // Controls image contrast (0..1)
     var jitter: Float
-    var invert: Float
     var time: Float
     var mirrorHorizontal: Float  // 1.0 for front camera (mirror), 0.0 for back camera
 }
@@ -167,7 +165,6 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
                 grid: grid,
                 effect: effect,
                 jitter: parameters.jitter.rawValue,
-                edge: parameters.edge.rawValue,
                 palette: palette
             )
 
@@ -328,14 +325,12 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
         grid: GridDescriptor,
         effect: EffectType,
         jitter: Double,
-        edge: Double,
         palette: PaletteState
     ) -> String {
         let glyphs = effect.characterSet
         guard !glyphs.isEmpty else { return "" }
 
         let jitterAmplitude = Int((jitter / EffectParameterValue.range.upperBound) * Double(max(1, glyphs.count / 4))).clamped(to: 0 ... max(1, glyphs.count - 1))
-        let edgeFactor = max(0, min(1, edge / EffectParameterValue.range.upperBound))
         let seed = UInt64(bitPattern: Int64(palette.hashValue ^ grid.columns ^ grid.rows)) ^ UInt64(jitterAmplitude)
         var rng = SeededRandomGenerator(seed: seed)
 
@@ -346,10 +341,9 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
             for column in 0 ..< grid.columns {
                 let index = row * grid.columns + column
                 var value = luminanceValues[index]
-                value = applyEdgeAdjustment(value, factor: edgeFactor)
                 value = max(0, min(1, value))
-                let inverted = 1 - value
-                let scaledDouble = Double(glyphs.count - 1) * Double(inverted)
+                // Direct mapping: light areas -> dense symbols, dark areas -> sparse symbols
+                let scaledDouble = Double(glyphs.count - 1) * Double(value)
                 let scaled = Int(scaledDouble).clamped(to: 0 ... glyphs.count - 1)
                 var finalIndex = scaled
                 if jitterAmplitude > 0 {
@@ -366,13 +360,6 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
         return builder
     }
 
-    private func applyEdgeAdjustment(_ value: Float, factor: Double) -> Float {
-        guard factor > 0 else { return value }
-        let contrast = Float(1 + factor * 0.8)
-        let midpoint: Float = 0.5
-        let adjusted = (value - midpoint) * contrast + midpoint
-        return max(0, min(1, adjusted))
-    }
 
     private func ensurePrepared() throws {
         guard isPrepared else {
@@ -506,7 +493,6 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
         let cellPercent = previewState.parameters.cell.rawValue / EffectParameterValue.range.upperBound
         // Invert cell logic: higher cell value = smaller cell size = more symbols
         let cellPixels = Int(48 - cellPercent * 32) // 48..16 pixels per cell (inverted for intuitive control)
-        let edgeFactor = Float(previewState.parameters.edge.rawValue / EffectParameterValue.range.upperBound)
         let jitterFactor = Float(previewState.parameters.jitter.rawValue / EffectParameterValue.range.upperBound)
         let contrastFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
 
@@ -526,10 +512,8 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
             atlasGrid: SIMD2<UInt32>(UInt32(atlas.gridColumns), UInt32(atlas.gridRows)),
             colorA: SIMD4<Float>(Float(bgColor.red), Float(bgColor.green), Float(bgColor.blue), Float(bgColor.alpha)),
             colorB: SIMD4<Float>(Float(fgColor.red), Float(fgColor.green), Float(fgColor.blue), Float(fgColor.alpha)),
-            edge: 0.5 + edgeFactor * 0.3,
-            contrast: contrastFactor, // Now controls image contrast (0..1)
+            contrast: contrastFactor, // Controls image contrast (0..1)
             jitter: jitterFactor,
-            invert: 0.0,
             time: previewState.time,
             mirrorHorizontal: previewState.isFrontCamera ? 1.0 : 0.0
         )
@@ -637,10 +621,8 @@ struct PreviewUniforms {
     uint2  atlasGrid;
     float4 colorA;
     float4 colorB;
-    float  edge;
-    float  contrast;  // Renamed from 'soft' - now controls image contrast
+    float  contrast;  // Controls image contrast (0..1)
     float  jitter;
-    float  invert;
     float  time;
     float  mirrorHorizontal;  // 1.0 for front camera (mirror), 0.0 for back camera
 };
@@ -701,19 +683,15 @@ fragment float4 previewFS(
     float luminance = dot(rgb, float3(0.2126, 0.7152, 0.0722));
     
     // Apply contrast adjustment
-    // Map contrast 0..1 to multiplier 0.3..2.5 (wider range for more visible effect)
-    // At 0.0: very low contrast (0.3x)
-    // At 0.5: neutral (1.4x) 
-    // At 1.0: high contrast (2.5x)
-    float contrastMultiplier = 0.3 + uniforms.contrast * 2.2;
+    // Contrast range: 0..1 maps to multiplier 0.5..2.0
+    // At 0.0: low contrast (0.5x) - soft, muted
+    // At 0.5: neutral (1.25x) - balanced
+    // At 1.0: high contrast (2.0x) - sharp, pronounced
+    float contrastMultiplier = 0.5 + uniforms.contrast * 1.5;
     luminance = clamp((luminance - 0.5) * contrastMultiplier + 0.5, 0.0, 1.0);
-    
-    if (uniforms.invert > 0.5) {
-        luminance = 1.0 - luminance;
-    }
 
     uint glyphCount = uniforms.atlasGrid.x * uniforms.atlasGrid.y;
-    // Natural mapping (user request):
+    // Natural mapping:
     // - Dark areas (low luminance) → sparse symbols (low index = space)
     // - Light areas (high luminance) → dense symbols (high index)
     float glyphIndex = luminance * float(glyphCount - 1);
@@ -730,11 +708,10 @@ fragment float4 previewFS(
     float2 atlasUV = (float2(atlasX, atlasY) + local) / float2(uniforms.atlasGrid);
 
     float glyphSample = atlasTexture.sample(atlasSampler, atlasUV).r;
-    // Edge parameter controls glyph threshold (softness of glyph edges)
-    // Lower edge = softer, rounder glyphs
-    // Higher edge = sharper, more defined glyphs
-    float softness = 0.15; // Fixed softness for smooth anti-aliasing
-    float alpha = smoothstep(uniforms.edge - softness, uniforms.edge + softness, glyphSample);
+    // Fixed threshold for glyph rendering with smooth anti-aliasing
+    float threshold = 0.5;
+    float softness = 0.15;
+    float alpha = smoothstep(threshold - softness, threshold + softness, glyphSample);
 
     return mix(uniforms.colorA, uniforms.colorB, alpha);
 }

@@ -78,7 +78,6 @@ public struct EffectSettingsSheet: View {
         case .cell: return viewModel.parameters.cell.rawValue
         case .jitter: return viewModel.parameters.jitter.rawValue
         case .softy: return viewModel.parameters.softy.rawValue
-        case .edge: return viewModel.parameters.edge.rawValue
         }
     }
 
