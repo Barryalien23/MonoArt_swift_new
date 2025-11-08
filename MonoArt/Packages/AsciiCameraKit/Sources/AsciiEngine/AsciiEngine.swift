@@ -504,7 +504,8 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
 
         // Compute uniforms from current state
         let cellPercent = previewState.parameters.cell.rawValue / EffectParameterValue.range.upperBound
-        let cellPixels = Int(16 + cellPercent * 32) // 16..48 pixels per cell (increased for sharper glyphs)
+        // Invert cell logic: higher cell value = smaller cell size = more symbols
+        let cellPixels = Int(48 - cellPercent * 32) // 48..16 pixels per cell (inverted for intuitive control)
         let edgeFactor = Float(previewState.parameters.edge.rawValue / EffectParameterValue.range.upperBound)
         let jitterFactor = Float(previewState.parameters.jitter.rawValue / EffectParameterValue.range.upperBound)
         let contrastFactor = Float(previewState.parameters.softy.rawValue / EffectParameterValue.range.upperBound)
@@ -712,7 +713,10 @@ fragment float4 previewFS(
     }
 
     uint glyphCount = uniforms.atlasGrid.x * uniforms.atlasGrid.y;
-    float glyphIndex = (1.0 - luminance) * float(glyphCount - 1);
+    // Natural mapping (user request):
+    // - Dark areas (low luminance) → sparse symbols (low index = space)
+    // - Light areas (high luminance) → dense symbols (high index)
+    float glyphIndex = luminance * float(glyphCount - 1);
 
     float noise = rand21(cell + uniforms.time);
     if (uniforms.jitter > 0.0) {
@@ -726,8 +730,11 @@ fragment float4 previewFS(
     float2 atlasUV = (float2(atlasX, atlasY) + local) / float2(uniforms.atlasGrid);
 
     float glyphSample = atlasTexture.sample(atlasSampler, atlasUV).r;
-    // Use fixed soft edge for glyph rendering
-    float alpha = smoothstep(uniforms.edge - 0.08, uniforms.edge + 0.08, glyphSample);
+    // Edge parameter controls glyph threshold (softness of glyph edges)
+    // Lower edge = softer, rounder glyphs
+    // Higher edge = sharper, more defined glyphs
+    float softness = 0.15; // Fixed softness for smooth anti-aliasing
+    float alpha = smoothstep(uniforms.edge - softness, uniforms.edge + softness, glyphSample);
 
     return mix(uniforms.colorA, uniforms.colorB, alpha);
 }
