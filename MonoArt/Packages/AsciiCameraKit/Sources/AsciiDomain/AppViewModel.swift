@@ -56,7 +56,8 @@ public final class AppViewModel: ObservableObject {
     public func selectEffect(_ effect: EffectType) {
         guard effect != selectedEffect else { return }
         selectedEffect = effect
-        parameters = AppViewModel.applyDefaults(for: effect, onto: parameters)
+        // Keep current parameters when switching effects (user preference preservation)
+        // No need to reset to defaults - user settings should persist
     }
 
     public func updateParameter(_ parameter: EffectParameter, value: Double) {

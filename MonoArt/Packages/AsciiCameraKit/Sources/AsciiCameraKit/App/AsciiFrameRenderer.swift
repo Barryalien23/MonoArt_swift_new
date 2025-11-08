@@ -28,15 +28,21 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         let columns = max(frame.columns, 1)
         let rows = max(frame.rows, 1)
 
-        // Calculate font size to fit the target dimensions while maintaining aspect ratio
+        // Always use fixed target dimensions (1080×1920) for consistent output
+        let canvasSize = CGSize(width: RenderingConstants.targetWidth, height: RenderingConstants.targetHeight)
+        
+        // Calculate font size to fill the canvas while maintaining aspect ratio
         let fontSizeForWidth = RenderingConstants.targetWidth / CGFloat(columns) / RenderingConstants.charWidthFactor
         let fontSizeForHeight = RenderingConstants.targetHeight / CGFloat(rows) / RenderingConstants.lineHeightFactor
-        let fontSize = min(fontSizeForWidth, fontSizeForHeight) // Use smaller to ensure fit
+        let fontSize = min(fontSizeForWidth, fontSizeForHeight) // Use smaller to ensure fit within bounds
         
         let lineHeight = fontSize * RenderingConstants.lineHeightFactor
-        let actualWidth = fontSize * RenderingConstants.charWidthFactor * CGFloat(columns)
-        let actualHeight = lineHeight * CGFloat(rows)
-        let canvasSize = CGSize(width: actualWidth, height: actualHeight)
+        let contentWidth = fontSize * RenderingConstants.charWidthFactor * CGFloat(columns)
+        let contentHeight = lineHeight * CGFloat(rows)
+        
+        // Center content in canvas
+        let offsetX = (RenderingConstants.targetWidth - contentWidth) / 2
+        let offsetY = (RenderingConstants.targetHeight - contentHeight) / 2
 
         let renderer = UIGraphicsImageRenderer(size: canvasSize)
         return renderer.image { context in
@@ -56,7 +62,8 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
                     .foregroundColor: color
                 ]
                 let attributed = NSAttributedString(string: String(line), attributes: attributes)
-                let point = CGPoint(x: 0, y: CGFloat(index) * lineHeight)
+                // Apply offset to center content in canvas
+                let point = CGPoint(x: offsetX, y: offsetY + CGFloat(index) * lineHeight)
                 attributed.draw(at: point)
             }
         }
