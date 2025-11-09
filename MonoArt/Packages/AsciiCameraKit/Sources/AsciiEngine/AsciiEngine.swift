@@ -159,12 +159,13 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
                 luminance = try self.renderWithCPU(pixelBuffer: pixelBuffer, grid: grid)
             }
 
-            let softened = self.applySofty(luminance, grid: grid, softy: parameters.softy.rawValue)
+            // Remove applySofty - no blur, use raw luminance
+            // Contrast is now applied inside composeASCII to match GPU shader
             let asciiText = self.composeASCII(
-                luminanceValues: softened,
+                luminanceValues: luminance,
                 grid: grid,
                 effect: effect,
-                jitter: parameters.jitter.rawValue,
+                parameters: parameters,
                 palette: palette
             )
 
@@ -324,13 +325,13 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
         luminanceValues: [Float],
         grid: GridDescriptor,
         effect: EffectType,
-        jitter: Double,
+        parameters: EffectParameters,
         palette: PaletteState
     ) -> String {
         let glyphs = effect.characterSet
         guard !glyphs.isEmpty else { return "" }
 
-        let jitterAmplitude = Int((jitter / EffectParameterValue.range.upperBound) * Double(max(1, glyphs.count / 4))).clamped(to: 0 ... max(1, glyphs.count - 1))
+        let jitterAmplitude = Int((parameters.jitter.rawValue / EffectParameterValue.range.upperBound) * Double(max(1, glyphs.count / 4))).clamped(to: 0 ... max(1, glyphs.count - 1))
         let seed = UInt64(bitPattern: Int64(palette.hashValue ^ grid.columns ^ grid.rows)) ^ UInt64(jitterAmplitude)
         var rng = SeededRandomGenerator(seed: seed)
 
@@ -342,6 +343,11 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
                 let index = row * grid.columns + column
                 var value = luminanceValues[index]
                 value = max(0, min(1, value))
+                
+                // Apply contrast adjustment (matches GPU shader)
+                let contrastFactor = Float(parameters.softy.rawValue / EffectParameterValue.range.upperBound)
+                let contrastMultiplier = 0.2 + contrastFactor * 2.8
+                value = max(0, min(1, (value - 0.5) * contrastMultiplier + 0.5))
                 
                 // 🌑 Darken shadows: apply power curve to push dark areas toward zero
                 // This makes dark areas use minimal/no symbols (space, dot)
