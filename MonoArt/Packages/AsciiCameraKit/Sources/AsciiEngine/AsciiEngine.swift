@@ -342,7 +342,13 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
                 let index = row * grid.columns + column
                 var value = luminanceValues[index]
                 value = max(0, min(1, value))
-                // Direct mapping: light areas -> dense symbols, dark areas -> sparse symbols
+                
+                // 🌑 Darken shadows: apply power curve to push dark areas toward zero
+                // This makes dark areas use minimal/no symbols (space, dot)
+                // Power 1.5 = moderate darkening (matches GPU shader)
+                value = pow(value, 1.5)
+                
+                // Direct mapping: light areas -> dense symbols, dark areas -> minimal symbols ✨
                 let scaledDouble = Double(glyphs.count - 1) * Double(value)
                 let scaled = Int(scaledDouble).clamped(to: 0 ... glyphs.count - 1)
                 var finalIndex = scaled
@@ -690,11 +696,16 @@ fragment float4 previewFS(
     // At 1.0: very high contrast (3.0x) - extremely sharp, pronounced
     float contrastMultiplier = 0.2 + uniforms.contrast * 2.8;
     luminance = clamp((luminance - 0.5) * contrastMultiplier + 0.5, 0.0, 1.0);
+    
+    // 🌑 Darken shadows: apply power curve to push dark areas toward zero
+    // This makes dark areas use minimal/no symbols (space, dot)
+    // Power 1.5 = moderate darkening, 2.0 = strong darkening
+    luminance = pow(luminance, 1.5);
 
     uint glyphCount = uniforms.atlasGrid.x * uniforms.atlasGrid.y;
     // Natural mapping:
-    // - Dark areas (low luminance) → sparse symbols (low index = space)
-    // - Light areas (high luminance) → dense symbols (high index)
+    // - Dark areas (low luminance) → minimal symbols (space, dot) ✨
+    // - Light areas (high luminance) → dense symbols (letters, @, $)
     float glyphIndex = luminance * float(glyphCount - 1);
 
     float noise = rand21(cell + uniforms.time);
