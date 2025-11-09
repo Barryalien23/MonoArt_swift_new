@@ -684,11 +684,11 @@ fragment float4 previewFS(
     float luminance = dot(rgb, float3(0.2126, 0.7152, 0.0722));
     
     // Apply contrast adjustment
-    // Contrast range: 0..1 maps to multiplier 0.5..2.0
-    // At 0.0: low contrast (0.5x) - soft, muted
-    // At 0.5: neutral (1.25x) - balanced
-    // At 1.0: high contrast (2.0x) - sharp, pronounced
-    float contrastMultiplier = 0.5 + uniforms.contrast * 1.5;
+    // Contrast range: 0..1 maps to multiplier 0.2..3.0
+    // At 0.0: very low contrast (0.2x) - extremely soft, muted
+    // At 0.5: neutral (1.6x) - balanced
+    // At 1.0: very high contrast (3.0x) - extremely sharp, pronounced
+    float contrastMultiplier = 0.2 + uniforms.contrast * 2.8;
     luminance = clamp((luminance - 0.5) * contrastMultiplier + 0.5, 0.0, 1.0);
 
     uint glyphCount = uniforms.atlasGrid.x * uniforms.atlasGrid.y;
