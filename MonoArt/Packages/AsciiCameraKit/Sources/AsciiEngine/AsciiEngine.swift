@@ -348,7 +348,17 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
                 // Power 1.5 = moderate darkening (matches GPU shader)
                 value = pow(value, 1.5)
                 
-                // Direct mapping: light areas -> dense symbols, dark areas -> minimal symbols ✨
+                // 🌌 Pure darkness threshold: cut off very dark areas completely
+                // Below this threshold → force to index 0 (space/empty) for absolute void
+                let darknessThreshold: Float = 0.15  // 0.0-0.15 becomes pure black (no symbols)
+                if value < darknessThreshold {
+                    value = 0.0  // Force to space character (index 0)
+                }
+                
+                // Direct mapping: 
+                // - Very dark areas (< 0.15) → NOTHING (absolute void) 🌌
+                // - Dark areas → minimal symbols (dot) ✨
+                // - Light areas → dense symbols (letters, @, $)
                 let scaledDouble = Double(glyphs.count - 1) * Double(value)
                 let scaled = Int(scaledDouble).clamped(to: 0 ... glyphs.count - 1)
                 var finalIndex = scaled
@@ -701,11 +711,19 @@ fragment float4 previewFS(
     // This makes dark areas use minimal/no symbols (space, dot)
     // Power 1.5 = moderate darkening, 2.0 = strong darkening
     luminance = pow(luminance, 1.5);
+    
+    // 🌌 Pure darkness threshold: cut off very dark areas completely
+    // Below this threshold → force to index 0 (space/empty) for absolute void
+    const float darknessThreshold = 0.15;  // 0.0-0.15 becomes pure black (no symbols)
+    if (luminance < darknessThreshold) {
+        luminance = 0.0;  // Force to space character (index 0)
+    }
 
     uint glyphCount = uniforms.atlasGrid.x * uniforms.atlasGrid.y;
     // Natural mapping:
-    // - Dark areas (low luminance) → minimal symbols (space, dot) ✨
-    // - Light areas (high luminance) → dense symbols (letters, @, $)
+    // - Very dark areas (< 0.15) → NOTHING (absolute void) 🌌
+    // - Dark areas → minimal symbols (dot) ✨
+    // - Light areas → dense symbols (letters, @, $)
     float glyphIndex = luminance * float(glyphCount - 1);
 
     float noise = rand21(cell + uniforms.time);
