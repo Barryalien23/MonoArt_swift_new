@@ -56,6 +56,22 @@ public final class GPUPreviewPipeline {
     public private(set) var mtkView: MTKView?
 
 #if canImport(UIKit)
+    private func describeEngineError(_ error: Error) -> String {
+        if let engineError = error as? AsciiEngineError {
+            switch engineError {
+            case .metalUnavailable:
+                return "Metal is unavailable on this device."
+            case .unsupportedPixelFormat:
+                return "Unsupported pixel format. Expected BGRA or 420f."
+            case .configurationFailure(let reason):
+                return "Configuration failure: \(reason)"
+            case .internalError(let reason):
+                return "Internal engine error: \(reason)"
+            }
+        }
+        return error.localizedDescription
+    }
+
     public init(
         viewModel: AppViewModel,
         engine: AsciiEngine,
@@ -372,9 +388,10 @@ public final class GPUPreviewPipeline {
                 print("❌ GPUPreviewPipeline: Failed to create UIImage from ASCII frame")
             }
         } catch {
-            print("❌ GPUPreviewPipeline: Render error: \(error.localizedDescription)")
+            let description = describeEngineError(error)
+            print("❌ GPUPreviewPipeline: Render error: \(description)")
             await MainActor.run {
-                self.viewModel.failPreview(message: error.localizedDescription)
+                self.viewModel.failPreview(message: description)
             }
         }
     }
@@ -480,6 +497,7 @@ public final class GPUPreviewPipeline {
                                            palette: context.palette,
                                            mirrored: cameraService.currentCameraPosition == .front)
         } catch {
+            print("❌ GPUPreviewPipeline: Preview rendering failed: \(describeEngineError(error))")
             return nil
         }
     }
