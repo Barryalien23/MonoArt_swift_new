@@ -62,6 +62,8 @@ public struct AsciiCameraExperience: View {
             captureAction: captureTapped,
             flipAction: flipCamera,
             importAction: { isImportPickerPresented = true },
+            saveImportAction: saveImportedPhoto,
+            cancelImportAction: cancelImport,
             shareAction: shareImage == nil ? nil : { shareTapped() },
             engine: gpuPipeline?.engine,
             useGPUPreview: useGPUPreview
@@ -183,6 +185,26 @@ public struct AsciiCameraExperience: View {
             textPipeline.capture()
         } else {
             viewModel.simulateCapture()
+        }
+    }
+
+    private func saveImportedPhoto() {
+        if let gpuPipeline = gpuPipeline {
+            gpuPipeline.saveImportedPhoto()
+        } else if let textPipeline = textPipeline {
+            textPipeline.saveImportedPhoto()
+        } else {
+            viewModel.simulateCapture()
+        }
+    }
+
+    private func cancelImport() {
+        if let gpuPipeline = gpuPipeline {
+            gpuPipeline.cancelImport()
+        } else if let textPipeline = textPipeline {
+            textPipeline.cancelImport()
+        } else {
+            viewModel.cancelImport()
         }
     }
 

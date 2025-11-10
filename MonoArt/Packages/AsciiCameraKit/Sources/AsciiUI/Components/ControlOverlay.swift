@@ -7,9 +7,12 @@ public struct ControlOverlay: View {
     public let selectedEffect: EffectType
     public let availableEffects: [EffectType]
     public let isCaptureInFlight: Bool
+    public let isImportMode: Bool
     public let onImport: () -> Void
     public let onCapture: () -> Void
     public let onFlip: () -> Void
+    public let onSaveImport: (() -> Void)?
+    public let onCancelImport: (() -> Void)?
     public let onSelectEffect: (EffectType) -> Void
     public let onShowColors: () -> Void
 
@@ -17,18 +20,24 @@ public struct ControlOverlay: View {
         selectedEffect: EffectType,
         availableEffects: [EffectType] = EffectType.allCases,
         isCaptureInFlight: Bool,
+        isImportMode: Bool,
         onImport: @escaping () -> Void,
         onCapture: @escaping () -> Void,
         onFlip: @escaping () -> Void,
+        onSaveImport: (() -> Void)? = nil,
+        onCancelImport: (() -> Void)? = nil,
         onSelectEffect: @escaping (EffectType) -> Void,
         onShowColors: @escaping () -> Void
     ) {
         self.selectedEffect = selectedEffect
         self.availableEffects = availableEffects
         self.isCaptureInFlight = isCaptureInFlight
+        self.isImportMode = isImportMode
         self.onImport = onImport
         self.onCapture = onCapture
         self.onFlip = onFlip
+        self.onSaveImport = onSaveImport
+        self.onCancelImport = onCancelImport
         self.onSelectEffect = onSelectEffect
         self.onShowColors = onShowColors
     }
@@ -66,26 +75,48 @@ public struct ControlOverlay: View {
                         .frame(minWidth: 88)
                 }
                 .buttonStyle(ControlButtonStyle())
+                .disabled(isImportMode)
                 .accessibilityHint("Import an existing photo to convert into ASCII art")
 
-                Button(action: onCapture) {
-                    Label(isCaptureInFlight ? "Saving" : "Capture", systemImage: "camera.shutter.button")
-                        .labelStyle(.titleAndIcon)
-                        .padding()
-                        .frame(minWidth: 120)
-                }
-                .buttonStyle(ControlButtonStyle(primary: true))
-                .disabled(isCaptureInFlight)
-                .accessibilityHint(isCaptureInFlight ? "Saving capture to Photos" : "Capture current frame and save to Photos")
+                if isImportMode {
+                    Button(action: onSaveImport ?? onCapture) {
+                        Label(isCaptureInFlight ? "Saving" : "Save Photo", systemImage: "square.and.arrow.down.on.square")
+                            .labelStyle(.titleAndIcon)
+                            .padding()
+                            .frame(minWidth: 120)
+                    }
+                    .buttonStyle(ControlButtonStyle(primary: true))
+                    .disabled(isCaptureInFlight)
+                    .accessibilityHint(isCaptureInFlight ? "Saving imported photo to Photos" : "Save imported photo to Photos")
 
-                Button(action: onFlip) {
-                    Label("Flip", systemImage: "camera.rotate")
-                        .labelStyle(.titleAndIcon)
-                        .padding()
-                        .frame(minWidth: 88)
+                    Button(action: onCancelImport ?? onFlip) {
+                        Label("Cancel", systemImage: "xmark.circle")
+                            .labelStyle(.titleAndIcon)
+                            .padding()
+                            .frame(minWidth: 88)
+                    }
+                    .buttonStyle(ControlButtonStyle())
+                    .accessibilityHint("Discard imported photo and return to live camera")
+                } else {
+                    Button(action: onCapture) {
+                        Label(isCaptureInFlight ? "Saving" : "Capture", systemImage: "camera.shutter.button")
+                            .labelStyle(.titleAndIcon)
+                            .padding()
+                            .frame(minWidth: 120)
+                    }
+                    .buttonStyle(ControlButtonStyle(primary: true))
+                    .disabled(isCaptureInFlight)
+                    .accessibilityHint(isCaptureInFlight ? "Saving capture to Photos" : "Capture current frame and save to Photos")
+
+                    Button(action: onFlip) {
+                        Label("Flip", systemImage: "camera.rotate")
+                            .labelStyle(.titleAndIcon)
+                            .padding()
+                            .frame(minWidth: 88)
+                    }
+                    .buttonStyle(ControlButtonStyle())
+                    .accessibilityHint("Switch between front and back cameras")
                 }
-                .buttonStyle(ControlButtonStyle())
-                .accessibilityHint("Switch between front and back cameras")
 
                 Spacer(minLength: 16)
 

@@ -44,6 +44,7 @@ public final class GPUPreviewPipeline {
     private var lastPreviewRenderTime: CFTimeInterval = 0
     private let previewFrameInterval: CFTimeInterval = 1.0 / 10.0
     private let previewMaxCells: Int = 36_000
+    private var importedFrame: FrameEnvelope?
 #endif
 
     private var frameCancellable: AnyCancellable?
@@ -127,6 +128,9 @@ public final class GPUPreviewPipeline {
         }
 
         viewModel.beginPreviewLoading()
+#if canImport(UIKit)
+        lastPreviewRenderTime = 0
+#endif
         subscribeToCameraFrames()
         observeViewModelChanges()
         updateCameraPosition()
@@ -162,6 +166,7 @@ public final class GPUPreviewPipeline {
         lastPreviewRenderTime = 0
         previewRenderTask?.cancel()
         previewRenderTask = nil
+        importedFrame = nil
         viewModel.updatePreviewImage(nil)
 #endif
         cameraService.stopSession()
@@ -178,6 +183,47 @@ public final class GPUPreviewPipeline {
 
 #if canImport(UIKit)
     public func capture() {
+        if viewModel.isImportMode {
+            captureImportedPhoto()
+        } else {
+            captureLivePhoto()
+        }
+    }
+
+    public func saveImportedPhoto() {
+        captureImportedPhoto()
+    }
+
+    public func cancelImport() {
+        previewRenderTask?.cancel()
+        importedFrame = nil
+        latestFrame = nil
+        lastPreviewRenderTime = 0
+        viewModel.cancelImport()
+        viewModel.beginPreviewLoading()
+    }
+
+    public func processImportedImage(_ image: UIImage) {
+        guard isEnginePrepared else { return }
+        viewModel.beginImport(previewImage: nil)
+        lastPreviewRenderTime = 0
+
+        guard let pixelBuffer = image.makePixelBuffer() else {
+            viewModel.failPreview(message: "Unable to read image")
+            return
+        }
+
+        let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
+        latestFrame = envelope
+        importedFrame = envelope
+        previewRenderTask?.cancel()
+        previewRenderTask = Task(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            await self.renderImportPreview()
+        }
+    }
+
+    private func captureLivePhoto() {
         guard isEnginePrepared else {
             viewModel.resolveCapture(with: .failure(message: "Engine unavailable"))
             return
@@ -202,7 +248,8 @@ public final class GPUPreviewPipeline {
                 guard let image = self.frameRenderer.makeImage(
                     from: asciiFrame,
                     effect: context.effect,
-                    palette: context.palette
+                    palette: context.palette,
+                    mirrored: self.cameraService.currentCameraPosition == .front
                 ) else {
                     throw CaptureError.renderingFailed
                 }
@@ -221,18 +268,92 @@ public final class GPUPreviewPipeline {
         }
     }
 
-    public func processImportedImage(_ image: UIImage) {
-        guard isEnginePrepared else { return }
-        guard let pixelBuffer = image.makePixelBuffer() else {
-            viewModel.failPreview(message: "Unable to read image")
+    private func captureImportedPhoto() {
+        guard viewModel.isImportMode else {
+            captureLivePhoto()
+            return
+        }
+        guard isEnginePrepared else {
+            viewModel.resolveCapture(with: .failure(message: "Engine unavailable"))
+            return
+        }
+        guard let frame = importedFrame else {
+            viewModel.resolveCapture(with: .failure(message: "No imported frame available"))
             return
         }
 
-        let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
-        processFrame(envelope)
+        viewModel.beginCapture()
+        captureTask?.cancel()
+        captureTask = Task(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            let context = self.snapshotContext()
+            do {
+                let asciiFrame = try await self.engine.renderCapture(
+                    pixelBuffer: frame.pixelBuffer,
+                    effect: context.effect,
+                    parameters: context.parameters,
+                    palette: context.palette
+                )
+                guard let image = self.frameRenderer.makeImage(
+                    from: asciiFrame,
+                    effect: context.effect,
+                    palette: context.palette,
+                    mirrored: self.cameraService.currentCameraPosition == .front
+                ) else {
+                    throw CaptureError.renderingFailed
+                }
+                try await self.mediaCoordinator.save(image: image)
+                await MainActor.run {
+                    self.viewModel.resolveCapture(with: .success(message: "Saved to Photos"))
+                    self.onCaptureSuccess?(image)
+                    self.viewModel.completeImport()
+                    self.viewModel.updatePreviewImage(nil)
+                    self.importedFrame = nil
+                    self.latestFrame = nil
+                    self.lastPreviewRenderTime = 0
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                await MainActor.run {
+                    self.viewModel.resolveCapture(with: .failure(message: error.localizedDescription))
+                }
+            }
+        }
+    }
+
+    private func renderImportPreview() async {
+        guard let frame = importedFrame else { return }
+        let context = snapshotContext()
+        do {
+            let asciiFrame = try await engine.renderCapture(
+                pixelBuffer: frame.pixelBuffer,
+                effect: context.effect,
+                parameters: context.parameters,
+                palette: context.palette,
+                maxCellsOverride: previewMaxCells
+            )
+            if let image = frameRenderer.makeImage(
+                from: asciiFrame,
+                effect: context.effect,
+                palette: context.palette,
+                mirrored: cameraService.currentCameraPosition == .front
+            ) {
+                await MainActor.run {
+                    if !viewModel.isImportMode {
+                        viewModel.beginImport(previewImage: image)
+                    } else {
+                        viewModel.updatePreviewImage(image)
+                    }
+                }
+            }
+        } catch {
+            await MainActor.run {
+                self.viewModel.failPreview(message: error.localizedDescription)
+            }
+        }
     }
 #endif
-
     private func prepareEngineIfNeeded() {
         guard !isEnginePrepared else { return }
         do {
@@ -272,6 +393,12 @@ public final class GPUPreviewPipeline {
                 palette: context.palette,
                 effect: context.effect
             )
+            if self.viewModel.isImportMode {
+                self.previewRenderTask?.cancel()
+                self.previewRenderTask = Task(priority: .userInitiated) { [weak self] in
+                    await self?.renderImportPreview()
+                }
+            }
         }
 #endif
     }
@@ -334,6 +461,9 @@ public final class GPUPreviewPipeline {
 
     private func processFrame(_ envelope: FrameEnvelope) {
         guard isEnginePrepared else { return }
+        if viewModel.isImportMode {
+            return
+        }
         latestFrame = envelope
         let context = snapshotContext()
 

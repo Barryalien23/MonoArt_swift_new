@@ -32,6 +32,8 @@ public final class PreviewPipeline {
     private let mediaCoordinator: MediaCoordinatorProtocol
     private var captureTask: Task<Void, Never>?
     public var onCaptureSuccess: ((UIImage) -> Void)?
+    private var importedFrame: FrameEnvelope?
+    private let previewMaxCells: Int = 36_000
 #endif
 
     private var frameCancellable: AnyCancellable?
@@ -113,6 +115,7 @@ public final class PreviewPipeline {
 #if canImport(UIKit)
         captureTask?.cancel()
         captureTask = nil
+        importedFrame = nil
 #endif
         cameraService.stopSession()
     }
@@ -125,6 +128,73 @@ public final class PreviewPipeline {
 
 #if canImport(UIKit)
     public func capture() {
+        if viewModel.isImportMode {
+            captureImportedPhoto()
+        } else {
+            captureLivePhoto()
+        }
+    }
+
+    public func saveImportedPhoto() {
+        captureImportedPhoto()
+    }
+
+    public func cancelImport() {
+        renderTask?.cancel()
+        importedFrame = nil
+        latestFrame = nil
+        viewModel.cancelImport()
+        viewModel.beginPreviewLoading()
+    }
+
+    public func processImportedImage(_ image: UIImage) {
+        guard isEnginePrepared else { return }
+        viewModel.beginImport(previewImage: nil)
+        renderTask?.cancel()
+        renderTask = Task(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            let context = self.snapshotContext()
+            guard let pixelBuffer = image.makePixelBuffer() else {
+                await MainActor.run {
+                    self.viewModel.failPreview(message: "Unable to read image")
+                }
+                return
+            }
+
+            let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
+            self.latestFrame = envelope
+            self.importedFrame = envelope
+            do {
+                let asciiFrame = try await self.engine.renderCapture(
+                    pixelBuffer: envelope.pixelBuffer,
+                    effect: context.effect,
+                    parameters: context.parameters,
+                    palette: context.palette
+                )
+                guard let glyphs = asciiFrame.glyphText else { return }
+                let preview = PreviewFrame(
+                    id: UUID(),
+                    glyphText: glyphs,
+                    columns: asciiFrame.columns,
+                    rows: asciiFrame.rows,
+                    renderedEffect: context.effect
+                )
+                await MainActor.run {
+                    if !self.viewModel.isImportMode {
+                        self.viewModel.beginImport(previewImage: nil)
+                    }
+                    self.viewModel.updatePreview(with: preview)
+                }
+            } catch {
+                await MainActor.run {
+                    self.viewModel.failPreview(message: error.localizedDescription)
+                }
+            }
+        }
+    }
+#endif
+
+    private func captureLivePhoto() {
         guard isEnginePrepared else {
             viewModel.resolveCapture(with: .failure(message: "Engine unavailable"))
             return
@@ -168,31 +238,82 @@ public final class PreviewPipeline {
         }
     }
 
-    public func processImportedImage(_ image: UIImage) {
-        guard isEnginePrepared else { return }
-        viewModel.beginPreviewLoading()
+    private func captureImportedPhoto() {
+        guard viewModel.isImportMode else {
+            captureLivePhoto()
+            return
+        }
+        guard isEnginePrepared else {
+            viewModel.resolveCapture(with: .failure(message: "Engine unavailable"))
+            return
+        }
+        guard let frame = importedFrame else {
+            viewModel.resolveCapture(with: .failure(message: "No imported frame available"))
+            return
+        }
 
-        renderTask?.cancel()
-        renderTask = Task(priority: .userInitiated) { [weak self] in
+        viewModel.beginCapture()
+        captureTask?.cancel()
+        captureTask = Task(priority: .userInitiated) { [weak self] in
             guard let self else { return }
             let context = self.snapshotContext()
-            guard let pixelBuffer = image.makePixelBuffer() else {
-                await MainActor.run {
-                    self.viewModel.failPreview(message: "Unable to read image")
-                }
-                return
-            }
-
-            let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
-            self.latestFrame = envelope
-
             do {
-                let asciiFrame = try await self.engine.renderPreview(
-                    pixelBuffer: pixelBuffer,
+                let asciiFrame = try await self.engine.renderCapture(
+                    pixelBuffer: frame.pixelBuffer,
                     effect: context.effect,
                     parameters: context.parameters,
                     palette: context.palette
                 )
+                guard let image = self.frameRenderer.makeImage(
+                    from: asciiFrame,
+                    effect: context.effect,
+                    palette: context.palette
+                ) else {
+                    throw CaptureError.renderingFailed
+                }
+                try await self.mediaCoordinator.save(image: image)
+                await MainActor.run {
+                    self.viewModel.resolveCapture(with: .success(message: "Saved to Photos"))
+                    self.onCaptureSuccess?(image)
+                    self.viewModel.completeImport()
+                    self.importedFrame = nil
+                    self.latestFrame = nil
+                    self.viewModel.beginPreviewLoading()
+                }
+            } catch is CancellationError {
+                return
+            } catch {
+                await MainActor.run {
+                    self.viewModel.resolveCapture(with: .failure(message: error.localizedDescription))
+                }
+            }
+        }
+    }
+
+    private func renderImportPreview() {
+        guard let frame = importedFrame else { return }
+        renderTask?.cancel()
+        renderTask = Task(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+            let context = self.snapshotContext()
+            do {
+                let asciiFrame: AsciiFrame
+                if let engine = self.engine as? AsciiEngine {
+                    asciiFrame = try await engine.renderCapture(
+                        pixelBuffer: frame.pixelBuffer,
+                        effect: context.effect,
+                        parameters: context.parameters,
+                        palette: context.palette,
+                        maxCellsOverride: previewMaxCells
+                    )
+                } else {
+                    asciiFrame = try await self.engine.renderCapture(
+                        pixelBuffer: frame.pixelBuffer,
+                        effect: context.effect,
+                        parameters: context.parameters,
+                        palette: context.palette
+                    )
+                }
                 guard let glyphs = asciiFrame.glyphText else { return }
                 let preview = PreviewFrame(
                     id: UUID(),
@@ -202,6 +323,9 @@ public final class PreviewPipeline {
                     renderedEffect: context.effect
                 )
                 await MainActor.run {
+                    if !self.viewModel.isImportMode {
+                        self.viewModel.beginImport(previewImage: nil)
+                    }
                     self.viewModel.updatePreview(with: preview)
                 }
             } catch {
@@ -211,7 +335,6 @@ public final class PreviewPipeline {
             }
         }
     }
-#endif
 
     private func prepareEngineIfNeeded() {
         guard !isEnginePrepared else { return }
@@ -241,18 +364,30 @@ public final class PreviewPipeline {
             .debounce(for: .milliseconds(60), scheduler: DispatchQueue.main)
             .receive(on: renderQueue)
             .sink { [weak self] _ in
-                self?.reprocessLatestFrame()
+                guard let self else { return }
+                if self.viewModel.isImportMode {
+                    self.renderImportPreview()
+                } else {
+                    self.reprocessLatestFrame()
+                }
             }
 #endif
     }
 
     private func reprocessLatestFrame() {
         guard let frame = latestFrame else { return }
+        if viewModel.isImportMode {
+            renderImportPreview()
+            return
+        }
         processFrame(frame)
     }
 
     private func processFrame(_ envelope: FrameEnvelope) {
         guard isEnginePrepared else { return }
+        if viewModel.isImportMode {
+            return
+        }
         latestFrame = envelope
         let context = snapshotContext()
         renderTask?.cancel()

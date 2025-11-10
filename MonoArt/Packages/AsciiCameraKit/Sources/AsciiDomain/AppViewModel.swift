@@ -19,6 +19,8 @@ public final class AppViewModel: ObservableObject {
     @Published public private(set) var previewFrame: PreviewFrame?
 #if canImport(UIKit)
     @Published public private(set) var previewImage: UIImage?
+    @Published public private(set) var importedImage: UIImage?
+    @Published public private(set) var isImportMode: Bool = false
 #endif
     @Published public private(set) var isCaptureInFlight: Bool
     @Published public private(set) var captureStatus: CaptureStatus?
@@ -48,6 +50,12 @@ public final class AppViewModel: ObservableObject {
         self.previewFrame = previewFrame
 #if canImport(UIKit)
         self.previewImage = nil
+#endif
+#if canImport(UIKit)
+        self.importedImage = nil
+#endif
+#if canImport(UIKit)
+        self.isImportMode = false
 #endif
         self.isCaptureInFlight = isCaptureInFlight
         self.captureStatus = captureStatus
@@ -97,6 +105,8 @@ public final class AppViewModel: ObservableObject {
         previewFrame = nil
 #if canImport(UIKit)
         previewImage = nil
+        importedImage = nil
+        isImportMode = false
 #endif
     }
 
@@ -104,7 +114,10 @@ public final class AppViewModel: ObservableObject {
         previewFrame = frame
         previewStatus = .running
 #if canImport(UIKit)
-        previewImage = nil
+        if !isImportMode {
+            previewImage = nil
+            importedImage = nil
+        }
 #endif
     }
 
@@ -113,6 +126,8 @@ public final class AppViewModel: ObservableObject {
         previewFrame = nil
 #if canImport(UIKit)
         previewImage = nil
+        importedImage = nil
+        isImportMode = false
 #endif
     }
 
@@ -125,6 +140,30 @@ public final class AppViewModel: ObservableObject {
         } else {
             previewImage = nil
         }
+    }
+
+    public func beginImport(previewImage image: UIImage?) {
+        importedImage = image
+        isImportMode = true
+        previewFrame = nil
+        previewImage = nil
+        previewStatus = .loading
+    }
+
+    public func cancelImport() {
+        importedImage = nil
+        isImportMode = false
+        previewImage = nil
+        previewFrame = nil
+        previewStatus = .idle
+    }
+
+    public func completeImport() {
+        importedImage = nil
+        isImportMode = false
+        previewImage = nil
+        previewFrame = nil
+        previewStatus = .loading
     }
 #endif
 

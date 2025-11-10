@@ -11,6 +11,8 @@ public struct RootView: View {
     private let captureAction: () -> Void
     private let flipAction: () -> Void
     private let importAction: () -> Void
+    private let saveImportAction: () -> Void
+    private let cancelImportAction: () -> Void
     private let shareAction: (() -> Void)?
     private let engine: AsciiEngine?
     private let useGPUPreview: Bool
@@ -21,6 +23,8 @@ public struct RootView: View {
         captureAction: (() -> Void)? = nil,
         flipAction: (() -> Void)? = nil,
         importAction: (() -> Void)? = nil,
+        saveImportAction: (() -> Void)? = nil,
+        cancelImportAction: (() -> Void)? = nil,
         shareAction: (() -> Void)? = nil,
         engine: AsciiEngine? = nil,
         useGPUPreview: Bool = true
@@ -30,6 +34,8 @@ public struct RootView: View {
         self.captureAction = captureAction ?? { viewModel.simulateCapture() }
         self.flipAction = flipAction ?? { viewModel.toggleCameraFacing() }
         self.importAction = importAction ?? { viewModel.presentColorPicker(for: .background) }
+        self.saveImportAction = saveImportAction ?? self.captureAction
+        self.cancelImportAction = cancelImportAction ?? self.flipAction
         self.shareAction = shareAction
         self.engine = engine
         self.useGPUPreview = useGPUPreview && engine != nil
@@ -62,9 +68,12 @@ public struct RootView: View {
                 ControlOverlay(
                     selectedEffect: viewModel.selectedEffect,
                     isCaptureInFlight: viewModel.isCaptureInFlight,
+                    isImportMode: viewModel.isImportMode,
                     onImport: importAction,
                     onCapture: captureTapped,
                     onFlip: flipTapped,
+                    onSaveImport: saveImportAction,
+                    onCancelImport: cancelImportAction,
                     onSelectEffect: viewModel.selectEffect,
                     onShowColors: { viewModel.presentColorPicker(for: .symbols) }
                 )
@@ -115,11 +124,19 @@ public struct RootView: View {
     }
 
     private func captureTapped() {
-        captureAction()
+        if viewModel.isImportMode {
+            saveImportAction()
+        } else {
+            captureAction()
+        }
     }
 
     private func flipTapped() {
-        flipAction()
+        if viewModel.isImportMode {
+            cancelImportAction()
+        } else {
+            flipAction()
+        }
     }
 }
 #endif
