@@ -146,8 +146,13 @@ public final class AppViewModel: ObservableObject {
         importedImage = image
         isImportMode = true
         previewFrame = nil
-        previewImage = nil
-        previewStatus = .loading
+        if let image {
+            previewImage = image
+            previewStatus = .running
+        } else {
+            previewImage = nil
+            previewStatus = .loading
+        }
     }
 
     public func cancelImport() {

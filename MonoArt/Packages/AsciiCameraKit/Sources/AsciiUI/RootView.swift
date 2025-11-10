@@ -49,6 +49,15 @@ public struct RootView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .ignoresSafeArea()
+            } else if viewModel.isImportMode {
+                // Show loading state when importing photo
+                ZStack {
+                    Color.black
+                        .ignoresSafeArea()
+                    ProgressView("Processing...")
+                        .tint(.white)
+                        .foregroundColor(.white)
+                }
             } else if useGPUPreview, let engine = engine {
                 MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
                     .ignoresSafeArea()

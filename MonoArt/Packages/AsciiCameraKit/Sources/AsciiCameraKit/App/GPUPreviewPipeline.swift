@@ -205,7 +205,7 @@ public final class GPUPreviewPipeline {
 
     public func processImportedImage(_ image: UIImage) {
         guard isEnginePrepared else { return }
-        viewModel.beginImport(previewImage: nil)
+        // Don't call beginImport yet - wait for the image to render first
         lastPreviewRenderTime = 0
 
         guard let pixelBuffer = image.makePixelBuffer() else {

@@ -171,19 +171,18 @@ public final class PreviewPipeline {
                     parameters: context.parameters,
                     palette: context.palette
                 )
-                guard let glyphs = asciiFrame.glyphText else { return }
-                let preview = PreviewFrame(
-                    id: UUID(),
-                    glyphText: glyphs,
-                    columns: asciiFrame.columns,
-                    rows: asciiFrame.rows,
-                    renderedEffect: context.effect
-                )
-                await MainActor.run {
-                    if !self.viewModel.isImportMode {
-                        self.viewModel.beginImport(previewImage: nil)
+                if let image = self.frameRenderer.makeImage(
+                    from: asciiFrame,
+                    effect: context.effect,
+                    palette: context.palette
+                ) {
+                    await MainActor.run {
+                        if !self.viewModel.isImportMode {
+                            self.viewModel.beginImport(previewImage: image)
+                        } else {
+                            self.viewModel.updatePreviewImage(image)
+                        }
                     }
-                    self.viewModel.updatePreview(with: preview)
                 }
             } catch {
                 await MainActor.run {
