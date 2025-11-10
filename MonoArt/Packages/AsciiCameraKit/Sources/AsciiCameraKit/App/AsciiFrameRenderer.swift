@@ -4,7 +4,13 @@ import AsciiDomain
 import AsciiEngine
 
 public protocol AsciiFrameRendering {
-    func makeImage(from frame: AsciiFrame, palette: PaletteState) -> UIImage?
+    func makeImage(from frame: AsciiFrame, effect: EffectType, palette: PaletteState, mirrored: Bool) -> UIImage?
+}
+
+public extension AsciiFrameRendering {
+    func makeImage(from frame: AsciiFrame, effect: EffectType, palette: PaletteState) -> UIImage? {
+        makeImage(from: frame, effect: effect, palette: palette, mirrored: false)
+    }
 }
 
 @available(iOS 15.0, tvOS 15.0, *)
@@ -13,13 +19,20 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         // Target dimensions for portrait 9:16 aspect ratio
         static let targetWidth: CGFloat = 1080  // Standard portrait width
         static let targetHeight: CGFloat = 1920 // Standard portrait height (9:16)
-        static let baseCharWidthFactor: CGFloat = 0.65
-        static let lineHeightFactor: CGFloat = 1.2
+        static let baseCharWidthFactor: CGFloat = 0.6
+        static let lineHeightFactor: CGFloat = 1.15
+        static let minimumFontSize: CGFloat = 8
+        static let maximumFontSize: CGFloat = 120
     }
 
     public init() {}
 
-    public func makeImage(from frame: AsciiFrame, palette: PaletteState) -> UIImage? {
+    public func makeImage(
+        from frame: AsciiFrame,
+        effect: EffectType,
+        palette: PaletteState,
+        mirrored: Bool = false
+    ) -> UIImage? {
         guard let glyphs = frame.glyphText, frame.columns > 0, frame.rows > 0 else {
             return nil
         }
@@ -33,29 +46,49 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         
         // Determine width factor dynamically to prevent overflow at high densities
         let widthFactor: CGFloat
-        if columns > 150 {
-            widthFactor = 0.75
+        if effect == .circles {
+            widthFactor = 0.7
+        } else if columns > 150 {
+            widthFactor = 0.68
         } else if columns > 100 {
-            widthFactor = 0.70
+            widthFactor = 0.64
         } else {
             widthFactor = RenderingConstants.baseCharWidthFactor
         }
 
-        // Calculate font size to FILL the canvas (use max to ensure full coverage)
-        let fontSizeForWidth = RenderingConstants.targetWidth / CGFloat(columns) / widthFactor
-        let fontSizeForHeight = RenderingConstants.targetHeight / CGFloat(rows) / RenderingConstants.lineHeightFactor
-        let fontSize = max(fontSizeForWidth, fontSizeForHeight) // Use LARGER to fill the entire canvas
-        
+        // Calculate font size to FILL the canvas
+        let widthFont = RenderingConstants.targetWidth / (CGFloat(columns) * widthFactor)
+        let heightFont = RenderingConstants.targetHeight / (CGFloat(rows) * RenderingConstants.lineHeightFactor)
+        var fontSize = max(widthFont, heightFont)
+        fontSize = min(max(fontSize, RenderingConstants.minimumFontSize), RenderingConstants.maximumFontSize)
+
         let lineHeight = fontSize * RenderingConstants.lineHeightFactor
-        let contentWidth = fontSize * widthFactor * CGFloat(columns)
-        let contentHeight = lineHeight * CGFloat(rows)
-        
-        // Center content (may overflow canvas slightly, but that's okay - it fills the screen)
-        let offsetX = (RenderingConstants.targetWidth - contentWidth) / 2
-        let offsetY = (RenderingConstants.targetHeight - contentHeight) / 2
+        var contentWidth = fontSize * widthFactor * CGFloat(columns)
+        var contentHeight = lineHeight * CGFloat(rows)
+
+        if contentWidth < RenderingConstants.targetWidth {
+            let scale = RenderingConstants.targetWidth / max(contentWidth, 1)
+            fontSize *= scale
+            contentWidth = RenderingConstants.targetWidth
+            contentHeight = lineHeight * scale * CGFloat(rows)
+        }
+
+        if contentHeight < RenderingConstants.targetHeight {
+            let scale = RenderingConstants.targetHeight / max(contentHeight, 1)
+            fontSize *= scale
+            contentHeight = RenderingConstants.targetHeight
+            contentWidth = fontSize * widthFactor * CGFloat(columns)
+        }
+
+        let lineHeightAdjusted = fontSize * RenderingConstants.lineHeightFactor
+        let contentWidthAdjusted = fontSize * widthFactor * CGFloat(columns)
+        let contentHeightAdjusted = lineHeightAdjusted * CGFloat(rows)
+
+        let offsetX = (RenderingConstants.targetWidth - contentWidthAdjusted) / 2
+        let offsetY = (RenderingConstants.targetHeight - contentHeightAdjusted) / 2
 
         let renderer = UIGraphicsImageRenderer(size: canvasSize)
-        return renderer.image { context in
+        var image = renderer.image { context in
             let cgContext = context.cgContext
             cgContext.setFillColor(palette.background.uiColor.cgColor)
             cgContext.fill(CGRect(origin: .zero, size: canvasSize))
@@ -76,10 +109,16 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
                 ]
                 let attributed = NSAttributedString(string: String(line), attributes: attributes)
                 // Apply offset to center content in canvas
-                let point = CGPoint(x: offsetX, y: offsetY + CGFloat(index) * lineHeight)
+                let point = CGPoint(x: offsetX, y: offsetY + CGFloat(index) * lineHeightAdjusted)
                 attributed.draw(at: point)
             }
         }
+
+        if mirrored, let cgImage = image.cgImage {
+            image = UIImage(cgImage: cgImage, scale: image.scale, orientation: .upMirrored)
+        }
+
+        return image
     }
 
     private func color(forLine index: Int, total: Int, palette: PaletteState) -> UIColor {

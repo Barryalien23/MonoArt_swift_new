@@ -146,7 +146,11 @@ public final class PreviewPipeline {
                     parameters: context.parameters,
                     palette: context.palette
                 )
-                guard let image = self.frameRenderer.makeImage(from: asciiFrame, palette: context.palette) else {
+                guard let image = self.frameRenderer.makeImage(
+                    from: asciiFrame,
+                    effect: context.effect,
+                    palette: context.palette
+                ) else {
                     throw CaptureError.renderingFailed
                 }
                 try await self.mediaCoordinator.save(image: image)

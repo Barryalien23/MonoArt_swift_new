@@ -194,7 +194,11 @@ public final class GPUPreviewPipeline {
                     parameters: context.parameters,
                     palette: context.palette
                 )
-                guard let image = self.frameRenderer.makeImage(from: asciiFrame, palette: context.palette) else {
+                guard let image = self.frameRenderer.makeImage(
+                    from: asciiFrame,
+                    effect: context.effect,
+                    palette: context.palette
+                ) else {
                     throw CaptureError.renderingFailed
                 }
                 try await self.mediaCoordinator.save(image: image)
@@ -312,7 +316,10 @@ public final class GPUPreviewPipeline {
                 parameters: context.parameters,
                 palette: context.palette
             )
-            return frameRenderer.makeImage(from: asciiFrame, palette: context.palette)
+            return frameRenderer.makeImage(from: asciiFrame,
+                                           effect: context.effect,
+                                           palette: context.palette,
+                                           mirrored: cameraService.currentCameraPosition == .front)
         } catch {
             return nil
         }
@@ -347,6 +354,17 @@ private enum CaptureError: Error {
 }
 
 private extension UIImage {
+    func mirrorHorizontally() -> UIImage? {
+        UIGraphicsBeginImageContextWithOptions(size, false, scale)
+        defer { UIGraphicsEndImageContext() }
+        guard let context = UIGraphicsGetCurrentContext(),
+              let cgImage = self.cgImage else { return nil }
+        context.translateBy(x: size.width, y: size.height)
+        context.scaleBy(x: -1.0, y: -1.0)
+        context.draw(cgImage, in: CGRect(origin: .zero, size: size))
+        return UIGraphicsGetImageFromCurrentImageContext()
+    }
+
     func makePixelBuffer() -> CVPixelBuffer? {
         guard let cgImage = cgImage else { return nil }
         let width = cgImage.width
