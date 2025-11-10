@@ -4,11 +4,20 @@ import AsciiDomain
 import AsciiEngine
 
 public protocol AsciiFrameRendering {
-    func makeImage(from frame: AsciiFrame, effect: EffectType, palette: PaletteState, mirrored: Bool) -> UIImage?
+    func makeImage(
+        from frame: AsciiFrame,
+        effect: EffectType,
+        palette: PaletteState,
+        mirrored: Bool
+    ) -> UIImage?
 }
 
 public extension AsciiFrameRendering {
-    func makeImage(from frame: AsciiFrame, effect: EffectType, palette: PaletteState) -> UIImage? {
+    func makeImage(
+        from frame: AsciiFrame,
+        effect: EffectType,
+        palette: PaletteState
+    ) -> UIImage? {
         makeImage(from: frame, effect: effect, palette: palette, mirrored: false)
     }
 }
@@ -20,7 +29,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         static let targetWidth: CGFloat = 1080  // Standard portrait width
         static let targetHeight: CGFloat = 1920 // Standard portrait height (9:16)
         static let baseCharWidthFactor: CGFloat = 0.6
-        static let lineHeightFactor: CGFloat = 1.15
+        static let lineHeightFactor: CGFloat = 1.12
         static let minimumFontSize: CGFloat = 8
         static let maximumFontSize: CGFloat = 120
     }
@@ -45,49 +54,46 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         let canvasSize = CGSize(width: RenderingConstants.targetWidth, height: RenderingConstants.targetHeight)
         
         // Determine width factor dynamically to prevent overflow at high densities
-        let widthFactor: CGFloat
+        var widthFactor = RenderingConstants.baseCharWidthFactor - (CGFloat(columns) / 200.0) * 0.08
+        widthFactor = max(0.52, widthFactor)
         if effect == .circles {
-            widthFactor = 0.7
-        } else if columns > 150 {
-            widthFactor = 0.68
-        } else if columns > 100 {
-            widthFactor = 0.64
-        } else {
-            widthFactor = RenderingConstants.baseCharWidthFactor
+            widthFactor *= 0.92 // circles need slightly wider cells to stay round
         }
 
         // Calculate font size to FILL the canvas
-        let widthFont = RenderingConstants.targetWidth / (CGFloat(columns) * widthFactor)
-        let heightFont = RenderingConstants.targetHeight / (CGFloat(rows) * RenderingConstants.lineHeightFactor)
-        var fontSize = max(widthFont, heightFont)
+        // Base font size derived from width (ensures horizontal fill)
+        var fontSize = RenderingConstants.targetWidth / (CGFloat(columns) * widthFactor)
         fontSize = min(max(fontSize, RenderingConstants.minimumFontSize), RenderingConstants.maximumFontSize)
 
+        // Derived metrics
         let lineHeight = fontSize * RenderingConstants.lineHeightFactor
         var contentWidth = fontSize * widthFactor * CGFloat(columns)
         var contentHeight = lineHeight * CGFloat(rows)
 
-        if contentWidth < RenderingConstants.targetWidth {
-            let scale = RenderingConstants.targetWidth / max(contentWidth, 1)
-            fontSize *= scale
-            contentWidth = RenderingConstants.targetWidth
-            contentHeight = lineHeight * scale * CGFloat(rows)
-        }
-
+        // If height does not fill canvas, scale uniformly to cover height (may overflow width; clipping handles)
         if contentHeight < RenderingConstants.targetHeight {
             let scale = RenderingConstants.targetHeight / max(contentHeight, 1)
             fontSize *= scale
-            contentHeight = RenderingConstants.targetHeight
-            contentWidth = fontSize * widthFactor * CGFloat(columns)
+            contentHeight *= scale
+            contentWidth *= scale
         }
 
-        let lineHeightAdjusted = fontSize * RenderingConstants.lineHeightFactor
-        let contentWidthAdjusted = fontSize * widthFactor * CGFloat(columns)
-        let contentHeightAdjusted = lineHeightAdjusted * CGFloat(rows)
-
-        let offsetX = (RenderingConstants.targetWidth - contentWidthAdjusted) / 2
-        let offsetY = (RenderingConstants.targetHeight - contentHeightAdjusted) / 2
+        let offsetX = (RenderingConstants.targetWidth - contentWidth) / 2
+        let offsetY = (RenderingConstants.targetHeight - contentHeight) / 2
+        let cellWidth = contentWidth / CGFloat(columns)
+        let cellHeight = contentHeight / CGFloat(rows)
 
         let renderer = UIGraphicsImageRenderer(size: canvasSize)
+        let circleLookup: [Character: Int] = {
+            guard effect == .circles else { return [:] }
+            var map: [Character: Int] = [:]
+            let characters = effect.characterSet
+            for (index, character) in characters.enumerated() {
+                map[character] = index
+            }
+            return map
+        }()
+
         var image = renderer.image { context in
             let cgContext = context.cgContext
             cgContext.setFillColor(palette.background.uiColor.cgColor)
@@ -96,21 +102,37 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
             // Clip to canvas bounds to prevent overflow
             cgContext.clip(to: CGRect(origin: .zero, size: canvasSize))
 
-            let paragraph = NSMutableParagraphStyle()
-            paragraph.alignment = .left
-            paragraph.lineBreakMode = .byClipping
+            if effect == .circles {
+                drawCircleGrid(
+                    lines: lines,
+                    columns: columns,
+                    rows: rows,
+                    offset: CGPoint(x: offsetX, y: offsetY),
+                    cellSize: CGSize(width: cellWidth, height: cellHeight),
+                    palette: palette,
+                    lookup: circleLookup,
+                    context: cgContext
+                )
+            } else {
+                let paragraph = NSMutableParagraphStyle()
+                paragraph.alignment = .left
+                paragraph.lineBreakMode = .byClipping
 
-            for (index, line) in lines.enumerated() {
-                let color = color(forLine: index, total: rows, palette: palette)
-                let attributes: [NSAttributedString.Key: Any] = [
-                    .font: UIFont.monospacedSystemFont(ofSize: fontSize, weight: .regular),
-                    .paragraphStyle: paragraph,
-                    .foregroundColor: color
-                ]
-                let attributed = NSAttributedString(string: String(line), attributes: attributes)
-                // Apply offset to center content in canvas
-                let point = CGPoint(x: offsetX, y: offsetY + CGFloat(index) * lineHeightAdjusted)
-                attributed.draw(at: point)
+                for (rowIndex, line) in lines.enumerated() {
+                    let color = color(forLine: rowIndex, total: rows, palette: palette)
+                    let attributes: [NSAttributedString.Key: Any] = [
+                        .font: UIFont.monospacedSystemFont(ofSize: fontSize, weight: .regular),
+                        .paragraphStyle: paragraph,
+                        .foregroundColor: color
+                    ]
+                    let attributed = NSAttributedString(string: String(line), attributes: attributes)
+                    let verticalInset = max((cellHeight - fontSize) / 2, 0)
+                    let point = CGPoint(
+                        x: offsetX,
+                        y: offsetY + CGFloat(rowIndex) * cellHeight + verticalInset
+                    )
+                    attributed.draw(at: point)
+                }
             }
         }
 
@@ -131,6 +153,53 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
             let start = stops.first?.color.uiColor ?? UIColor.white
             let end = stops.last?.color.uiColor ?? UIColor.white
             return start.interpolate(to: end, progress: position)
+        }
+    }
+
+    private func drawCircleGrid(
+        lines: [Substring],
+        columns: Int,
+        rows: Int,
+        offset: CGPoint,
+        cellSize: CGSize,
+        palette: PaletteState,
+        lookup: [Character: Int],
+        context: CGContext
+    ) {
+        guard !lookup.isEmpty else { return }
+        let maxLevel = max(lookup.values.max() ?? 0, 1)
+        let minDimension = min(cellSize.width, cellSize.height)
+
+        context.setShouldAntialias(true)
+
+        for (rowIndex, line) in lines.enumerated() {
+            let color = color(forLine: rowIndex, total: rows, palette: palette)
+            context.setFillColor(color.cgColor)
+
+            let lineCharacters = Array(line)
+            for columnIndex in 0..<columns {
+                guard columnIndex < lineCharacters.count else { continue }
+                let character = lineCharacters[columnIndex]
+                guard let level = lookup[character], level > 0 else { continue }
+
+                let fraction = CGFloat(level) / CGFloat(maxLevel)
+                let radius = fraction * 0.5 * minDimension
+                guard radius > 0 else { continue }
+
+                let originX = offset.x + CGFloat(columnIndex) * cellSize.width
+                let originY = offset.y + CGFloat(rowIndex) * cellSize.height
+                let center = CGPoint(
+                    x: originX + cellSize.width / 2,
+                    y: originY + cellSize.height / 2
+                )
+                let circleRect = CGRect(
+                    x: center.x - radius,
+                    y: center.y - radius,
+                    width: radius * 2,
+                    height: radius * 2
+                )
+                context.fillEllipse(in: circleRect)
+            }
         }
     }
 }

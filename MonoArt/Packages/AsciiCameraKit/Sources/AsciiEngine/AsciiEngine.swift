@@ -143,8 +143,25 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
     }
 
     public func renderCapture(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame {
+        try await renderCapture(
+            pixelBuffer: pixelBuffer,
+            effect: effect,
+            parameters: parameters,
+            palette: palette,
+            maxCellsOverride: nil
+        )
+    }
+
+    public func renderCapture(
+        pixelBuffer: CVPixelBuffer,
+        effect: EffectType,
+        parameters: EffectParameters,
+        palette: PaletteState,
+        maxCellsOverride: Int? = nil
+    ) async throws -> AsciiFrame {
         try ensurePrepared()
-        return try await render(pixelBuffer: pixelBuffer, effect: effect, parameters: parameters, palette: palette, maxCells: configuration.maxCaptureCells)
+        let maxCells = maxCellsOverride ?? configuration.maxCaptureCells
+        return try await render(pixelBuffer: pixelBuffer, effect: effect, parameters: parameters, palette: palette, maxCells: maxCells)
     }
 
     // MARK: - Private

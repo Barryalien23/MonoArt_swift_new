@@ -2,6 +2,7 @@ import Foundation
 import Combine
 import Metal
 import MetalKit
+import QuartzCore
 import AsciiDomain
 import AsciiEngine
 import AsciiCamera
@@ -40,6 +41,9 @@ public final class GPUPreviewPipeline {
     private let mediaCoordinator: MediaCoordinatorProtocol
     private var captureTask: Task<Void, Never>?
     public var onCaptureSuccess: ((UIImage) -> Void)?
+    private var lastPreviewRenderTime: CFTimeInterval = 0
+    private let previewFrameInterval: CFTimeInterval = 1.0 / 10.0
+    private let previewMaxCells: Int = 36_000
 #endif
 
     private var frameCancellable: AnyCancellable?
@@ -155,6 +159,7 @@ public final class GPUPreviewPipeline {
 #if canImport(UIKit)
         captureTask?.cancel()
         captureTask = nil
+        lastPreviewRenderTime = 0
         previewRenderTask?.cancel()
         previewRenderTask = nil
         viewModel.updatePreviewImage(nil)
@@ -260,6 +265,7 @@ public final class GPUPreviewPipeline {
         .debounce(for: .milliseconds(16), scheduler: DispatchQueue.main)
         .sink { [weak self] _ in
             guard let self else { return }
+            self.lastPreviewRenderTime = 0
             let context = self.snapshotContext()
             self.engine.updatePreviewParameters(
                 context.parameters,
@@ -314,7 +320,8 @@ public final class GPUPreviewPipeline {
                 pixelBuffer: pixelBuffer,
                 effect: context.effect,
                 parameters: context.parameters,
-                palette: context.palette
+                palette: context.palette,
+                maxCellsOverride: previewMaxCells
             )
             return frameRenderer.makeImage(from: asciiFrame,
                                            effect: context.effect,
@@ -330,6 +337,13 @@ public final class GPUPreviewPipeline {
         latestFrame = envelope
         let context = snapshotContext()
 
+        let now = CACurrentMediaTime()
+        let needsImmediateRender = viewModel.previewImage == nil
+        if !needsImmediateRender && now - lastPreviewRenderTime < previewFrameInterval {
+            return
+        }
+        lastPreviewRenderTime = now
+
         previewRenderTask?.cancel()
         previewRenderTask = Task(priority: .userInitiated) { [weak self] in
             guard let self else { return }
@@ -337,6 +351,7 @@ public final class GPUPreviewPipeline {
             if let image = await self.renderPreviewImage(context: context, pixelBuffer: envelope.pixelBuffer) {
                 await MainActor.run {
                     self.viewModel.updatePreviewImage(image)
+                    self.lastPreviewRenderTime = CACurrentMediaTime()
                 }
             }
         }
