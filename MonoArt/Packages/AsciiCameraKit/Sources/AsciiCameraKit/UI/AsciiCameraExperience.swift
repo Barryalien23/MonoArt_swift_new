@@ -136,16 +136,22 @@ public struct AsciiCameraExperience: View {
     }
 
     private func handlePhotoSelection(_ item: PhotosPickerItem?) {
-        guard let item else { return }
+        print("📱 AsciiCameraExperience: handlePhotoSelection called, item: \(item != nil ? "present" : "nil")")
+        guard let item else {
+            print("❌ AsciiCameraExperience: No photo item selected")
+            return
+        }
         Task {
             await loadPhoto(from: item)
         }
     }
 
     private func loadPhoto(from item: PhotosPickerItem) async {
+        print("📸 AsciiCameraExperience: loadPhoto started")
         do {
             guard let data = try await item.loadTransferable(type: Data.self),
                   let image = UIImage(data: data) else {
+                print("❌ AsciiCameraExperience: Failed to load image data")
                 await MainActor.run {
                     selectedPhotoItem = nil
                     viewModel.failPreview(message: "Unable to load image")
@@ -153,15 +159,21 @@ public struct AsciiCameraExperience: View {
                 return
             }
 
+            print("✅ AsciiCameraExperience: Image loaded, size: \(image.size)")
             await MainActor.run {
                 selectedPhotoItem = nil
                 if let gpuPipeline = gpuPipeline {
+                    print("🎯 AsciiCameraExperience: Calling gpuPipeline.processImportedImage")
                     gpuPipeline.processImportedImage(image)
                 } else if let textPipeline = textPipeline {
+                    print("🎯 AsciiCameraExperience: Calling textPipeline.processImportedImage")
                     textPipeline.processImportedImage(image)
+                } else {
+                    print("❌ AsciiCameraExperience: No pipeline available!")
                 }
             }
         } catch {
+            print("❌ AsciiCameraExperience: Error loading photo: \(error.localizedDescription)")
             await MainActor.run {
                 selectedPhotoItem = nil
                 viewModel.failPreview(message: error.localizedDescription)

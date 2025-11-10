@@ -204,21 +204,33 @@ public final class GPUPreviewPipeline {
     }
 
     public func processImportedImage(_ image: UIImage) {
-        guard isEnginePrepared else { return }
+        print("🖼️ GPUPreviewPipeline: processImportedImage called, isEnginePrepared: \(isEnginePrepared)")
+        if !isEnginePrepared {
+            print("❌ GPUPreviewPipeline: Engine not prepared, preparing now...")
+            prepareEngineIfNeeded()
+            if !isEnginePrepared {
+                print("❌ GPUPreviewPipeline: Failed to prepare engine")
+                viewModel.failPreview(message: "Engine not ready")
+                return
+            }
+        }
         // Don't call beginImport yet - wait for the image to render first
         lastPreviewRenderTime = 0
 
         guard let pixelBuffer = image.makePixelBuffer() else {
+            print("❌ GPUPreviewPipeline: Failed to create pixel buffer")
             viewModel.failPreview(message: "Unable to read image")
             return
         }
 
+        print("✅ GPUPreviewPipeline: Pixel buffer created, starting render task")
         let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
         latestFrame = envelope
         importedFrame = envelope
         previewRenderTask?.cancel()
         previewRenderTask = Task(priority: .userInitiated) { [weak self] in
             guard let self else { return }
+            print("🎨 GPUPreviewPipeline: Starting renderImportPreview")
             await self.renderImportPreview()
         }
     }
@@ -323,8 +335,13 @@ public final class GPUPreviewPipeline {
     }
 
     private func renderImportPreview() async {
-        guard let frame = importedFrame else { return }
+        print("🎨 GPUPreviewPipeline: renderImportPreview started")
+        guard let frame = importedFrame else {
+            print("❌ GPUPreviewPipeline: No imported frame found")
+            return
+        }
         let context = snapshotContext()
+        print("📸 GPUPreviewPipeline: Rendering with effect: \(context.effect), cells: \(previewMaxCells)")
         do {
             let asciiFrame = try await engine.renderCapture(
                 pixelBuffer: frame.pixelBuffer,
@@ -333,21 +350,29 @@ public final class GPUPreviewPipeline {
                 palette: context.palette,
                 maxCellsOverride: previewMaxCells
             )
+            print("✅ GPUPreviewPipeline: ASCII frame rendered, cols: \(asciiFrame.columns), rows: \(asciiFrame.rows)")
             if let image = frameRenderer.makeImage(
                 from: asciiFrame,
                 effect: context.effect,
                 palette: context.palette,
                 mirrored: cameraService.currentCameraPosition == .front
             ) {
+                print("✅ GPUPreviewPipeline: UIImage created, size: \(image.size)")
                 await MainActor.run {
-                    if !viewModel.isImportMode {
-                        viewModel.beginImport(previewImage: image)
+                    print("🔄 GPUPreviewPipeline: Updating ViewModel, isImportMode: \(self.viewModel.isImportMode)")
+                    if !self.viewModel.isImportMode {
+                        print("🆕 GPUPreviewPipeline: Calling beginImport with image")
+                        self.viewModel.beginImport(previewImage: image)
                     } else {
-                        viewModel.updatePreviewImage(image)
+                        print("🔄 GPUPreviewPipeline: Calling updatePreviewImage")
+                        self.viewModel.updatePreviewImage(image)
                     }
                 }
+            } else {
+                print("❌ GPUPreviewPipeline: Failed to create UIImage from ASCII frame")
             }
         } catch {
+            print("❌ GPUPreviewPipeline: Render error: \(error.localizedDescription)")
             await MainActor.run {
                 self.viewModel.failPreview(message: error.localizedDescription)
             }
