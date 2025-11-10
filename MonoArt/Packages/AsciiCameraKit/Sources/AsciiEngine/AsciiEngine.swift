@@ -1,6 +1,7 @@
 import CoreImage
 import CoreVideo
 import Foundation
+import AVFoundation
 @preconcurrency import Metal
 import MetalKit
 import AsciiDomain
@@ -55,7 +56,7 @@ public enum AsciiEngineError: Error {
 public protocol AsciiEngineProtocol: AnyObject {
     func prepare(configuration: EngineConfiguration) throws
     func renderPreview(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame
-    func renderCapture(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame
+    func renderCapture(pixelBuffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame
 }
 
 /// Production-ready ASCII engine built on Metal with a CPU fallback.
@@ -139,12 +140,14 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
 
     public func renderPreview(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame {
         try ensurePrepared()
-        return try await render(pixelBuffer: pixelBuffer, effect: effect, parameters: parameters, palette: palette, maxCells: configuration.maxPreviewCells)
+        // Fallback to portrait aspect for legacy preview usage
+        return try await render(pixelBuffer: pixelBuffer, orientation: .portrait, effect: effect, parameters: parameters, palette: palette, maxCells: configuration.maxPreviewCells)
     }
 
-    public func renderCapture(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame {
+    public func renderCapture(pixelBuffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame {
         try await renderCapture(
             pixelBuffer: pixelBuffer,
+            orientation: orientation,
             effect: effect,
             parameters: parameters,
             palette: palette,
@@ -154,6 +157,7 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
 
     public func renderCapture(
         pixelBuffer: CVPixelBuffer,
+        orientation: AVCaptureVideoOrientation,
         effect: EffectType,
         parameters: EffectParameters,
         palette: PaletteState,
@@ -161,14 +165,14 @@ public final class AsciiEngine: NSObject, AsciiEngineProtocol, MTKViewDelegate {
     ) async throws -> AsciiFrame {
         try ensurePrepared()
         let maxCells = maxCellsOverride ?? configuration.maxCaptureCells
-        return try await render(pixelBuffer: pixelBuffer, effect: effect, parameters: parameters, palette: palette, maxCells: maxCells)
+        return try await render(pixelBuffer: pixelBuffer, orientation: orientation, effect: effect, parameters: parameters, palette: palette, maxCells: maxCells)
     }
 
     // MARK: - Private
 
-    private func render(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState, maxCells: Int) async throws -> AsciiFrame {
+    private func render(pixelBuffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation, effect: EffectType, parameters: EffectParameters, palette: PaletteState, maxCells: Int) async throws -> AsciiFrame {
         try processingQueue.sync {
-            let grid = GridPlanner.makeGrid(for: pixelBuffer, parameters: parameters, maxCells: maxCells)
+            let grid = GridPlanner.makeGrid(for: pixelBuffer, orientation: orientation, parameters: parameters, maxCells: maxCells)
             let luminance: [Float]
             if let device = self.device, let commandQueue = self.commandQueue, let pipelineState = self.pipelineState {
                 luminance = try self.renderWithMetal(pixelBuffer: pixelBuffer, grid: grid, device: device, commandQueue: commandQueue, pipelineState: pipelineState)
@@ -780,7 +784,7 @@ public final class StubAsciiEngine: AsciiEngineProtocol {
         try await renderFallbackFrame()
     }
 
-    public func renderCapture(pixelBuffer: CVPixelBuffer, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame {
+    public func renderCapture(pixelBuffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation, effect: EffectType, parameters: EffectParameters, palette: PaletteState) async throws -> AsciiFrame {
         try await renderFallbackFrame()
     }
 

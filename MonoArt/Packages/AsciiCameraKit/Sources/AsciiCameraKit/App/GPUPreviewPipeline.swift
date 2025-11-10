@@ -233,14 +233,14 @@ public final class GPUPreviewPipeline {
         viewModel.beginImport(previewImage: nil)
         lastPreviewRenderTime = 0
 
-        guard let pixelBuffer = image.makePixelBuffer() else {
+        guard let result = image.makePixelBuffer() else {
             print("❌ GPUPreviewPipeline: Failed to create pixel buffer")
             viewModel.failPreview(message: "Unable to read image")
             return
         }
 
         print("✅ GPUPreviewPipeline: Pixel buffer created, starting render task")
-        let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
+        let envelope = FrameEnvelope(pixelBuffer: result.buffer, timestamp: .zero, orientation: result.orientation)
         latestFrame = envelope
         importedFrame = envelope
         previewRenderTask?.cancel()
@@ -269,6 +269,7 @@ public final class GPUPreviewPipeline {
             do {
                 let asciiFrame = try await self.engine.renderCapture(
                     pixelBuffer: frame.pixelBuffer,
+                    orientation: frame.orientation,
                     effect: context.effect,
                     parameters: context.parameters,
                     palette: context.palette
@@ -277,6 +278,7 @@ public final class GPUPreviewPipeline {
                     from: asciiFrame,
                     effect: context.effect,
                     palette: context.palette,
+                    orientation: frame.orientation,
                     mirrored: self.cameraService.currentCameraPosition == .front
                 ) else {
                     throw CaptureError.renderingFailed
@@ -318,6 +320,7 @@ public final class GPUPreviewPipeline {
             do {
                 let asciiFrame = try await self.engine.renderCapture(
                     pixelBuffer: frame.pixelBuffer,
+                    orientation: frame.orientation,
                     effect: context.effect,
                     parameters: context.parameters,
                     palette: context.palette
@@ -326,6 +329,7 @@ public final class GPUPreviewPipeline {
                     from: asciiFrame,
                     effect: context.effect,
                     palette: context.palette,
+                    orientation: frame.orientation,
                     mirrored: self.cameraService.currentCameraPosition == .front
                 ) else {
                     throw CaptureError.renderingFailed
@@ -363,6 +367,7 @@ public final class GPUPreviewPipeline {
         do {
             let asciiFrame = try await engine.renderCapture(
                 pixelBuffer: frame.pixelBuffer,
+                orientation: frame.orientation,
                 effect: context.effect,
                 parameters: context.parameters,
                 palette: context.palette,
@@ -373,6 +378,7 @@ public final class GPUPreviewPipeline {
                 from: asciiFrame,
                 effect: context.effect,
                 palette: context.palette,
+                orientation: frame.orientation,
                 mirrored: cameraService.currentCameraPosition == .front
             ) {
                 print("✅ GPUPreviewPipeline: UIImage created, size: \(image.size)")
@@ -485,10 +491,11 @@ public final class GPUPreviewPipeline {
     }
 
 #if canImport(UIKit)
-    private func renderPreviewImage(context: RenderContext, pixelBuffer: CVPixelBuffer) async -> UIImage? {
+    private func renderPreviewImage(context: RenderContext, pixelBuffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation) async -> UIImage? {
         do {
             let asciiFrame = try await engine.renderCapture(
                 pixelBuffer: pixelBuffer,
+                orientation: orientation,
                 effect: context.effect,
                 parameters: context.parameters,
                 palette: context.palette,
@@ -497,6 +504,7 @@ public final class GPUPreviewPipeline {
             return frameRenderer.makeImage(from: asciiFrame,
                                            effect: context.effect,
                                            palette: context.palette,
+                                           orientation: orientation,
                                            mirrored: cameraService.currentCameraPosition == .front)
         } catch {
             print("❌ GPUPreviewPipeline: Preview rendering failed: \(describeEngineError(error))")
@@ -523,7 +531,7 @@ public final class GPUPreviewPipeline {
         previewRenderTask = Task(priority: .userInitiated) { [weak self] in
             guard let self else { return }
 
-            if let image = await self.renderPreviewImage(context: context, pixelBuffer: envelope.pixelBuffer) {
+            if let image = await self.renderPreviewImage(context: context, pixelBuffer: envelope.pixelBuffer, orientation: envelope.orientation) {
                 await MainActor.run {
                     self.viewModel.updatePreviewImage(image)
                     self.lastPreviewRenderTime = CACurrentMediaTime()
@@ -555,10 +563,20 @@ private extension UIImage {
         return UIGraphicsGetImageFromCurrentImageContext()
     }
 
-    func makePixelBuffer() -> CVPixelBuffer? {
-        guard let cgImage = cgImage else { return nil }
+    func makePixelBuffer() -> (buffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation)? {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        format.opaque = false
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        let rendered = renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+
+        guard let cgImage = rendered.cgImage else { return nil }
+
         let width = cgImage.width
         let height = cgImage.height
+        let orientation: AVCaptureVideoOrientation = width >= height ? .landscapeRight : .portrait
 
         var pixelBuffer: CVPixelBuffer?
         let attrs: [CFString: Any] = [
@@ -567,7 +585,14 @@ private extension UIImage {
             kCVPixelBufferMetalCompatibilityKey: true,
             kCVPixelBufferIOSurfacePropertiesKey: [:] as CFDictionary
         ]
-        let status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, attrs as CFDictionary, &pixelBuffer)
+        let status = CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            width,
+            height,
+            kCVPixelFormatType_32BGRA,
+            attrs as CFDictionary,
+            &pixelBuffer
+        )
         guard status == kCVReturnSuccess, let buffer = pixelBuffer else { return nil }
 
         CVPixelBufferLockBaseAddress(buffer, [])
@@ -585,8 +610,8 @@ private extension UIImage {
             return nil
         }
 
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        return buffer
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)))
+        return (buffer, orientation)
     }
 }
 #endif

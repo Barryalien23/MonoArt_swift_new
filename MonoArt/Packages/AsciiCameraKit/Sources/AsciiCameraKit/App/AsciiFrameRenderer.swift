@@ -1,5 +1,6 @@
 #if canImport(UIKit)
 import UIKit
+import AVFoundation
 import AsciiDomain
 import AsciiEngine
 
@@ -8,6 +9,7 @@ public protocol AsciiFrameRendering {
         from frame: AsciiFrame,
         effect: EffectType,
         palette: PaletteState,
+        orientation: AVCaptureVideoOrientation,
         mirrored: Bool
     ) -> UIImage?
 }
@@ -16,9 +18,10 @@ public extension AsciiFrameRendering {
     func makeImage(
         from frame: AsciiFrame,
         effect: EffectType,
-        palette: PaletteState
+        palette: PaletteState,
+        orientation: AVCaptureVideoOrientation
     ) -> UIImage? {
-        makeImage(from: frame, effect: effect, palette: palette, mirrored: false)
+        makeImage(from: frame, effect: effect, palette: palette, orientation: orientation, mirrored: false)
     }
 }
 
@@ -40,6 +43,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         from frame: AsciiFrame,
         effect: EffectType,
         palette: PaletteState,
+        orientation: AVCaptureVideoOrientation,
         mirrored: Bool = false
     ) -> UIImage? {
         guard let glyphs = frame.glyphText, frame.columns > 0, frame.rows > 0 else {
@@ -50,8 +54,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         let columns = max(frame.columns, 1)
         let rows = max(frame.rows, 1)
 
-        let isLandscape = columns >= rows
-        let canvasSize = isLandscape ? RenderingConstants.landscapeSize : RenderingConstants.portraitSize
+        let canvasSize = orientation.isLandscape ? RenderingConstants.landscapeSize : RenderingConstants.portraitSize
         
         // Determine width factor dynamically to prevent overflow at high densities
         var widthFactor = RenderingConstants.baseCharWidthFactor - (CGFloat(columns) / 200.0) * 0.08
@@ -200,6 +203,17 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
                 )
                 context.fillEllipse(in: circleRect)
             }
+        }
+    }
+}
+
+private extension AVCaptureVideoOrientation {
+    var isLandscape: Bool {
+        switch self {
+        case .landscapeLeft, .landscapeRight:
+            return true
+        default:
+            return false
         }
     }
 }

@@ -154,19 +154,20 @@ public final class PreviewPipeline {
         renderTask = Task(priority: .userInitiated) { [weak self] in
             guard let self else { return }
             let context = self.snapshotContext()
-            guard let pixelBuffer = image.makePixelBuffer() else {
+            guard let result = image.makePixelBuffer() else {
                 await MainActor.run {
                     self.viewModel.failPreview(message: "Unable to read image")
                 }
                 return
             }
 
-            let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
+            let envelope = FrameEnvelope(pixelBuffer: result.buffer, timestamp: .zero, orientation: result.orientation)
             self.latestFrame = envelope
             self.importedFrame = envelope
             do {
                 let asciiFrame = try await self.engine.renderCapture(
                     pixelBuffer: envelope.pixelBuffer,
+                    orientation: envelope.orientation,
                     effect: context.effect,
                     parameters: context.parameters,
                     palette: context.palette
@@ -174,7 +175,8 @@ public final class PreviewPipeline {
                 if let image = self.frameRenderer.makeImage(
                     from: asciiFrame,
                     effect: context.effect,
-                    palette: context.palette
+                    palette: context.palette,
+                    orientation: envelope.orientation
                 ) {
                     await MainActor.run {
                         if !self.viewModel.isImportMode {
@@ -211,6 +213,7 @@ public final class PreviewPipeline {
             do {
                 let asciiFrame = try await self.engine.renderCapture(
                     pixelBuffer: frame.pixelBuffer,
+                    orientation: frame.orientation,
                     effect: context.effect,
                     parameters: context.parameters,
                     palette: context.palette
@@ -218,7 +221,8 @@ public final class PreviewPipeline {
                 guard let image = self.frameRenderer.makeImage(
                     from: asciiFrame,
                     effect: context.effect,
-                    palette: context.palette
+                    palette: context.palette,
+                    orientation: frame.orientation
                 ) else {
                     throw CaptureError.renderingFailed
                 }
@@ -259,6 +263,7 @@ public final class PreviewPipeline {
             do {
                 let asciiFrame = try await self.engine.renderCapture(
                     pixelBuffer: frame.pixelBuffer,
+                    orientation: frame.orientation,
                     effect: context.effect,
                     parameters: context.parameters,
                     palette: context.palette
@@ -266,7 +271,8 @@ public final class PreviewPipeline {
                 guard let image = self.frameRenderer.makeImage(
                     from: asciiFrame,
                     effect: context.effect,
-                    palette: context.palette
+                    palette: context.palette,
+                    orientation: frame.orientation
                 ) else {
                     throw CaptureError.renderingFailed
                 }
@@ -300,6 +306,7 @@ public final class PreviewPipeline {
                 if let engine = self.engine as? AsciiEngine {
                     asciiFrame = try await engine.renderCapture(
                         pixelBuffer: frame.pixelBuffer,
+                        orientation: frame.orientation,
                         effect: context.effect,
                         parameters: context.parameters,
                         palette: context.palette,
@@ -308,6 +315,7 @@ public final class PreviewPipeline {
                 } else {
                     asciiFrame = try await self.engine.renderCapture(
                         pixelBuffer: frame.pixelBuffer,
+                        orientation: frame.orientation,
                         effect: context.effect,
                         parameters: context.parameters,
                         palette: context.palette
@@ -449,17 +457,36 @@ private enum CaptureError: Error {
 }
 
 private extension UIImage {
-    func makePixelBuffer() -> CVPixelBuffer? {
-        guard let cgImage = cgImage else { return nil }
+    func makePixelBuffer() -> (buffer: CVPixelBuffer, orientation: AVCaptureVideoOrientation)? {
+        let format = UIGraphicsImageRendererFormat()
+        format.scale = scale
+        format.opaque = false
+        let renderer = UIGraphicsImageRenderer(size: size, format: format)
+        let rendered = renderer.image { _ in
+            self.draw(in: CGRect(origin: .zero, size: size))
+        }
+
+        guard let cgImage = rendered.cgImage else { return nil }
+
         let width = cgImage.width
         let height = cgImage.height
+        let orientation: AVCaptureVideoOrientation = width >= height ? .landscapeRight : .portrait
 
         var pixelBuffer: CVPixelBuffer?
         let attrs: [CFString: Any] = [
             kCVPixelBufferCGImageCompatibilityKey: true,
-            kCVPixelBufferCGBitmapContextCompatibilityKey: true
+            kCVPixelBufferCGBitmapContextCompatibilityKey: true,
+            kCVPixelBufferMetalCompatibilityKey: true,
+            kCVPixelBufferIOSurfacePropertiesKey: [:] as CFDictionary
         ]
-        let status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, attrs as CFDictionary, &pixelBuffer)
+        let status = CVPixelBufferCreate(
+            kCFAllocatorDefault,
+            width,
+            height,
+            kCVPixelFormatType_32BGRA,
+            attrs as CFDictionary,
+            &pixelBuffer
+        )
         guard status == kCVReturnSuccess, let buffer = pixelBuffer else { return nil }
 
         CVPixelBufferLockBaseAddress(buffer, [])
@@ -477,8 +504,8 @@ private extension UIImage {
             return nil
         }
 
-        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
-        return buffer
+        context.draw(cgImage, in: CGRect(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)))
+        return (buffer, orientation)
     }
 }
 #endif

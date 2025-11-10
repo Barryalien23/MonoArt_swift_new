@@ -1,4 +1,5 @@
 import CoreVideo
+import AVFoundation
 import AsciiDomain
 
 struct GridDescriptor {
@@ -22,13 +23,11 @@ enum GridPlanner {
 
     static func makeGrid(
         for pixelBuffer: CVPixelBuffer,
+        orientation: AVCaptureVideoOrientation,
         parameters: EffectParameters,
         maxCells: Int
     ) -> GridDescriptor {
-        let width = CVPixelBufferGetWidth(pixelBuffer)
-        let height = CVPixelBufferGetHeight(pixelBuffer)
-        // Choose aspect ratio based on source orientation
-        let aspect = width >= height ? landscapeAspectRatio : portraitAspectRatio
+        let aspect: Double = orientation.isLandscape ? landscapeAspectRatio : portraitAspectRatio
 
         // Cell parameter now controls density (number of columns) while maintaining aspect ratio
         // Inverted logic: higher cell value = more columns = higher density
@@ -53,6 +52,17 @@ enum GridPlanner {
         }
 
         return GridDescriptor(columns: max(columns, minColumns), rows: max(rows, minRows))
+    }
+}
+
+private extension AVCaptureVideoOrientation {
+    var isLandscape: Bool {
+        switch self {
+        case .landscapeLeft, .landscapeRight:
+            return true
+        default:
+            return false
+        }
     }
 }
 
