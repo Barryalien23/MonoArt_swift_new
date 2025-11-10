@@ -42,72 +42,81 @@ public struct RootView: View {
     }
 
     public var body: some View {
-        ZStack {
-            // Background layer: Camera preview
-            if let previewImage = viewModel.previewImage {
-                Image(uiImage: previewImage)
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-                    .ignoresSafeArea()
-            } else if viewModel.isImportMode {
-                // Show loading state when importing photo
-                ZStack {
-                    Color.black
+        GeometryReader { proxy in
+            ZStack {
+                // Background layer: Camera preview
+                if let previewImage = viewModel.previewImage {
+                    Image(uiImage: previewImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
                         .ignoresSafeArea()
-                    ProgressView("Processing...")
-                        .tint(.white)
-                        .foregroundColor(.white)
-                }
-            } else if useGPUPreview, let engine = engine {
-                MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
-                    .ignoresSafeArea()
-            } else {
-                CameraPreviewContainer(
-                    status: viewModel.previewStatus,
-                    frame: viewModel.previewFrame,
-                    palette: viewModel.palette
-                )
-                .ignoresSafeArea()
-            }
-
-            // Bottom controls layer
-            VStack(spacing: 12) {
-                Spacer() // Push controls to bottom
-                SettingsHandle { viewModel.presentSettingsSheet() }
-                ControlOverlay(
-                    selectedEffect: viewModel.selectedEffect,
-                    isCaptureInFlight: viewModel.isCaptureInFlight,
-                    isImportMode: viewModel.isImportMode,
-                    onImport: importAction,
-                    onCapture: captureTapped,
-                    onFlip: flipTapped,
-                    onSaveImport: saveImportAction,
-                    onCancelImport: cancelImportAction,
-                    onSelectEffect: viewModel.selectEffect,
-                    onShowColors: { viewModel.presentColorPicker(for: .symbols) }
-                )
-            }
-            .padding(.horizontal)
-            .padding(.bottom, 24)
-
-            // Top notification layer
-            if let status = viewModel.captureStatus {
-                VStack {
-                    CaptureConfirmationBanner(status: status, onDismiss: {
-                        viewModel.dismissCaptureStatus()
-                    }, onShare: shareAction)
-                    .padding(.horizontal, 16) // 16px horizontal padding as requested
-                    .padding(.top, 16) // Top padding for safe area
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                            viewModel.dismissCaptureStatus()
-                        }
+                } else if viewModel.isImportMode {
+                    // Show loading state when importing photo
+                    ZStack {
+                        Color.black
+                            .ignoresSafeArea()
+                            .frame(width: proxy.size.width, height: proxy.size.height)
+                        ProgressView("Processing...")
+                            .tint(.white)
+                            .foregroundColor(.white)
                     }
-                    
-                    Spacer() // Push banner to top
+                } else if useGPUPreview, let engine = engine {
+                    MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
+                        .ignoresSafeArea()
+                        .frame(width: proxy.size.width, height: proxy.size.height)
+                } else {
+                    CameraPreviewContainer(
+                        status: viewModel.previewStatus,
+                        frame: viewModel.previewFrame,
+                        palette: viewModel.palette
+                    )
+                    .ignoresSafeArea()
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+                }
+
+                // Bottom controls layer
+                VStack(spacing: 12) {
+                    Spacer() // Push controls to bottom
+                    SettingsHandle { viewModel.presentSettingsSheet() }
+                    ControlOverlay(
+                        selectedEffect: viewModel.selectedEffect,
+                        isCaptureInFlight: viewModel.isCaptureInFlight,
+                        isImportMode: viewModel.isImportMode,
+                        onImport: importAction,
+                        onCapture: captureTapped,
+                        onFlip: flipTapped,
+                        onSaveImport: saveImportAction,
+                        onCancelImport: cancelImportAction,
+                        onSelectEffect: viewModel.selectEffect,
+                        onShowColors: { viewModel.presentColorPicker(for: .symbols) }
+                    )
+                }
+                .padding(.horizontal)
+                .padding(.bottom, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+
+                // Top notification layer
+                if let status = viewModel.captureStatus {
+                    VStack {
+                        CaptureConfirmationBanner(status: status, onDismiss: {
+                            viewModel.dismissCaptureStatus()
+                        }, onShare: shareAction)
+                        .padding(.horizontal, 16) // 16px horizontal padding as requested
+                        .padding(.top, 16) // Top padding for safe area
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                viewModel.dismissCaptureStatus()
+                            }
+                        }
+                        
+                        Spacer() // Push banner to top
+                    }
                 }
             }
+            .frame(width: proxy.size.width, height: proxy.size.height)
         }
         .onAppear {
             if useDemoPreviewOnAppear {
