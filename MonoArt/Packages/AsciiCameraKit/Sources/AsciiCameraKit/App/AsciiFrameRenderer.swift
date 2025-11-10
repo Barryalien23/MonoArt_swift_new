@@ -13,8 +13,8 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         // Target dimensions for portrait 9:16 aspect ratio
         static let targetWidth: CGFloat = 1080  // Standard portrait width
         static let targetHeight: CGFloat = 1920 // Standard portrait height (9:16)
-        static let charWidthFactor: CGFloat = 0.6
-        static let lineHeightFactor: CGFloat = 1.1
+        static let baseCharWidthFactor: CGFloat = 0.65
+        static let lineHeightFactor: CGFloat = 1.2
     }
 
     public init() {}
@@ -31,13 +31,23 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         // Always use fixed target dimensions (1080×1920) for consistent output
         let canvasSize = CGSize(width: RenderingConstants.targetWidth, height: RenderingConstants.targetHeight)
         
+        // Determine width factor dynamically to prevent overflow at high densities
+        let widthFactor: CGFloat
+        if columns > 150 {
+            widthFactor = 0.75
+        } else if columns > 100 {
+            widthFactor = 0.70
+        } else {
+            widthFactor = RenderingConstants.baseCharWidthFactor
+        }
+
         // Calculate font size to FILL the canvas (use max to ensure full coverage)
-        let fontSizeForWidth = RenderingConstants.targetWidth / CGFloat(columns) / RenderingConstants.charWidthFactor
+        let fontSizeForWidth = RenderingConstants.targetWidth / CGFloat(columns) / widthFactor
         let fontSizeForHeight = RenderingConstants.targetHeight / CGFloat(rows) / RenderingConstants.lineHeightFactor
         let fontSize = max(fontSizeForWidth, fontSizeForHeight) // Use LARGER to fill the entire canvas
         
         let lineHeight = fontSize * RenderingConstants.lineHeightFactor
-        let contentWidth = fontSize * RenderingConstants.charWidthFactor * CGFloat(columns)
+        let contentWidth = fontSize * widthFactor * CGFloat(columns)
         let contentHeight = lineHeight * CGFloat(rows)
         
         // Center content (may overflow canvas slightly, but that's okay - it fills the screen)

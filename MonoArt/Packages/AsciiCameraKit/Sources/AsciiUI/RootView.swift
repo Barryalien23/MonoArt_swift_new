@@ -38,7 +38,12 @@ public struct RootView: View {
     public var body: some View {
         ZStack {
             // Background layer: Camera preview
-            if useGPUPreview, let engine = engine {
+            if let previewImage = viewModel.previewImage {
+                Image(uiImage: previewImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .ignoresSafeArea()
+            } else if useGPUPreview, let engine = engine {
                 MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
                     .ignoresSafeArea()
             } else {

@@ -31,6 +31,9 @@ public final class GPUPreviewPipeline {
     private let configuration: EngineConfiguration
     private var latestFrame: FrameEnvelope?
     private var textureCache: CVMetalTextureCache?
+#if canImport(UIKit)
+    private var previewRenderTask: Task<Void, Never>?
+#endif
     
 #if canImport(UIKit)
     private let frameRenderer: AsciiFrameRendering
@@ -152,6 +155,9 @@ public final class GPUPreviewPipeline {
 #if canImport(UIKit)
         captureTask?.cancel()
         captureTask = nil
+        previewRenderTask?.cancel()
+        previewRenderTask = nil
+        viewModel.updatePreviewImage(nil)
 #endif
         cameraService.stopSession()
     }
@@ -208,19 +214,13 @@ public final class GPUPreviewPipeline {
 
     public func processImportedImage(_ image: UIImage) {
         guard isEnginePrepared else { return }
-        
         guard let pixelBuffer = image.makePixelBuffer() else {
             viewModel.failPreview(message: "Unable to read image")
             return
         }
 
         let envelope = FrameEnvelope(pixelBuffer: pixelBuffer, timestamp: .zero, orientation: .portrait)
-        latestFrame = envelope
-        
-        // Convert to Metal texture and update engine
-        if let texture = makeTexture(from: pixelBuffer) {
-            engine.updatePreviewVideoTexture(texture)
-        }
+        processFrame(envelope)
     }
 #endif
 
@@ -237,15 +237,8 @@ public final class GPUPreviewPipeline {
     private func subscribeToCameraFrames() {
         frameCancellable = cameraService.framePublisher
             .receive(on: DispatchQueue.global(qos: .userInitiated))
-            .compactMap { [weak self] envelope -> MTLTexture? in
-                guard let self else { return nil }
-                self.latestFrame = envelope
-                return self.makeTexture(from: envelope.pixelBuffer)
-            }
-            .sink { [weak self] texture in
-                Task { @MainActor in
-                    self?.engine.updatePreviewVideoTexture(texture)
-                }
+            .sink { [weak self] envelope in
+                self?.processFrame(envelope)
             }
     }
 
@@ -309,6 +302,43 @@ public final class GPUPreviewPipeline {
             palette: viewModel.palette
         )
     }
+
+#if canImport(UIKit)
+    private func renderPreviewImage(context: RenderContext, pixelBuffer: CVPixelBuffer) async -> UIImage? {
+        do {
+            let asciiFrame = try await engine.renderCapture(
+                pixelBuffer: pixelBuffer,
+                effect: context.effect,
+                parameters: context.parameters,
+                palette: context.palette
+            )
+            return frameRenderer.makeImage(from: asciiFrame, palette: context.palette)
+        } catch {
+            return nil
+        }
+    }
+
+    private func processFrame(_ envelope: FrameEnvelope) {
+        guard isEnginePrepared else { return }
+        latestFrame = envelope
+        let context = snapshotContext()
+
+        previewRenderTask?.cancel()
+        previewRenderTask = Task(priority: .userInitiated) { [weak self] in
+            guard let self else { return }
+
+            if let image = await self.renderPreviewImage(context: context, pixelBuffer: envelope.pixelBuffer) {
+                await MainActor.run {
+                    self.viewModel.updatePreviewImage(image)
+                }
+            }
+        }
+    }
+#else
+    private func processFrame(_ envelope: FrameEnvelope) {
+        latestFrame = envelope
+    }
+#endif
 }
 
 #if canImport(UIKit)

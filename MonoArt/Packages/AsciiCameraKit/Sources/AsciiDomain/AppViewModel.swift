@@ -3,6 +3,9 @@ import Combine
 #endif
 import Dispatch
 import Foundation
+#if canImport(UIKit)
+import UIKit
+#endif
 
 /// Observable reducer that mirrors the Android MainViewModel intent surface.
 /// Implementation intentionally minimal; refer to SwiftStarterBundle/Docs/Swift/Architecture.md before extending.
@@ -14,6 +17,9 @@ public final class AppViewModel: ObservableObject {
     @Published public private(set) var cameraFacing: CameraFacing
     @Published public private(set) var previewStatus: PreviewStatus
     @Published public private(set) var previewFrame: PreviewFrame?
+#if canImport(UIKit)
+    @Published public private(set) var previewImage: UIImage?
+#endif
     @Published public private(set) var isCaptureInFlight: Bool
     @Published public private(set) var captureStatus: CaptureStatus?
     @Published public private(set) var selectedColorTarget: ColorTarget
@@ -40,6 +46,9 @@ public final class AppViewModel: ObservableObject {
         self.cameraFacing = cameraFacing
         self.previewStatus = previewStatus
         self.previewFrame = previewFrame
+#if canImport(UIKit)
+        self.previewImage = nil
+#endif
         self.isCaptureInFlight = isCaptureInFlight
         self.captureStatus = captureStatus
         self.selectedColorTarget = selectedColorTarget
@@ -85,16 +94,39 @@ public final class AppViewModel: ObservableObject {
 
     public func beginPreviewLoading() {
         previewStatus = .loading
+        previewFrame = nil
+#if canImport(UIKit)
+        previewImage = nil
+#endif
     }
 
     public func updatePreview(with frame: PreviewFrame) {
         previewFrame = frame
         previewStatus = .running
+#if canImport(UIKit)
+        previewImage = nil
+#endif
     }
 
     public func failPreview(message: String) {
         previewStatus = .failed(.init(message: message))
+        previewFrame = nil
+#if canImport(UIKit)
+        previewImage = nil
+#endif
     }
+
+#if canImport(UIKit)
+    public func updatePreviewImage(_ image: UIImage?) {
+        if let image {
+            previewImage = image
+            previewFrame = nil
+            previewStatus = .running
+        } else {
+            previewImage = nil
+        }
+    }
+#endif
 
     // MARK: - Capture Flow
 
