@@ -46,12 +46,13 @@ public struct RootView: View {
             ZStack {
                 // Background layer: Camera preview
                 if let previewImage = viewModel.previewImage {
+                    Color.black
+                        .ignoresSafeArea()
                     Image(uiImage: previewImage)
                         .resizable()
-                        .scaledToFill()
+                        .aspectRatio(previewImage.size, contentMode: .fit)
                         .frame(width: proxy.size.width, height: proxy.size.height)
                         .clipped()
-                        .ignoresSafeArea()
                 } else if viewModel.isImportMode {
                     // Show loading state when importing photo
                     ZStack {
