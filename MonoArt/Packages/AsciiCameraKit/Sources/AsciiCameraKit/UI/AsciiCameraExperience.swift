@@ -61,7 +61,13 @@ public struct AsciiCameraExperience: View {
             useDemoPreviewOnAppear: false,
             captureAction: captureTapped,
             flipAction: flipCamera,
-            importAction: { isImportPickerPresented = true },
+            importAction: {
+                if viewModel.isImportMode {
+                    gpuPipeline?.cancelImport()
+                    textPipeline?.cancelImport()
+                }
+                isImportPickerPresented = true
+            },
             saveImportAction: saveImportedPhoto,
             cancelImportAction: cancelImport,
             shareAction: shareImage == nil ? nil : { shareTapped() },

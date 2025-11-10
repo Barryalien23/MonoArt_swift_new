@@ -230,7 +230,7 @@ public final class GPUPreviewPipeline {
                 return
             }
         }
-        // Don't call beginImport yet - wait for the image to render first
+        viewModel.beginImport(previewImage: nil)
         lastPreviewRenderTime = 0
 
         guard let pixelBuffer = image.makePixelBuffer() else {
@@ -336,6 +336,8 @@ public final class GPUPreviewPipeline {
                     self.onCaptureSuccess?(image)
                     self.viewModel.completeImport()
                     self.viewModel.updatePreviewImage(nil)
+                    self.previewRenderTask?.cancel()
+                    self.previewRenderTask = nil
                     self.importedFrame = nil
                     self.latestFrame = nil
                     self.lastPreviewRenderTime = 0

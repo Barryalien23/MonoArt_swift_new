@@ -25,9 +25,9 @@ public extension AsciiFrameRendering {
 @available(iOS 15.0, tvOS 15.0, *)
 public struct AsciiFrameRenderer: AsciiFrameRendering {
     private struct RenderingConstants {
-        // Target dimensions for portrait 9:16 aspect ratio
-        static let targetWidth: CGFloat = 1080  // Standard portrait width
-        static let targetHeight: CGFloat = 1920 // Standard portrait height (9:16)
+        // Target dimensions for common aspect ratios
+        static let portraitSize = CGSize(width: 1080, height: 1920)   // 9:16
+        static let landscapeSize = CGSize(width: 1920, height: 1080)  // 16:9
         static let baseCharWidthFactor: CGFloat = 0.6
         static let lineHeightFactor: CGFloat = 1.12
         static let minimumFontSize: CGFloat = 8
@@ -50,8 +50,8 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         let columns = max(frame.columns, 1)
         let rows = max(frame.rows, 1)
 
-        // Always use fixed target dimensions (1080×1920) for consistent output
-        let canvasSize = CGSize(width: RenderingConstants.targetWidth, height: RenderingConstants.targetHeight)
+        let isLandscape = columns >= rows
+        let canvasSize = isLandscape ? RenderingConstants.landscapeSize : RenderingConstants.portraitSize
         
         // Determine width factor dynamically to prevent overflow at high densities
         var widthFactor = RenderingConstants.baseCharWidthFactor - (CGFloat(columns) / 200.0) * 0.08
@@ -62,7 +62,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
 
         // Calculate font size to FILL the canvas
         // Base font size derived from width (ensures horizontal fill)
-        var fontSize = RenderingConstants.targetWidth / (CGFloat(columns) * widthFactor)
+        var fontSize = canvasSize.width / (CGFloat(columns) * widthFactor)
         fontSize = min(max(fontSize, RenderingConstants.minimumFontSize), RenderingConstants.maximumFontSize)
 
         // Derived metrics
@@ -71,15 +71,15 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         var contentHeight = lineHeight * CGFloat(rows)
 
         // If height does not fill canvas, scale uniformly to cover height (may overflow width; clipping handles)
-        if contentHeight < RenderingConstants.targetHeight {
-            let scale = RenderingConstants.targetHeight / max(contentHeight, 1)
+        if contentHeight < canvasSize.height {
+            let scale = canvasSize.height / max(contentHeight, 1)
             fontSize *= scale
             contentHeight *= scale
             contentWidth *= scale
         }
 
-        let offsetX = (RenderingConstants.targetWidth - contentWidth) / 2
-        let offsetY = (RenderingConstants.targetHeight - contentHeight) / 2
+        let offsetX = (canvasSize.width - contentWidth) / 2
+        let offsetY = (canvasSize.height - contentHeight) / 2
         let cellWidth = contentWidth / CGFloat(columns)
         let cellHeight = contentHeight / CGFloat(rows)
 

@@ -75,7 +75,6 @@ public struct ControlOverlay: View {
                         .frame(minWidth: 88)
                 }
                 .buttonStyle(ControlButtonStyle())
-                .disabled(isImportMode)
                 .accessibilityHint("Import an existing photo to convert into ASCII art")
 
                 if isImportMode {
