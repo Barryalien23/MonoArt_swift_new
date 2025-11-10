@@ -561,7 +561,9 @@ private extension UIImage {
         var pixelBuffer: CVPixelBuffer?
         let attrs: [CFString: Any] = [
             kCVPixelBufferCGImageCompatibilityKey: true,
-            kCVPixelBufferCGBitmapContextCompatibilityKey: true
+            kCVPixelBufferCGBitmapContextCompatibilityKey: true,
+            kCVPixelBufferMetalCompatibilityKey: true,
+            kCVPixelBufferIOSurfacePropertiesKey: [:] as CFDictionary
         ]
         let status = CVPixelBufferCreate(kCFAllocatorDefault, width, height, kCVPixelFormatType_32BGRA, attrs as CFDictionary, &pixelBuffer)
         guard status == kCVReturnSuccess, let buffer = pixelBuffer else { return nil }
