@@ -1,0 +1,26 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="16dp"
+    android:height="16dp"
+    android:viewportWidth="16"
+    android:viewportHeight="16">
+    <circle
+        android:fillColor="@android:color/white"
+        android:cx="4"
+        android:cy="4.5"
+        android:r="4"/>
+    <circle
+        android:fillColor="@android:color/white"
+        android:cx="12"
+        android:cy="11.5"
+        android:r="4"/>
+    <circle
+        android:fillColor="@android:color/white"
+        android:cx="4"
+        android:cy="12.5"
+        android:r="3"/>
+    <circle
+        android:fillColor="@android:color/white"
+        android:cx="12"
+        android:cy="3.5"
+        android:r="3"/>
+</vector>
