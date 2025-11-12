@@ -132,12 +132,6 @@ public struct CameraPreviewContainer: View {
     }
 }
 
-private extension EffectType {
-    var displayTitle: String {
-        rawValue.capitalized
-    }
-}
-
 private struct AsciiPreviewLayout {
     let lines: [String]
     let font: Font

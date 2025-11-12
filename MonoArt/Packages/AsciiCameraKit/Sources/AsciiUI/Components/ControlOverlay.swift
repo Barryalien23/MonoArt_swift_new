@@ -8,12 +8,17 @@ public struct ControlOverlay: View {
     public let availableEffects: [EffectType]
     public let isCaptureInFlight: Bool
     public let isImportMode: Bool
+    public let palette: PaletteState
+    public let selectedColorTarget: ColorTarget
     public let onImport: () -> Void
     public let onCapture: () -> Void
     public let onFlip: () -> Void
     public let onSaveImport: (() -> Void)?
     public let onCancelImport: (() -> Void)?
     public let onSelectEffect: (EffectType) -> Void
+    public let onSelectColorTarget: (ColorTarget) -> Void
+    public let onShowEffects: () -> Void
+    public let onShowSettings: () -> Void
     public let onShowColors: () -> Void
 
     public init(
@@ -21,152 +26,275 @@ public struct ControlOverlay: View {
         availableEffects: [EffectType] = EffectType.allCases,
         isCaptureInFlight: Bool,
         isImportMode: Bool,
+        palette: PaletteState,
+        selectedColorTarget: ColorTarget,
         onImport: @escaping () -> Void,
         onCapture: @escaping () -> Void,
         onFlip: @escaping () -> Void,
         onSaveImport: (() -> Void)? = nil,
         onCancelImport: (() -> Void)? = nil,
         onSelectEffect: @escaping (EffectType) -> Void,
+        onSelectColorTarget: @escaping (ColorTarget) -> Void,
+        onShowEffects: @escaping () -> Void,
+        onShowSettings: @escaping () -> Void,
         onShowColors: @escaping () -> Void
     ) {
         self.selectedEffect = selectedEffect
         self.availableEffects = availableEffects
         self.isCaptureInFlight = isCaptureInFlight
         self.isImportMode = isImportMode
+        self.palette = palette
+        self.selectedColorTarget = selectedColorTarget
         self.onImport = onImport
         self.onCapture = onCapture
         self.onFlip = onFlip
         self.onSaveImport = onSaveImport
         self.onCancelImport = onCancelImport
         self.onSelectEffect = onSelectEffect
+        self.onSelectColorTarget = onSelectColorTarget
+        self.onShowEffects = onShowEffects
+        self.onShowSettings = onShowSettings
         self.onShowColors = onShowColors
     }
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 12) {
-                    ForEach(availableEffects, id: \.self) { effect in
-                        Button(action: { onSelectEffect(effect) }) {
-                            Text(effect.displayTitle)
-                                .font(.callout.weight(.semibold))
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 12)
-                                .background(effectBackground(for: effect))
-                                .foregroundStyle(effectForeground(for: effect))
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                        .stroke(effect == selectedEffect ? Color.accentColor : .clear, lineWidth: 2)
-                                )
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel("Select \(effect.displayTitle) effect")
-                        .accessibilityAddTraits(effect == selectedEffect ? [.isSelected] : [])
-                    }
-                }
-                .padding(.horizontal, 4)
-            }
-
-            HStack(spacing: 16) {
-                Button(action: onImport) {
-                    Label("Import", systemImage: "square.and.arrow.down")
-                        .labelStyle(.titleAndIcon)
-                        .padding()
-                        .frame(minWidth: 88)
-                }
-                .buttonStyle(ControlButtonStyle())
-                .accessibilityHint("Import an existing photo to convert into ASCII art")
-
-                if isImportMode {
-                    Button(action: onSaveImport ?? onCapture) {
-                        Label(isCaptureInFlight ? "Saving" : "Save Photo", systemImage: "square.and.arrow.down.on.square")
-                            .labelStyle(.titleAndIcon)
-                            .padding()
-                            .frame(minWidth: 120)
-                    }
-                    .buttonStyle(ControlButtonStyle(primary: true))
-                    .disabled(isCaptureInFlight)
-                    .accessibilityHint(isCaptureInFlight ? "Saving imported photo to Photos" : "Save imported photo to Photos")
-
-                    Button(action: onCancelImport ?? onFlip) {
-                        Label("Cancel", systemImage: "xmark.circle")
-                            .labelStyle(.titleAndIcon)
-                            .padding()
-                            .frame(minWidth: 88)
-                    }
-                    .buttonStyle(ControlButtonStyle())
-                    .accessibilityHint("Discard imported photo and return to live camera")
-                } else {
-                    Button(action: onCapture) {
-                        Label(isCaptureInFlight ? "Saving" : "Capture", systemImage: "camera.shutter.button")
-                            .labelStyle(.titleAndIcon)
-                            .padding()
-                            .frame(minWidth: 120)
-                    }
-                    .buttonStyle(ControlButtonStyle(primary: true))
-                    .disabled(isCaptureInFlight)
-                    .accessibilityHint(isCaptureInFlight ? "Saving capture to Photos" : "Capture current frame and save to Photos")
-
-                    Button(action: onFlip) {
-                        Label("Flip", systemImage: "camera.rotate")
-                            .labelStyle(.titleAndIcon)
-                            .padding()
-                            .frame(minWidth: 88)
-                    }
-                    .buttonStyle(ControlButtonStyle())
-                    .accessibilityHint("Switch between front and back cameras")
-                }
-
-                Spacer(minLength: 16)
-
-                Button(action: onShowColors) {
-                    Label("Colors", systemImage: "paintpalette")
-                        .labelStyle(.iconOnly)
-                        .frame(width: 48, height: 48)
-                }
-                .buttonStyle(.borderedProminent)
-                .clipShape(Circle())
-                .accessibilityLabel("Open color picker")
-                .accessibilityHint("Adjust background or symbol colors")
-            }
-        }
-        .padding(16)
-        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 24, style: .continuous))
-        .accessibilityElement(children: .contain)
-    }
-
-    private func effectBackground(for effect: EffectType) -> some ShapeStyle {
-        effect == selectedEffect ? AnyShapeStyle(Color.accentColor.opacity(0.15)) : AnyShapeStyle(Color.black.opacity(0.35))
-    }
-
-    private func effectForeground(for effect: EffectType) -> some ShapeStyle {
-        effect == selectedEffect ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(Color.white)
-    }
-}
-
-private struct ControlButtonStyle: ButtonStyle {
-    var primary: Bool = false
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .frame(height: 56)
-            .frame(minWidth: 88)
-            .background(primary ? Color.accentColor : Color.white.opacity(0.1))
-            .foregroundColor(primary ? Color.white : Color.white)
-            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .stroke(Color.white.opacity(configuration.isPressed ? 0.6 : 0.25), lineWidth: primary ? 0 : 1)
+        VStack(spacing: DesignSpacing.base) {
+            DesignActionBar(
+                mode: isImportMode ? .import : .camera,
+                primaryState: isCaptureInFlight ? .processing : .idle,
+                isLocked: false,
+                onLeft: onImport,
+                onPrimary: isImportMode ? (onSaveImport ?? onCapture) : onCapture,
+                onRight: isImportMode ? (onCancelImport ?? onFlip) : onFlip
             )
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .animation(.spring(response: 0.2, dampingFraction: 0.65), value: configuration.isPressed)
+
+            VStack(alignment: .leading, spacing: DesignSpacing.base) {
+                HStack(alignment: .top, spacing: DesignSpacing.base) {
+                    effectTile
+
+                    VStack(alignment: .leading, spacing: DesignSpacing.base) {
+                        settingsRow
+                        colorRow
+                    }
+                }
+            }
+            .padding(.horizontal, DesignSpacing.xl)
+            .padding(.vertical, DesignSpacing.base)
+            .background(controllerBackground)
+            .shadow(color: DesignColor.black.opacity(0.4), radius: 24, x: 0, y: 12)
+        }
+    }
+
+    private var controllerBackground: Color {
+        DesignColor.black.opacity(0.92)
+    }
+
+    private var effectTile: some View {
+        DesignEffectTile(
+            icon: effectIcon(for: selectedEffect),
+            title: selectedEffect.displayTitle,
+            action: onShowEffects
+        )
+    }
+
+    private var settingsRow: some View {
+        HStack(spacing: DesignSpacing.base) {
+            DesignParameterTile(icon: .settingCell, title: "CELL", action: onShowSettings)
+            DesignParameterTile(icon: .settingJitter, title: "JITTER", action: onShowSettings)
+            DesignParameterTile(icon: .settingContrast, title: "CONTRAST", action: onShowSettings)
+        }
+    }
+
+    private var colorRow: some View {
+        HStack(spacing: DesignSpacing.base) {
+            DesignColorTile(
+                title: "BG COLOR",
+                indicator: .solid(palette.background.swiftUIColor),
+                isActive: selectedColorTarget == .background,
+                action: {
+                    onSelectColorTarget(.background)
+                    onShowColors()
+                }
+            )
+
+            DesignColorTile(
+                title: "COLOR #2",
+                indicator: symbolIndicator,
+                isActive: selectedColorTarget == .symbols && !isGradientActive,
+                action: {
+                    onSelectColorTarget(.symbols)
+                    onShowColors()
+                }
+            )
+
+            DesignColorTile(
+                title: "GRADIENT",
+                indicator: gradientIndicator,
+                isActive: isGradientActive,
+                action: {
+                    onSelectColorTarget(.symbols)
+                    onShowColors()
+                }
+            )
+        }
+    }
+
+    private var symbolIndicator: DesignColorIndicator.Kind {
+        switch palette.symbols {
+        case .solid(let descriptor):
+            return .solid(descriptor.swiftUIColor)
+        case .gradient(let stops):
+            return .gradient(gradient(from: stops))
+        }
+    }
+
+    private var gradientIndicator: DesignColorIndicator.Kind {
+        switch palette.symbols {
+        case .gradient(let stops):
+            return .gradient(gradient(from: stops))
+        case .solid:
+            return .solid(DesignColor.white20)
+        }
+    }
+
+    private var isGradientActive: Bool {
+        if case .gradient = palette.symbols { return true }
+        return false
+    }
+
+    private func gradient(from stops: [GradientStop]) -> Gradient {
+        if stops.isEmpty {
+            return Gradient(colors: [DesignColor.white, DesignColor.white60])
+        }
+        let gradientStops = stops.map {
+            Gradient.Stop(color: $0.color.swiftUIColor, location: $0.position)
+        }
+        return Gradient(stops: gradientStops)
+    }
+
+    private func effectIcon(for effect: EffectType) -> DesignIcon {
+        switch effect {
+        case .ascii: return .effectASCII
+        case .shapes: return .effectShapes
+        case .circles: return .effectCircle
+        case .squares: return .effectSquare
+        case .triangles: return .effectTriangle
+        case .diamonds: return .effectDiamond
+        }
     }
 }
 
-private extension EffectType {
-    var displayTitle: String {
-        rawValue.capitalized
+@available(iOS 15.0, *)
+private struct DesignEffectTile: View {
+    let icon: DesignIcon
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: DesignSpacing.s) {
+                DesignIconView(icon, color: DesignColor.white, size: 18)
+                DesignTokens.Typography.body1.text(title)
+                    .foregroundColor(DesignColor.white)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(width: 64, height: 120)
+            .background(tileBackground)
+        }
+        .buttonStyle(DesignPressFeedbackStyle())
+    }
+
+    private var tileBackground: some View {
+        RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+            .fill(DesignColor.mainGrey)
+            .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
     }
 }
+
+@available(iOS 15.0, *)
+private struct DesignParameterTile: View {
+    let icon: DesignIcon
+    let title: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: DesignSpacing.s) {
+                DesignIconView(icon, color: DesignColor.white, size: 16)
+                DesignTokens.Typography.body1.text(title)
+                    .foregroundColor(DesignColor.white)
+            }
+            .frame(width: 100, height: 56)
+            .background(tileBackground)
+        }
+        .buttonStyle(DesignPressFeedbackStyle())
+    }
+
+    private var tileBackground: some View {
+        RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+            .fill(DesignColor.mainGrey)
+            .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
+    }
+}
+
+@available(iOS 15.0, *)
+private struct DesignColorTile: View {
+    let title: String
+    let indicator: DesignColorIndicator.Kind
+    let isActive: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: DesignSpacing.s) {
+                DesignColorIndicator(kind: indicator)
+                DesignTokens.Typography.body1.text(title)
+                    .foregroundColor(DesignColor.white)
+            }
+            .frame(width: 100, height: 56)
+            .background(tileBackground)
+            .opacity(isActive ? 1 : 0.9)
+        }
+        .buttonStyle(DesignPressFeedbackStyle())
+    }
+
+    private var tileBackground: some View {
+        RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+            .fill(DesignColor.mainGrey)
+            .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
+    }
+}
+
+@available(iOS 15.0, *)
+private struct DesignColorIndicator: View {
+    enum Kind {
+        case solid(Color)
+        case gradient(Gradient)
+    }
+
+    let kind: Kind
+
+    var body: some View {
+        ZStack {
+            fillLayer
+        }
+        .frame(width: 24, height: 24)
+        .clipShape(Circle())
+        .overlay(
+            Circle().stroke(DesignColor.white, lineWidth: 2)
+        )
+    }
+
+    @ViewBuilder
+    private var fillLayer: some View {
+        switch kind {
+        case .solid(let color):
+            Circle().fill(color)
+        case .gradient(let gradient):
+            Circle().fill(LinearGradient(gradient: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+        }
+    }
+}
+
 #endif
 

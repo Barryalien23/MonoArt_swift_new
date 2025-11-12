@@ -3,6 +3,7 @@ import AsciiDomain
 import AsciiEngine
 import Dispatch
 import SwiftUI
+import UIKit
 
 @available(iOS 16.0, *)
 public struct RootView: View {
@@ -33,7 +34,7 @@ public struct RootView: View {
         self.useDemoPreviewOnAppear = useDemoPreviewOnAppear
         self.captureAction = captureAction ?? { viewModel.simulateCapture() }
         self.flipAction = flipAction ?? { viewModel.toggleCameraFacing() }
-        self.importAction = importAction ?? { viewModel.presentColorPicker(for: .background) }
+        self.importAction = importAction ?? {}
         self.saveImportAction = saveImportAction ?? self.captureAction
         self.cancelImportAction = cancelImportAction ?? self.flipAction
         self.shareAction = shareAction
@@ -77,25 +78,47 @@ public struct RootView: View {
                     .frame(width: proxy.size.width, height: proxy.size.height)
                 }
 
-                // Bottom controls layer
-                VStack(spacing: 12) {
-                    Spacer() // Push controls to bottom
-                    SettingsHandle { viewModel.presentSettingsSheet() }
-                    ControlOverlay(
-                        selectedEffect: viewModel.selectedEffect,
-                        isCaptureInFlight: viewModel.isCaptureInFlight,
-                        isImportMode: viewModel.isImportMode,
-                        onImport: importAction,
-                        onCapture: captureTapped,
-                        onFlip: flipTapped,
-                        onSaveImport: saveImportAction,
-                        onCancelImport: cancelImportAction,
-                        onSelectEffect: viewModel.selectEffect,
-                        onShowColors: { viewModel.presentColorPicker(for: .symbols) }
-                    )
+                // Header layer
+                VStack {
+                    topToolbar(proxy: proxy)
+                    Spacer()
                 }
-                .padding(.horizontal)
-                .padding(.bottom, 24)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+
+                // Bottom controls layer
+                VStack(spacing: DesignSpacing.base) {
+                    Spacer()
+                    
+                    if viewModel.isEffectSelectionPresented {
+                        EffectSelectionView(
+                            selectedEffect: viewModel.selectedEffect,
+                            availableEffects: EffectType.allCases,
+                            onSelectEffect: viewModel.selectEffect,
+                            onDismiss: { viewModel.dismissEffectSelection() }
+                        )
+                    } else {
+                        ControlOverlay(
+                            selectedEffect: viewModel.selectedEffect,
+                            availableEffects: EffectType.allCases,
+                            isCaptureInFlight: viewModel.isCaptureInFlight,
+                            isImportMode: viewModel.isImportMode,
+                            palette: viewModel.palette,
+                            selectedColorTarget: viewModel.selectedColorTarget,
+                            onImport: importAction,
+                            onCapture: captureTapped,
+                            onFlip: flipTapped,
+                            onSaveImport: saveImportAction,
+                            onCancelImport: cancelImportAction,
+                            onSelectEffect: viewModel.selectEffect,
+                            onSelectColorTarget: viewModel.selectColorTarget,
+                            onShowEffects: { viewModel.presentEffectSelection() },
+                            onShowSettings: { viewModel.presentSettingsSheet() },
+                            onShowColors: { viewModel.presentColorPicker(for: viewModel.selectedColorTarget) }
+                        )
+                    }
+                }
+                .padding(.horizontal, DesignSpacing.xl)
+                .padding(.bottom, proxy.safeAreaInsets.bottom)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
 
                 // Top notification layer
@@ -156,6 +179,55 @@ public struct RootView: View {
         } else {
             flipAction()
         }
+    }
+
+    private func topToolbar(proxy: GeometryProxy) -> some View {
+        HStack {
+            GalleryPreviewButton(image: galleryImage, action: openPhotosApp)
+            Spacer()
+            DesignIconButton(icon: .question, action: {})
+                .accessibilityLabel("Help")
+        }
+        .padding(.horizontal, DesignSpacing.xl)
+        .padding(.top, proxy.safeAreaInsets.top + DesignSpacing.base)
+    }
+
+    private var galleryImage: UIImage? {
+        viewModel.lastSavedImage
+    }
+
+    private func openPhotosApp() {
+        if let url = URL(string: "photos-redirect://") {
+            UIApplication.shared.open(url)
+        }
+    }
+}
+
+@available(iOS 16.0, *)
+private struct GalleryPreviewButton: View {
+    let image: UIImage?
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            ZStack {
+                RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous)
+                    .fill(DesignColor.white20)
+
+                if let image {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 52, height: 52)
+                        .clipShape(RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous))
+                } else {
+                    DesignIconView(.upload, color: DesignColor.white, size: 24)
+                }
+            }
+            .frame(width: 52, height: 52)
+            .shadow(color: DesignColor.black.opacity(0.25), radius: 10, x: 0, y: 4)
+        }
+        .buttonStyle(DesignPressFeedbackStyle())
     }
 }
 #endif

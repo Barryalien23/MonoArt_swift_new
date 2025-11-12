@@ -286,6 +286,7 @@ public final class GPUPreviewPipeline {
                 try await self.mediaCoordinator.save(image: image)
                 await MainActor.run {
                     self.viewModel.resolveCapture(with: .success(message: "Saved to Photos"))
+                    self.viewModel.updateLastSavedImage(image)
                     self.onCaptureSuccess?(image)
                 }
             } catch is CancellationError {
@@ -337,6 +338,7 @@ public final class GPUPreviewPipeline {
                 try await self.mediaCoordinator.save(image: image)
                 await MainActor.run {
                     self.viewModel.resolveCapture(with: .success(message: "Saved to Photos"))
+                    self.viewModel.updateLastSavedImage(image)
                     self.onCaptureSuccess?(image)
                     self.viewModel.completeImport()
                     self.viewModel.updatePreviewImage(nil)

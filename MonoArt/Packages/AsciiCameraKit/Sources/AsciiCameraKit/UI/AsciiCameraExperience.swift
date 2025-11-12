@@ -89,10 +89,10 @@ public struct AsciiCameraExperience: View {
     private func startPipelineIfNeeded() {
         guard gpuPipeline == nil && textPipeline == nil else { return }
 
-        let engine = engineFactory()
-        let camera = cameraFactory()
+            let engine = engineFactory()
+            let camera = cameraFactory()
         let mediaCoordinator = mediaCoordinatorFactory()
-        let renderer = frameRendererFactory()
+            let renderer = frameRendererFactory()
 
         // Try to use GPU pipeline first
         if useGPUPreview, let asciiEngine = engine as? AsciiEngine {
@@ -138,8 +138,8 @@ public struct AsciiCameraExperience: View {
         gpuPipeline = nil
         textPipeline?.stop()
         textPipeline = nil
-        isImportPickerPresented = false
-    }
+            isImportPickerPresented = false
+        }
 
     private func handlePhotoSelection(_ item: PhotosPickerItem?) {
         print("📱 AsciiCameraExperience: handlePhotoSelection called, item: \(item != nil ? "present" : "nil")")
@@ -147,26 +147,26 @@ public struct AsciiCameraExperience: View {
             print("❌ AsciiCameraExperience: No photo item selected")
             return
         }
-        Task {
+            Task {
             await loadPhoto(from: item)
         }
     }
 
     private func loadPhoto(from item: PhotosPickerItem) async {
         print("📸 AsciiCameraExperience: loadPhoto started")
-        do {
+                do {
             guard let data = try await item.loadTransferable(type: Data.self),
                   let image = UIImage(data: data) else {
                 print("❌ AsciiCameraExperience: Failed to load image data")
-                await MainActor.run {
+                        await MainActor.run {
                     selectedPhotoItem = nil
-                    viewModel.failPreview(message: "Unable to load image")
-                }
+                            viewModel.failPreview(message: "Unable to load image")
+                        }
                 return
-            }
+                    }
 
             print("✅ AsciiCameraExperience: Image loaded, size: \(image.size)")
-            await MainActor.run {
+                    await MainActor.run {
                 selectedPhotoItem = nil
                 if let gpuPipeline = gpuPipeline {
                     print("🎯 AsciiCameraExperience: Calling gpuPipeline.processImportedImage")

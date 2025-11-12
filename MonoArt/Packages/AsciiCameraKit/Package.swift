@@ -12,6 +12,9 @@ let package = Package(
             targets: ["AsciiCameraKit"]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/pocketsvg/PocketSVG.git", from: "2.6.0")
+    ],
     targets: [
         .target(
             name: "AsciiSupport"
@@ -42,7 +45,11 @@ let package = Package(
                 .target(name: "AsciiDomain"),
                 .target(name: "AsciiEngine"),
                 .target(name: "AsciiCamera"),
-                .target(name: "AsciiSupport")
+                .target(name: "AsciiSupport"),
+                .product(name: "PocketSVG", package: "PocketSVG")
+            ],
+            resources: [
+                .process("Resources")
             ]
         ),
         .target(

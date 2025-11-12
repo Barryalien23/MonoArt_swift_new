@@ -7,9 +7,14 @@
 
 import SwiftUI
 import AsciiCameraKit
+import AsciiUI
 
 @main
 struct MonoArtApp: App {
+    init() {
+        DesignSystem.bootstrap()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()

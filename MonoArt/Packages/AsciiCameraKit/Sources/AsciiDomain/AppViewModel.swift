@@ -21,6 +21,7 @@ public final class AppViewModel: ObservableObject {
     @Published public private(set) var previewImage: UIImage?
     @Published public private(set) var importedImage: UIImage?
     @Published public private(set) var isImportMode: Bool = false
+    @Published public private(set) var lastSavedImage: UIImage?
 #endif
     @Published public private(set) var isCaptureInFlight: Bool
     @Published public private(set) var captureStatus: CaptureStatus?
@@ -28,6 +29,7 @@ public final class AppViewModel: ObservableObject {
 
     @Published public var isSettingsPresented: Bool
     @Published public var isColorPickerPresented: Bool
+    @Published public var isEffectSelectionPresented: Bool
 
     public init(
         selectedEffect: EffectType = .ascii,
@@ -40,7 +42,8 @@ public final class AppViewModel: ObservableObject {
         captureStatus: CaptureStatus? = nil,
         selectedColorTarget: ColorTarget = .symbols,
         isSettingsPresented: Bool = false,
-        isColorPickerPresented: Bool = false
+        isColorPickerPresented: Bool = false,
+        isEffectSelectionPresented: Bool = false
     ) {
         self.selectedEffect = selectedEffect
         self.parameters = AppViewModel.normalizedParameters(for: selectedEffect, existing: parameters)
@@ -57,11 +60,15 @@ public final class AppViewModel: ObservableObject {
 #if canImport(UIKit)
         self.isImportMode = false
 #endif
+#if canImport(UIKit)
+        self.lastSavedImage = nil
+#endif
         self.isCaptureInFlight = isCaptureInFlight
         self.captureStatus = captureStatus
         self.selectedColorTarget = selectedColorTarget
         self.isSettingsPresented = isSettingsPresented
         self.isColorPickerPresented = isColorPickerPresented
+        self.isEffectSelectionPresented = isEffectSelectionPresented
 
         if previewFrame == nil && previewStatus == .running {
             self.previewStatus = .idle
@@ -195,6 +202,12 @@ public final class AppViewModel: ObservableObject {
         captureStatus = status
     }
 
+#if canImport(UIKit)
+    public func updateLastSavedImage(_ image: UIImage?) {
+        lastSavedImage = image
+    }
+#endif
+
     public func dismissCaptureStatus() {
         captureStatus = nil
     }
@@ -216,6 +229,14 @@ public final class AppViewModel: ObservableObject {
 
     public func dismissColorPicker() {
         isColorPickerPresented = false
+    }
+
+    public func presentEffectSelection() {
+        isEffectSelectionPresented = true
+    }
+
+    public func dismissEffectSelection() {
+        isEffectSelectionPresented = false
     }
 
     // MARK: - Color Management

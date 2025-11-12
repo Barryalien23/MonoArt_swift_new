@@ -1,6 +1,9 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#endif
 
 @available(iOS 16.0, *)
 public struct ColorPickerSheet: View {
@@ -16,11 +19,15 @@ public struct ColorPickerSheet: View {
 
     public var body: some View {
         NavigationStack {
-            Form {
-                layerSection
-                presetSection
-                gradientSection
+            ScrollView {
+                VStack(alignment: .leading, spacing: DesignSpacing.xl) {
+                    layerSelector
+                    presetsGrid
+                    gradientEditor
+                }
+                .padding(DesignSpacing.xl)
             }
+            .background(DesignColor.mainGrey.ignoresSafeArea())
             .navigationTitle("Colors")
             .toolbar { doneToolbarItem }
         }
@@ -31,46 +38,62 @@ public struct ColorPickerSheet: View {
         }
     }
 
-    private var layerSection: some View {
-        Section("Layer") {
-            Picker("Layer", selection: layerBinding) {
-                Text("Background").tag(ColorTarget.background)
-                Text("Symbols").tag(ColorTarget.symbols)
+    private var layerSelector: some View {
+        DesignSegmentedControl(
+            options: ColorTarget.allCases,
+            selection: Binding(
+                get: { viewModel.selectedColorTarget },
+                set: { target in viewModel.selectColorTarget(target) }
+            ),
+            spacing: DesignSpacing.md,
+            showsBackground: true,
+            configuration: { target in
+                DesignSegmentButton.Configuration(
+                    title: target == .background ? "BG COLOR" : "SYMBOLS"
+                )
             }
-            .pickerStyle(.segmented)
-        }
+        )
     }
 
-    private var presetSection: some View {
-        Section("Presets") {
-            LazyVGrid(columns: presetColumns, spacing: 12) {
+    private var presetsGrid: some View {
+        VStack(alignment: .leading, spacing: DesignSpacing.lg) {
+            DesignTokens.Typography.body2.text("PRESETS")
+                .foregroundColor(DesignColor.white60)
+
+            LazyVGrid(columns: presetColumns, spacing: DesignSpacing.lg) {
                 ForEach(ColorDescriptor.Preset.allCases, id: \.self, content: presetButton(preset:))
             }
-            .padding(.vertical, 8)
+
+            ColorPicker("Custom Color", selection: activeColorBinding, supportsOpacity: false)
+                .labelsHidden()
+                .scaleEffect(x: 1, y: 1, anchor: .leading)
         }
     }
 
-    private var gradientSection: some View {
-        Section("Gradient") {
-            gradientToggle
+    private var gradientEditor: some View {
+        VStack(alignment: .leading, spacing: DesignSpacing.lg) {
+            Toggle(isOn: gradientEnabledBinding) {
+                DesignTokens.Typography.body2.text("SYMBOL GRADIENT")
+                    .foregroundColor(DesignColor.white)
+            }
+            .toggleStyle(.switch)
+            .disabled(!viewModel.isGradientEditingEnabled)
+            .tint(.orange)
 
             if viewModel.isSymbolGradientEnabled {
-                gradientStopPicker
-                selectedGradientEditor
+                gradientStopSelector
+                selectedGradientControls
                 gradientActions
             }
         }
+        .padding(DesignSpacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: DesignRadius.xl, style: .continuous)
+                .fill(DesignColor.greyActive)
+        )
     }
 
-    private var gradientToggle: some View {
-        Toggle(isOn: gradientEnabledBinding) {
-            Text("Enable Symbol Gradient")
-        }
-        .disabled(!viewModel.isGradientEditingEnabled)
-        .accessibilityHint("Gradients apply only to symbol glyphs as documented in Android specs")
-    }
-
-    private var gradientStopPicker: some View {
+    private var gradientStopSelector: some View {
         Picker("Editing Stop", selection: $selectedGradientIndex) {
             ForEach(Array(viewModel.symbolGradientStops.enumerated()), id: \.offset) { index, stop in
                 Text("Stop \(index + 1) – \(formattedPercentage(stop.position))")
@@ -83,38 +106,49 @@ public struct ColorPickerSheet: View {
         }
     }
 
-    private var selectedGradientEditor: some View {
+    private var selectedGradientControls: some View {
         ForEach(Array(viewModel.symbolGradientStops.enumerated()), id: \.offset) { index, stop in
             if index == selectedGradientIndex {
-                gradientStopEditor(index: index, stop: stop)
+                VStack(alignment: .leading, spacing: DesignSpacing.lg) {
+                    DesignTokens.Typography.body2.text("Gradient Stop \(index + 1)")
+                        .foregroundColor(DesignColor.white)
+
+                    DesignSliderView(
+                        value: Binding(
+                            get: { viewModel.symbolGradientStops[index].position },
+                            set: { newValue in viewModel.updateSymbolGradientPosition(at: index, position: newValue) }
+                        ),
+                        range: 0...1,
+                        step: 0.01,
+                        label: "POSITION",
+                        minimumLabel: "START",
+                        maximumLabel: "END",
+                        valueFormatter: { formattedPercentage($0) }
+                    )
+                }
             }
         }
     }
 
     private var gradientActions: some View {
-        HStack {
+        HStack(spacing: DesignSpacing.lg) {
             Button("Add Stop", action: viewModel.addSymbolGradientStop)
                 .disabled(viewModel.symbolGradientStops.count >= 4)
-
             Button("Remove Stop") {
                 viewModel.removeSymbolGradientStop(at: selectedGradientIndex)
                 selectedGradientIndex = max(0, selectedGradientIndex - 1)
             }
             .disabled(viewModel.symbolGradientStops.count <= 2)
         }
+        .font(DesignTokens.Typography.body1.font())
+        .foregroundColor(DesignColor.white)
     }
 
     private var doneToolbarItem: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button("Done") { viewModel.dismissColorPicker() }
+                .font(DesignTokens.Typography.body2.font())
         }
-    }
-
-    private var layerBinding: Binding<ColorTarget> {
-        Binding(
-            get: { viewModel.selectedColorTarget },
-            set: { target in viewModel.selectColorTarget(target) }
-        )
     }
 
     private var gradientEnabledBinding: Binding<Bool> {
@@ -125,7 +159,7 @@ public struct ColorPickerSheet: View {
     }
 
     private var presetColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
+        Array(repeating: GridItem(.flexible(), spacing: DesignSpacing.lg), count: 4)
     }
 
     private func presetButton(preset: ColorDescriptor.Preset) -> some View {
@@ -164,6 +198,44 @@ public struct ColorPickerSheet: View {
     }
 
     private func handlePresetTap(_ descriptor: ColorDescriptor) {
+        updateActiveColor(descriptor)
+    }
+
+    private func formattedPercentage(_ value: Double) -> String {
+        String(format: "%.0f%%", value * 100)
+    }
+
+    private var activeColorBinding: Binding<Color> {
+        Binding(
+            get: { activeColorDescriptor.swiftUIColor },
+            set: { newValue in updateActiveColor(descriptor(from: newValue)) }
+        )
+    }
+
+    private var activeColorDescriptor: ColorDescriptor {
+        if viewModel.isGradientEditingEnabled && viewModel.isSymbolGradientEnabled {
+            let stops = viewModel.symbolGradientStops
+            guard stops.indices.contains(selectedGradientIndex) else {
+                return ColorDescriptor.preset(.white)
+            }
+            return stops[selectedGradientIndex].color
+        } else {
+            switch viewModel.selectedColorTarget {
+            case .background:
+                return viewModel.palette.background
+            case .symbols:
+                if case let .solid(color) = viewModel.palette.symbols {
+                    return color
+                }
+                if case let .gradient(stops) = viewModel.palette.symbols, let first = stops.first {
+                    return first.color
+                }
+                return ColorDescriptor.preset(.white)
+            }
+        }
+    }
+
+    private func updateActiveColor(_ descriptor: ColorDescriptor) {
         if viewModel.isGradientEditingEnabled && viewModel.isSymbolGradientEnabled {
             viewModel.updateSymbolGradientColor(at: selectedGradientIndex, color: descriptor)
         } else {
@@ -171,26 +243,18 @@ public struct ColorPickerSheet: View {
         }
     }
 
-    private func gradientStopEditor(index: Int, stop: GradientStop) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Gradient Stop \(index + 1)")
-                .font(.headline)
-            Slider(value: Binding(
-                get: { stop.position },
-                set: { newValue in viewModel.updateSymbolGradientPosition(at: index, position: newValue) }
-            ), in: 0 ... 1) {
-                Text("Position")
-            }
-            Text("Position: \(formattedPercentage(stop.position))")
-                .font(.caption.monospacedDigit())
-                .foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 4)
-    }
-
-    private func formattedPercentage(_ value: Double) -> String {
-        String(format: "%.0f%%", value * 100)
+    private func descriptor(from color: Color) -> ColorDescriptor {
+        #if canImport(UIKit)
+        let uiColor = UIColor(color)
+        var r: CGFloat = 0
+        var g: CGFloat = 0
+        var b: CGFloat = 0
+        var a: CGFloat = 0
+        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return ColorDescriptor(red: Double(r), green: Double(g), blue: Double(b), alpha: Double(a))
+        #else
+        return ColorDescriptor.preset(.white)
+        #endif
     }
 }
 #endif
-

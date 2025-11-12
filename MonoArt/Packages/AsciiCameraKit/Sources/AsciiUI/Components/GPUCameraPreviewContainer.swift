@@ -64,10 +64,5 @@ public struct GPUCameraPreviewContainer: View {
     }
 }
 
-private extension EffectType {
-    var displayTitle: String {
-        rawValue.capitalized
-    }
-}
 #endif
 

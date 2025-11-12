@@ -229,6 +229,7 @@ public final class PreviewPipeline {
                 try await self.mediaCoordinator.save(image: image)
                 await MainActor.run {
                     self.viewModel.resolveCapture(with: .success(message: "Saved to Photos"))
+                    self.viewModel.updateLastSavedImage(image)
                     self.onCaptureSuccess?(image)
                 }
             } catch is CancellationError {
@@ -316,10 +317,10 @@ public final class PreviewPipeline {
                     asciiFrame = try await self.engine.renderCapture(
                         pixelBuffer: frame.pixelBuffer,
                         orientation: frame.orientation,
-                        effect: context.effect,
-                        parameters: context.parameters,
-                        palette: context.palette
-                    )
+                    effect: context.effect,
+                    parameters: context.parameters,
+                    palette: context.palette
+                )
                 }
                 guard let glyphs = asciiFrame.glyphText else { return }
                 let preview = PreviewFrame(

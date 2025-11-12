@@ -30,6 +30,29 @@ public enum EffectType: String, CaseIterable, Codable, Sendable {
     }
 }
 
+public extension EffectType {
+    var displayTitle: String {
+        rawValue.uppercased()
+    }
+
+    var previewGlyphs: String {
+        switch self {
+        case .ascii:
+            return "h0\n1&"
+        case .shapes:
+            return "@*\n#+"
+        case .circles:
+            return "oo\n()"
+        case .squares:
+            return "[]\n##"
+        case .triangles:
+            return "/\\\\\n<>"
+        case .diamonds:
+            return "<>\n/\\\\"
+        }
+    }
+}
+
 public enum EffectParameter: String, CaseIterable, Codable, Sendable {
     case cell
     case jitter
