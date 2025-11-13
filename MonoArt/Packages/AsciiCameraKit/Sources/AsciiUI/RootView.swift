@@ -79,11 +79,11 @@ public struct RootView: View {
                 }
 
                 // Header layer
-                VStack {
+                VStack(alignment: .leading) {
                     topToolbar(proxy: proxy)
                     Spacer()
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
                 // Bottom controls layer
                 VStack(spacing: DesignSpacing.base) {
@@ -190,14 +190,14 @@ public struct RootView: View {
     }
 
     private func topToolbar(proxy: GeometryProxy) -> some View {
-        HStack {
+        HStack(spacing: DesignSpacing.md) {
             GalleryPreviewButton(image: galleryImage, action: openPhotosApp)
-            Spacer()
+            Spacer(minLength: DesignSpacing.zero)
             DesignIconButton(icon: .question, action: {})
                 .accessibilityLabel("Help")
         }
-        .frame(maxWidth: .infinity, alignment: .center)
-        .padding(.horizontal, DesignSpacing.xl)
+    .frame(maxWidth: .infinity, alignment: .leading)
+    .padding(.horizontal, DesignSpacing.xxl + DesignSpacing.base)
         .padding(.top, proxy.safeAreaInsets.top + DesignSpacing.base)
     }
 
