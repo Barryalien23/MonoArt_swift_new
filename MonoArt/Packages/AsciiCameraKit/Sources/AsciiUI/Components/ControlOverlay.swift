@@ -2,6 +2,17 @@
 import AsciiDomain
 import SwiftUI
 
+private enum ControlOverlayMetrics {
+    static let tileHeight: CGFloat = 56
+    static let tileWidth: CGFloat = 100
+    static let effectTileWidth: CGFloat = 64
+    static let stackSpacing: CGFloat = DesignSpacing.md
+
+    static var stackedTileHeight: CGFloat {
+        (tileHeight * 2) + stackSpacing
+    }
+}
+
 @available(iOS 15.0, *)
 public struct ControlOverlay: View {
     public let selectedEffect: EffectType
@@ -58,7 +69,7 @@ public struct ControlOverlay: View {
     }
 
     public var body: some View {
-        VStack(spacing: DesignSpacing.base) {
+        VStack(spacing: DesignSpacing.md) {
             DesignActionBar(
                 mode: isImportMode ? .import : .camera,
                 primaryState: isCaptureInFlight ? .processing : .idle,
@@ -68,11 +79,11 @@ public struct ControlOverlay: View {
                 onRight: isImportMode ? (onCancelImport ?? onFlip) : onFlip
             )
 
-            VStack(alignment: .leading, spacing: DesignSpacing.base) {
-                HStack(alignment: .top, spacing: DesignSpacing.base) {
+            VStack(alignment: .leading, spacing: DesignSpacing.md) {
+                HStack(alignment: .top, spacing: DesignSpacing.md) {
                     effectTile
 
-                    VStack(alignment: .leading, spacing: DesignSpacing.base) {
+                    VStack(alignment: .leading, spacing: DesignSpacing.md) {
                         settingsRow
                         colorRow
                     }
@@ -80,13 +91,14 @@ public struct ControlOverlay: View {
             }
             .padding(.horizontal, DesignSpacing.xl)
             .padding(.vertical, DesignSpacing.base)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(controllerBackground)
             .shadow(color: DesignColor.black.opacity(0.4), radius: 24, x: 0, y: 12)
         }
     }
 
     private var controllerBackground: Color {
-        DesignColor.black.opacity(0.92)
+        DesignColor.black
     }
 
     private var effectTile: some View {
@@ -98,7 +110,7 @@ public struct ControlOverlay: View {
     }
 
     private var settingsRow: some View {
-        HStack(spacing: DesignSpacing.base) {
+        HStack(spacing: DesignSpacing.md) {
             DesignParameterTile(icon: .settingCell, title: "CELL", action: onShowSettings)
             DesignParameterTile(icon: .settingJitter, title: "JITTER", action: onShowSettings)
             DesignParameterTile(icon: .settingContrast, title: "CONTRAST", action: onShowSettings)
@@ -106,10 +118,11 @@ public struct ControlOverlay: View {
     }
 
     private var colorRow: some View {
-        HStack(spacing: DesignSpacing.base) {
+        HStack(spacing: DesignSpacing.md) {
             DesignColorTile(
                 title: "BG COLOR",
                 indicator: .solid(palette.background.swiftUIColor),
+                indicatorState: .default,
                 isActive: selectedColorTarget == .background,
                 action: {
                     onSelectColorTarget(.background)
@@ -120,6 +133,7 @@ public struct ControlOverlay: View {
             DesignColorTile(
                 title: "COLOR #2",
                 indicator: symbolIndicator,
+                indicatorState: symbolIndicatorState,
                 isActive: selectedColorTarget == .symbols && !isGradientActive,
                 action: {
                     onSelectColorTarget(.symbols)
@@ -130,6 +144,7 @@ public struct ControlOverlay: View {
             DesignColorTile(
                 title: "GRADIENT",
                 indicator: gradientIndicator,
+                indicatorState: isGradientActive ? .default : .disabled,
                 isActive: isGradientActive,
                 action: {
                     onSelectColorTarget(.symbols)
@@ -146,6 +161,13 @@ public struct ControlOverlay: View {
         case .gradient(let stops):
             return .gradient(gradient(from: stops))
         }
+    }
+
+    private var symbolIndicatorState: DesignColorIndicator.State {
+        if case .gradient = palette.symbols {
+            return .disabled
+        }
+        return .default
     }
 
     private var gradientIndicator: DesignColorIndicator.Kind {
@@ -198,7 +220,7 @@ private struct DesignEffectTile: View {
                     .foregroundColor(DesignColor.white)
                     .multilineTextAlignment(.center)
             }
-            .frame(width: 64, height: 120)
+            .frame(width: ControlOverlayMetrics.effectTileWidth, height: ControlOverlayMetrics.stackedTileHeight)
             .background(tileBackground)
         }
         .buttonStyle(DesignPressFeedbackStyle())
@@ -224,7 +246,7 @@ private struct DesignParameterTile: View {
                 DesignTokens.Typography.body1.text(title)
                     .foregroundColor(DesignColor.white)
             }
-            .frame(width: 100, height: 56)
+            .frame(width: ControlOverlayMetrics.tileWidth, height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
         }
         .buttonStyle(DesignPressFeedbackStyle())
@@ -241,17 +263,18 @@ private struct DesignParameterTile: View {
 private struct DesignColorTile: View {
     let title: String
     let indicator: DesignColorIndicator.Kind
+    let indicatorState: DesignColorIndicator.State
     let isActive: Bool
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             VStack(spacing: DesignSpacing.s) {
-                DesignColorIndicator(kind: indicator)
+                DesignColorIndicator(kind: indicator, state: indicatorState)
                 DesignTokens.Typography.body1.text(title)
                     .foregroundColor(DesignColor.white)
             }
-            .frame(width: 100, height: 56)
+            .frame(width: ControlOverlayMetrics.tileWidth, height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
             .opacity(isActive ? 1 : 0.9)
         }
@@ -272,26 +295,62 @@ private struct DesignColorIndicator: View {
         case gradient(Gradient)
     }
 
-    let kind: Kind
+    enum State {
+        case `default`
+        case disabled
+    }
+
+    private let kind: Kind
+    private let state: State
+    private let size: CGFloat
+    private let innerPadding: CGFloat = 3
+    private let borderWidth: CGFloat = 1
+
+    init(kind: Kind, state: State = .default, size: CGFloat = 16) {
+        self.kind = kind
+        self.state = state
+        self.size = size
+    }
 
     var body: some View {
         ZStack {
+            Circle()
+                .strokeBorder(borderColor, lineWidth: borderWidth)
             fillLayer
+                .padding(innerPadding)
         }
-        .frame(width: 24, height: 24)
-        .clipShape(Circle())
-        .overlay(
-            Circle().stroke(DesignColor.white, lineWidth: 2)
-        )
+        .frame(width: size, height: size)
     }
 
     @ViewBuilder
     private var fillLayer: some View {
         switch kind {
         case .solid(let color):
-            Circle().fill(color)
+            Circle()
+                .fill(color)
+                .opacity(fillOpacity)
         case .gradient(let gradient):
-            Circle().fill(LinearGradient(gradient: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+            Circle()
+                .fill(LinearGradient(gradient: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
+                .opacity(fillOpacity)
+        }
+    }
+
+    private var borderColor: Color {
+        switch state {
+        case .default:
+            return DesignColor.white
+        case .disabled:
+            return DesignColor.white20
+        }
+    }
+
+    private var fillOpacity: Double {
+        switch state {
+        case .default:
+            return 1
+        case .disabled:
+            return 0.6
         }
     }
 }

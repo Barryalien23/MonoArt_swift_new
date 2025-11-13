@@ -31,6 +31,8 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         // Target dimensions for common aspect ratios
         static let portraitSize = CGSize(width: 1080, height: 1920)   // 9:16
         static let landscapeSize = CGSize(width: 1920, height: 1080)  // 16:9
+        static let squareSize = CGSize(width: 1600, height: 1600)     // 1:1
+        static let squareTolerance: CGFloat = 0.08
         static let baseCharWidthFactor: CGFloat = 0.6
         static let lineHeightFactor: CGFloat = 1.12
         static let minimumFontSize: CGFloat = 8
@@ -54,7 +56,13 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         let columns = max(frame.columns, 1)
         let rows = max(frame.rows, 1)
 
-        let canvasSize = orientation.isLandscape ? RenderingConstants.landscapeSize : RenderingConstants.portraitSize
+        let gridAspect = CGFloat(columns) / CGFloat(rows)
+        let canvasSize: CGSize
+        if orientation.isLandscape {
+            canvasSize = RenderingConstants.landscapeSize
+        } else {
+            canvasSize = RenderingConstants.portraitSize
+        }
         
         // Determine width factor dynamically to prevent overflow at high densities
         var widthFactor = RenderingConstants.baseCharWidthFactor - (CGFloat(columns) / 200.0) * 0.08

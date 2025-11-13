@@ -471,7 +471,7 @@ private extension UIImage {
 
         let width = cgImage.width
         let height = cgImage.height
-        let orientation: AVCaptureVideoOrientation = width >= height ? .landscapeRight : .portrait
+        let orientation: AVCaptureVideoOrientation = width > height ? .landscapeRight : .portrait
 
         var pixelBuffer: CVPixelBuffer?
         let attrs: [CFString: Any] = [

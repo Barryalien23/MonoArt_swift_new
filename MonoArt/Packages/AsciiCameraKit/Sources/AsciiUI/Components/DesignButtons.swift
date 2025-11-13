@@ -44,20 +44,29 @@ public struct DesignIconButton: View {
 
     public var body: some View {
         Button(action: action) {
-            ZStack(alignment: .center) {
-                RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous)
-                    .fill(buttonFill)
-
+            ZStack {
+                backgroundLayer
                 DesignIconView(icon, color: iconColor, size: DesignSize.iconButtonIcon)
                     .frame(width: DesignSize.iconButtonIcon, height: DesignSize.iconButtonIcon)
             }
-            .frame(width: DesignSize.iconButton, height: DesignSize.iconButton, alignment: .center)
-            .shadow(color: DesignColor.black.opacity(0.25), radius: 10, x: 0, y: 4)
+            .frame(width: DesignSize.iconButton, height: DesignSize.iconButton)
         }
         .buttonStyle(DesignPressFeedbackStyle())
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.45)
         .accessibilityLabel(accessibilityLabel ?? icon.rawValue)
+    }
+
+    @ViewBuilder
+    private var backgroundLayer: some View {
+        switch style {
+        case .normal:
+            DesignSurface(.glassButton, cornerRadius: DesignRadius.lg)
+        case .subtle:
+            RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous)
+                .fill(buttonFill)
+                .shadow(color: DesignColor.black.opacity(0.25), radius: 8, x: 0, y: 4)
+        }
     }
 
     private var buttonFill: Color {
@@ -72,6 +81,7 @@ public struct DesignIconButton: View {
     private var iconColor: Color {
         DesignColor.white
     }
+
 }
 
 public struct DesignPrimaryButton: View {
@@ -135,7 +145,7 @@ public struct DesignPrimaryButton: View {
                 .fill(DesignColor.white20)
                 .shadow(color: DesignColor.black.opacity(0.25), radius: 14, x: 0, y: 6)
             RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(DesignColor.white20, lineWidth: 2)
+                .stroke(DesignColor.white, lineWidth: 2)
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(state == .processing ? DesignColor.white20 : DesignColor.white)
                 .padding(4)
@@ -148,12 +158,11 @@ public struct DesignPrimaryButton: View {
 
     private func saveButton(title: String, icon: DesignIcon) -> some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .fill(DesignColor.white20)
-                .shadow(color: DesignColor.black.opacity(0.25), radius: 14, x: 0, y: 6)
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .stroke(DesignColor.white20, lineWidth: 2)
-
+            DesignSurface(.glassButton, cornerRadius: 20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(DesignColor.white, lineWidth: 2)
+                )
             HStack(spacing: DesignSpacing.sm) {
                 if state == .processing {
                     progressIndicator(tint: DesignColor.white)
@@ -164,6 +173,11 @@ public struct DesignPrimaryButton: View {
                     .foregroundColor(DesignColor.white)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(DesignColor.white20)
+                    .padding(4)
+            )
         }
     }
 
@@ -210,37 +224,36 @@ public struct DesignActionBar: View {
 
     public var body: some View {
         HStack(spacing: DesignSpacing.base) {
-            DesignIconButton(icon: leftIcon,
-                             style: .normal,
-                             isEnabled: !isLocked,
-                             accessibilityLabel: leftLabel,
-                             action: onLeft)
+            VStack {
+                DesignIconButton(icon: leftIcon,
+                                 style: .normal,
+                                 isEnabled: !isLocked,
+                                 accessibilityLabel: leftLabel,
+                                 action: onLeft)
+            }
+            .frame(maxWidth: .infinity)
 
-            DesignPrimaryButton(
-                mode: primaryMode,
-                state: primaryState,
-                isEnabled: !isLocked,
-                action: onPrimary
-            )
+            VStack {
+                DesignPrimaryButton(
+                    mode: primaryMode,
+                    state: primaryState,
+                    isEnabled: !isLocked,
+                    action: onPrimary
+                )
+            }
+            .frame(maxWidth: .infinity)
 
-            DesignIconButton(icon: rightIcon,
-                             style: .normal,
-                             isEnabled: !isLocked,
-                             accessibilityLabel: rightLabel,
-                             action: onRight)
+            VStack {
+                DesignIconButton(icon: rightIcon,
+                                 style: .normal,
+                                 isEnabled: !isLocked,
+                                 accessibilityLabel: rightLabel,
+                                 action: onRight)
+            }
+            .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, DesignSpacing.xl)
         .padding(.vertical, DesignSpacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: DesignRadius.xl, style: .continuous)
-                .fill(DesignColor.mainGrey.opacity(0.92))
-                .overlay(
-                    RoundedRectangle(cornerRadius: DesignRadius.xl, style: .continuous)
-                        .stroke(DesignColor.white20.opacity(0.4), lineWidth: 1)
-                )
-                .shadow(color: DesignColor.black.opacity(0.35), radius: 24, x: 0, y: 12)
-        )
         .accessibilityElement(children: .contain)
         .accessibilityHint(mode == .camera ? "Camera controls" : "Image import controls")
     }

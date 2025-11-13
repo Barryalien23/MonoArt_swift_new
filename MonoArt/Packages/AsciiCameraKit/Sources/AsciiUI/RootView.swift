@@ -51,9 +51,9 @@ public struct RootView: View {
                         .ignoresSafeArea()
                     Image(uiImage: previewImage)
                         .resizable()
-                        .aspectRatio(previewImage.size, contentMode: .fit)
+                        .scaledToFit()
                         .frame(width: proxy.size.width, height: proxy.size.height)
-                        .clipped()
+                        .background(Color.black)
                 } else if viewModel.isImportMode {
                     // Show loading state when importing photo
                     ZStack {
@@ -118,7 +118,7 @@ public struct RootView: View {
                     }
                 }
                 .padding(.horizontal, DesignSpacing.xl)
-                .padding(.bottom, proxy.safeAreaInsets.bottom)
+                .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
 
                 // Top notification layer
@@ -181,6 +181,14 @@ public struct RootView: View {
         }
     }
 
+    private func bottomPadding(for safeAreaBottom: CGFloat) -> CGFloat {
+        guard safeAreaBottom > 0 else {
+            return DesignSpacing.xl
+        }
+        let adjusted = safeAreaBottom - 36
+        return max(adjusted, DesignSpacing.zero)
+    }
+
     private func topToolbar(proxy: GeometryProxy) -> some View {
         HStack {
             GalleryPreviewButton(image: galleryImage, action: openPhotosApp)
@@ -188,6 +196,7 @@ public struct RootView: View {
             DesignIconButton(icon: .question, action: {})
                 .accessibilityLabel("Help")
         }
+        .frame(maxWidth: .infinity, alignment: .center)
         .padding(.horizontal, DesignSpacing.xl)
         .padding(.top, proxy.safeAreaInsets.top + DesignSpacing.base)
     }
@@ -210,25 +219,84 @@ private struct GalleryPreviewButton: View {
 
     var body: some View {
         Button(action: action) {
-            ZStack {
-                RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous)
-                    .fill(DesignColor.white20)
-
-                if let image {
-                    Image(uiImage: image)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 52, height: 52)
-                        .clipShape(RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous))
-                } else {
-                    DesignIconView(.upload, color: DesignColor.white, size: 24)
-                }
-            }
-            .frame(width: 52, height: 52)
-            .shadow(color: DesignColor.black.opacity(0.25), radius: 10, x: 0, y: 4)
+            DesignSurface(.glassButton, cornerRadius: DesignRadius.lg)
+                .overlay(
+                    Group {
+                        if let image {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 52, height: 52)
+                                .clipShape(RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous))
+                        }
+                    }
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: DesignRadius.lg, style: .continuous)
+                        .stroke(DesignColor.white, lineWidth: 2)
+                )
+                .frame(width: 52, height: 52)
         }
         .buttonStyle(DesignPressFeedbackStyle())
     }
 }
+#if DEBUG
+@MainActor
+private enum RootViewPreviewFactory {
+    static func makeViewModel(showCaptureConfirmation: Bool = false) -> AppViewModel {
+        DesignSystem.bootstrap()
+
+        let palette = PaletteState(
+            background: .preset(.yellow),
+            symbols: .solid(.preset(.magenta))
+        )
+
+        let viewModel = AppViewModel(
+            selectedEffect: .ascii,
+            palette: palette,
+            previewStatus: .running,
+            captureStatus: showCaptureConfirmation ? .success(message: "Saved to Photos") : nil
+        )
+
+        viewModel.updatePreview(with: sampleFrame)
+        return viewModel
+    }
+
+    private static var sampleFrame: PreviewFrame {
+        PreviewFrame(
+            id: UUID(),
+            glyphText: sampleGlyphs,
+            columns: 8,
+            rows: 4,
+            renderedEffect: .ascii
+        )
+    }
+
+    private static let sampleGlyphs = """
+@@##**++
+##**++@@
+**++@@##
++@@##**
+"""
+}
+
+@available(iOS 17.0, *)
+#Preview("Root View") {
+    RootView(
+        viewModel: RootViewPreviewFactory.makeViewModel(),
+        useDemoPreviewOnAppear: false
+    )
+    .background(Color.black.ignoresSafeArea())
+}
+
+@available(iOS 17.0, *)
+#Preview("Root View – Capture Confirmation") {
+    RootView(
+        viewModel: RootViewPreviewFactory.makeViewModel(showCaptureConfirmation: true),
+        useDemoPreviewOnAppear: false
+    )
+    .background(Color.black.ignoresSafeArea())
+}
+#endif
 #endif
 
