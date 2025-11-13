@@ -1,0 +1,33 @@
+{
+  "": {
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/master.swiftdeps"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/AppViewModel.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/AppViewModel.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/ColorModels.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/ColorModels.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/EffectModels.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectModels.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiDomain/EffectType+Characters.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectType+Characters.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectType+Characters.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectType+Characters~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectType+Characters.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiDomain.build/EffectType+Characters.dia"
+  }
+}

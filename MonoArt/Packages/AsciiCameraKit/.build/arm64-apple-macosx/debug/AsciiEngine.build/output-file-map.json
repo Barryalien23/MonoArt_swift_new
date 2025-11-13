@@ -1,0 +1,26 @@
+{
+  "": {
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/master.swiftdeps"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/AsciiEngine.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/AsciiEngine.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GlyphAtlas.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GlyphAtlas.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiEngine/GridPlanner.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/GridPlanner.dia"
+  }
+}

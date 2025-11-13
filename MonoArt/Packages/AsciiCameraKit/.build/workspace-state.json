@@ -1,0 +1,30 @@
+{
+  "object" : {
+    "artifacts" : [
+
+    ],
+    "dependencies" : [
+      {
+        "basedOn" : null,
+        "packageRef" : {
+          "identity" : "pocketsvg",
+          "kind" : "remoteSourceControl",
+          "location" : "https://github.com/pocketsvg/PocketSVG.git",
+          "name" : "PocketSVG"
+        },
+        "state" : {
+          "checkoutState" : {
+            "revision" : "890a94e60c59cdf055b4d549dd246f60c6b25b5e",
+            "version" : "2.8.0"
+          },
+          "name" : "sourceControlCheckout"
+        },
+        "subpath" : "PocketSVG"
+      }
+    ],
+    "prebuilts" : [
+
+    ]
+  },
+  "version" : 7
+}

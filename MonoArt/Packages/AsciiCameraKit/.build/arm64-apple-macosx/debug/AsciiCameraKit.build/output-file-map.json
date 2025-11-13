@@ -1,0 +1,68 @@
+{
+  "": {
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/master.swiftdeps"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/AsciiFrameRenderer.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiFrameRenderer.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/GPUPreviewCoordinator.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewCoordinator.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewCoordinator.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewCoordinator~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewCoordinator.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewCoordinator.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/GPUPreviewPipeline.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewPipeline.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewPipeline.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewPipeline~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewPipeline.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/GPUPreviewPipeline.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/MediaCoordinator.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/MediaCoordinator.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/ObservableStubs.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ObservableStubs.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/App/PreviewPipeline.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/PreviewPipeline.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/Exports.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/Exports.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/AsciiCameraExperience.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/AsciiCameraExperience.dia"
+  },
+  "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/Sources/AsciiCameraKit/UI/ShareSheet.swift": {
+    "dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.d",
+    "object": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.swift.o",
+    "swiftmodule": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet~partial.swiftmodule",
+    "swift-dependencies": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.swiftdeps",
+    "diagnostics": "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiCameraKit.build/ShareSheet.dia"
+  }
+}

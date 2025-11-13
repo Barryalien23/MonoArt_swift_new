@@ -1,0 +1,3 @@
+module AsciiEngine {
+    header "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/arm64-apple-macosx/debug/AsciiEngine.build/include/AsciiEngine-Swift.h"
+}
