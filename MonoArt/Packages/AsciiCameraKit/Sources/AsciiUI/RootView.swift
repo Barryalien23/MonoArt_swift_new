@@ -96,6 +96,7 @@ public struct RootView: View {
                             onSelectEffect: viewModel.selectEffect,
                             onDismiss: { viewModel.dismissEffectSelection() }
                         )
+                        .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom, internalVerticalPadding: DesignSpacing.xl))
                     } else {
                         ControlOverlay(
                             selectedEffect: viewModel.selectedEffect,
@@ -115,33 +116,14 @@ public struct RootView: View {
                             onShowSettings: { viewModel.presentSettingsSheet() },
                             onShowColors: { viewModel.presentColorPicker(for: viewModel.selectedColorTarget) }
                         )
+                        .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
                     }
                 }
-                .padding(.horizontal, DesignSpacing.xl)
-                .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-
-                // Top notification layer
-                if let status = viewModel.captureStatus {
-                    VStack {
-                        CaptureConfirmationBanner(status: status, onDismiss: {
-                            viewModel.dismissCaptureStatus()
-                        }, onShare: shareAction)
-                        .padding(.horizontal, 16) // 16px horizontal padding as requested
-                        .padding(.top, 16) // Top padding for safe area
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                        .onAppear {
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                viewModel.dismissCaptureStatus()
-                            }
-                        }
-                        
-                        Spacer() // Push banner to top
-                    }
-                }
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
         }
+        .ignoresSafeArea()
         .onAppear {
             if useDemoPreviewOnAppear {
                 viewModel.startDemoPreviewIfNeeded()
@@ -181,14 +163,27 @@ public struct RootView: View {
         }
     }
 
-    private func bottomPadding(for safeAreaBottom: CGFloat) -> CGFloat {
-        guard safeAreaBottom > 0 else {
-            return DesignSpacing.xl
+    /// Вычисляет отступ снизу с учётом safe area
+    /// Цель: всегда 16pt визуального отступа от нижнего края устройства
+    /// - Parameters:
+    ///   - safeAreaBottom: Высота safe area снизу (обычно ~34pt на iPhone X и новее)
+    ///   - internalVerticalPadding: Внутренний вертикальный padding компонента (12pt для ControlOverlay, 20pt для EffectSelectionView)
+    private func bottomPadding(for safeAreaBottom: CGFloat, internalVerticalPadding: CGFloat = DesignSpacing.base) -> CGFloat {
+        // На устройствах с home indicator (iPhone X и новее)
+        // safeAreaBottom обычно ~34pt
+        // Нам нужно 16pt визуального отступа от края устройства
+        // Но компоненты уже имеют внутренний вертикальный padding
+        // Поэтому возвращаем: safeAreaBottom - внутренний padding
+        if safeAreaBottom > 0 {
+            // max гарантирует, что не будет отрицательного значения
+            return max(safeAreaBottom - internalVerticalPadding, 0)
         }
-        let adjusted = safeAreaBottom - 36
-        return max(adjusted, DesignSpacing.zero)
+        // На старых устройствах без home indicator
+        // Добавляем фиксированный отступ 16pt
+        return DesignSpacing.xl
     }
 
+    /// Top toolbar с Gallery и Help кнопками
     private func topToolbar(proxy: GeometryProxy) -> some View {
         HStack(spacing: DesignSpacing.md) {
             GalleryPreviewButton(image: galleryImage, action: openPhotosApp)
@@ -196,9 +191,21 @@ public struct RootView: View {
             DesignIconButton(icon: .question, action: {})
                 .accessibilityLabel("Help")
         }
-    .frame(maxWidth: .infinity, alignment: .leading)
-    .padding(.horizontal, DesignSpacing.xxl + DesignSpacing.base)
-        .padding(.top, proxy.safeAreaInsets.top + DesignSpacing.base)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, DesignSpacing.xl) // 16pt с боков
+        .padding(.top, topPadding(for: proxy.safeAreaInsets.top)) // Динамический отступ сверху
+    }
+
+    /// Вычисляет отступ сверху с учётом safe area
+    /// Цель: кнопки на комфортном расстоянии от Dynamic Island/статус-бара
+    private func topPadding(for safeAreaTop: CGFloat) -> CGFloat {
+        // На iPhone с Dynamic Island/notch: safeAreaTop ~59pt (iPhone 15 Pro)
+        // Добавляем ещё 8pt для визуального комфорта
+        if safeAreaTop > 0 {
+            return safeAreaTop + DesignSpacing.md // safe area + 8pt
+        }
+        // На старых устройствах (без notch): добавляем базовый отступ
+        return DesignSpacing.xxl // 20pt
     }
 
     private var galleryImage: UIImage? {
@@ -299,4 +306,3 @@ private enum RootViewPreviewFactory {
 }
 #endif
 #endif
-
