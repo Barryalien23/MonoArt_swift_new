@@ -87,6 +87,7 @@ public struct ControlOverlay: View {
                         settingsRow
                         colorRow
                     }
+                    .frame(maxWidth: .infinity)
                 }
             }
             .padding(.horizontal, DesignSpacing.xl)
@@ -115,6 +116,7 @@ public struct ControlOverlay: View {
             DesignParameterTile(icon: .settingJitter, title: "JITTER", action: onShowSettings)
             DesignParameterTile(icon: .settingContrast, title: "CONTRAST", action: onShowSettings)
         }
+        .frame(maxWidth: .infinity)
     }
 
     private var colorRow: some View {
@@ -152,6 +154,7 @@ public struct ControlOverlay: View {
                 }
             )
         }
+        .frame(maxWidth: .infinity)
     }
 
     private var symbolIndicator: DesignColorIndicator.Kind {
@@ -246,7 +249,8 @@ private struct DesignParameterTile: View {
                 DesignTokens.Typography.body1.text(title)
                     .foregroundColor(DesignColor.white)
             }
-            .frame(width: ControlOverlayMetrics.tileWidth, height: ControlOverlayMetrics.tileHeight)
+            .frame(minWidth: ControlOverlayMetrics.tileWidth, maxWidth: .infinity)
+            .frame(height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
         }
         .buttonStyle(DesignPressFeedbackStyle())
@@ -274,7 +278,8 @@ private struct DesignColorTile: View {
                 DesignTokens.Typography.body1.text(title)
                     .foregroundColor(DesignColor.white)
             }
-            .frame(width: ControlOverlayMetrics.tileWidth, height: ControlOverlayMetrics.tileHeight)
+            .frame(minWidth: ControlOverlayMetrics.tileWidth, maxWidth: .infinity)
+            .frame(height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
             .opacity(isActive ? 1 : 0.9)
         }

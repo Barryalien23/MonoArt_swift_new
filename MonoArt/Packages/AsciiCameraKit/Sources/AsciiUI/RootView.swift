@@ -51,8 +51,9 @@ public struct RootView: View {
                         .ignoresSafeArea()
                     Image(uiImage: previewImage)
                         .resizable()
-                        .scaledToFit()
+                        .scaledToFill()
                         .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
                         .background(Color.black)
                 } else if viewModel.isImportMode {
                     // Show loading state when importing photo
@@ -68,6 +69,7 @@ public struct RootView: View {
                     MetalPreviewView(engine: engine, effect: viewModel.selectedEffect)
                         .ignoresSafeArea()
                         .frame(width: proxy.size.width, height: proxy.size.height)
+                        .clipped()
                 } else {
                     CameraPreviewContainer(
                         status: viewModel.previewStatus,
@@ -76,10 +78,11 @@ public struct RootView: View {
                     )
                     .ignoresSafeArea()
                     .frame(width: proxy.size.width, height: proxy.size.height)
+                    .clipped()
                 }
 
                 // Header layer
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 0) {
                     topToolbar(proxy: proxy)
                     Spacer()
                 }
@@ -145,6 +148,18 @@ public struct RootView: View {
                 ColorPickerSheet(viewModel: viewModel)
             }
         }
+        // Альтернативный метод через .safeAreaInset (раскомментировать, если VStack не работает)
+        // .safeAreaInset(edge: .top, spacing: 0) {
+        //     HStack(spacing: DesignSpacing.md) {
+        //         GalleryPreviewButton(image: galleryImage, action: openPhotosApp)
+        //         Spacer(minLength: DesignSpacing.zero)
+        //         DesignIconButton(icon: .question, action: {})
+        //             .accessibilityLabel("Help")
+        //     }
+        //     .padding(.horizontal, DesignSpacing.xl)
+        //     .padding(.vertical, DesignSpacing.xxl)
+        //     .background(Color.clear)
+        // }
     }
 
     private func captureTapped() {
@@ -193,19 +208,39 @@ public struct RootView: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, DesignSpacing.xl) // 16pt с боков
-        .padding(.top, topPadding(for: proxy.safeAreaInsets.top)) // Динамический отступ сверху
+        .padding(.top, topPadding(for: proxy.safeAreaInsets.top, screenHeight: proxy.size.height)) // Фиксированный отступ сверху
     }
 
-    /// Вычисляет отступ сверху с учётом safe area
-    /// Цель: кнопки на комфортном расстоянии от Dynamic Island/статус-бара
-    private func topPadding(for safeAreaTop: CGFloat) -> CGFloat {
-        // На iPhone с Dynamic Island/notch: safeAreaTop ~59pt (iPhone 15 Pro)
-        // Добавляем ещё 8pt для визуального комфорта
-        if safeAreaTop > 0 {
-            return safeAreaTop + DesignSpacing.md // safe area + 8pt
+    /// Вычисляет фиксированный отступ сверху для toolbar
+    /// 
+    /// Использует фиксированные значения, так как из-за `.ignoresSafeArea()` на родителе
+    /// `safeAreaInsets.top` может возвращать некорректные значения.
+    ///
+    /// **Фиксированные отступы:**
+    /// - **80pt** для iPhone с notch/Dynamic Island (iPhone X и новее)
+    ///   Определяется по `safeAreaTop > 0` или высоте экрана >= 800pt
+    ///   
+    /// - **36pt** для старых iPhone без notch (iPhone SE, 8, 7 и т.д.)
+    ///   Высота статус-бара (20pt) + комфортный отступ (16pt)
+    ///
+    /// - Parameters:
+    ///   - safeAreaTop: Значение safeAreaInsets.top (может быть некорректным из-за ignoresSafeArea)
+    ///   - screenHeight: Высота экрана для определения типа устройства
+    /// - Returns: Отступ в точках
+    private func topPadding(for safeAreaTop: CGFloat, screenHeight: CGFloat) -> CGFloat {
+        // Определяем, является ли устройство современным (с notch/Dynamic Island)
+        // Используем либо safeAreaTop > 0, либо высоту экрана >= 800pt
+        let isModernDevice = safeAreaTop > 0 || screenHeight >= 800
+        
+        if isModernDevice {
+            // Устройства с notch/Dynamic Island
+            // Фиксированный отступ 80pt обеспечивает комфортное расстояние от Dynamic Island/notch
+            return 80
+        } else {
+            // Старые устройства без notch (iPhone SE, 8, 7 и т.д.)
+            // Высота статус-бара (20pt) + комфортный отступ (16pt)
+            return 20 + DesignSpacing.xl // 36pt
         }
-        // На старых устройствах (без notch): добавляем базовый отступ
-        return DesignSpacing.xxl // 20pt
     }
 
     private var galleryImage: UIImage? {
