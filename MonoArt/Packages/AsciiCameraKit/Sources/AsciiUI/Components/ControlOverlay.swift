@@ -4,7 +4,7 @@ import SwiftUI
 
 private enum ControlOverlayMetrics {
     static let tileHeight: CGFloat = 56
-    static let tileWidth: CGFloat = 100
+    static let tileMinWidth: CGFloat = 80
     static let effectTileWidth: CGFloat = 64
     static let stackSpacing: CGFloat = DesignSpacing.md
 
@@ -248,8 +248,10 @@ private struct DesignParameterTile: View {
                 DesignIconView(icon, color: DesignColor.white, size: 16)
                 DesignTokens.Typography.body1.text(title)
                     .foregroundColor(DesignColor.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
-            .frame(minWidth: ControlOverlayMetrics.tileWidth, maxWidth: .infinity)
+            .frame(minWidth: ControlOverlayMetrics.tileMinWidth, maxWidth: .infinity)
             .frame(height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
         }
@@ -277,8 +279,10 @@ private struct DesignColorTile: View {
                 DesignColorIndicator(kind: indicator, state: indicatorState)
                 DesignTokens.Typography.body1.text(title)
                     .foregroundColor(DesignColor.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
-            .frame(minWidth: ControlOverlayMetrics.tileWidth, maxWidth: .infinity)
+            .frame(minWidth: ControlOverlayMetrics.tileMinWidth, maxWidth: .infinity)
             .frame(height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
             .opacity(isActive ? 1 : 0.9)

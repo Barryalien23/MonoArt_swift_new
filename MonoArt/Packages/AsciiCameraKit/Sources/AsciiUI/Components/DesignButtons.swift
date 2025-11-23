@@ -253,6 +253,7 @@ public struct DesignActionBar: View {
             .frame(maxWidth: .infinity)
         }
         .frame(maxWidth: .infinity)
+        .padding(.horizontal, DesignSpacing.xl)
         .padding(.vertical, DesignSpacing.md)
         .accessibilityElement(children: .contain)
         .accessibilityHint(mode == .camera ? "Camera controls" : "Image import controls")

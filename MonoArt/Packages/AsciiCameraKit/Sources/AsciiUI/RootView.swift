@@ -178,6 +178,28 @@ public struct RootView: View {
         }
     }
 
+    /// Вычисляет горизонтальные отступы с учётом safe area
+    /// Цель: обеспечить согласованные отступы на всех устройствах, включая iPad
+    /// - Parameters:
+    ///   - safeAreaInsets: Safe area insets для определения боковых зон
+    /// - Returns: Горизонтальный отступ в точках
+    private func horizontalPadding(for safeAreaInsets: EdgeInsets) -> CGFloat {
+        // Базовый отступ 16pt
+        let baseHorizontalPadding: CGFloat = DesignSpacing.xl
+        
+        // Если есть боковые safe area (например, landscape на iPhone или iPad)
+        // добавляем их к базовому отступу
+        let leftInset = safeAreaInsets.leading
+        let rightInset = safeAreaInsets.trailing
+        
+        // Используем максимальный из боковых отступов
+        let maxSideInset = max(leftInset, rightInset)
+        
+        // Если safe area больше базового отступа, используем safe area
+        // Иначе используем базовый отступ
+        return max(baseHorizontalPadding, maxSideInset + DesignSpacing.md)
+    }
+    
     /// Вычисляет отступ снизу с учётом safe area
     /// Цель: всегда 16pt визуального отступа от нижнего края устройства
     /// - Parameters:
@@ -207,35 +229,36 @@ public struct RootView: View {
                 .accessibilityLabel("Help")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, DesignSpacing.xl) // 16pt с боков
-        .padding(.top, topPadding(for: proxy.safeAreaInsets.top, screenHeight: proxy.size.height)) // Фиксированный отступ сверху
+        .padding(.horizontal, horizontalPadding(for: proxy.safeAreaInsets))
+        .padding(.top, topPadding(for: proxy.safeAreaInsets.top, screenHeight: proxy.size.height))
     }
 
-    /// Вычисляет фиксированный отступ сверху для toolbar
+    /// Вычисляет адаптивный отступ сверху для toolbar
     /// 
-    /// Использует фиксированные значения, так как из-за `.ignoresSafeArea()` на родителе
-    /// `safeAreaInsets.top` может возвращать некорректные значения.
+    /// Использует комбинацию фиксированных и адаптивных значений с учетом размера экрана.
     ///
-    /// **Фиксированные отступы:**
-    /// - **80pt** для iPhone с notch/Dynamic Island (iPhone X и новее)
-    ///   Определяется по `safeAreaTop > 0` или высоте экрана >= 800pt
-    ///   
-    /// - **36pt** для старых iPhone без notch (iPhone SE, 8, 7 и т.д.)
-    ///   Высота статус-бара (20pt) + комфортный отступ (16pt)
+    /// **Логика расчета:**
+    /// - Для устройств с notch/Dynamic Island: базовый отступ 80pt, 
+    ///   но не более 12% от высоты экрана для компактных размеров
+    /// - Для старых устройств: статус-бар (20pt) + комфортный отступ (16pt) = 36pt
     ///
     /// - Parameters:
-    ///   - safeAreaTop: Значение safeAreaInsets.top (может быть некорректным из-за ignoresSafeArea)
-    ///   - screenHeight: Высота экрана для определения типа устройства
+    ///   - safeAreaTop: Значение safeAreaInsets.top
+    ///   - screenHeight: Высота экрана для определения типа устройства и адаптации
     /// - Returns: Отступ в точках
     private func topPadding(for safeAreaTop: CGFloat, screenHeight: CGFloat) -> CGFloat {
         // Определяем, является ли устройство современным (с notch/Dynamic Island)
-        // Используем либо safeAreaTop > 0, либо высоту экрана >= 800pt
         let isModernDevice = safeAreaTop > 0 || screenHeight >= 800
         
         if isModernDevice {
             // Устройства с notch/Dynamic Island
-            // Фиксированный отступ 80pt обеспечивает комфортное расстояние от Dynamic Island/notch
-            return 80
+            // Базовый отступ 80pt, но адаптируем для маленьких экранов
+            let baseTopPadding: CGFloat = 80
+            let maxTopPaddingRatio: CGFloat = 0.12 // Максимум 12% от высоты экрана
+            let maxAllowedPadding = screenHeight * maxTopPaddingRatio
+            
+            // Используем минимум из базового и максимального допустимого
+            return min(baseTopPadding, maxAllowedPadding)
         } else {
             // Старые устройства без notch (iPhone SE, 8, 7 и т.д.)
             // Высота статус-бара (20pt) + комфортный отступ (16pt)
