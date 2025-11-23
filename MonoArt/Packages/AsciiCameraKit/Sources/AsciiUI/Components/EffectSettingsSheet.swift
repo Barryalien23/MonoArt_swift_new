@@ -113,10 +113,10 @@ public struct EffectSettingsSheet: View {
         switch effect {
         case .ascii: return .effectASCII
         case .shapes: return .effectShapes
-        case .circles: return .effectCircle
-        case .squares: return .effectSquare
-        case .triangles: return .effectTriangle
-        case .diamonds: return .effectDiamond
+        case .circle: return .effectCircle
+        case .square: return .effectSquare
+        case .triangle: return .effectTriangle
+        case .diamond: return .effectDiamond
         }
     }
 }

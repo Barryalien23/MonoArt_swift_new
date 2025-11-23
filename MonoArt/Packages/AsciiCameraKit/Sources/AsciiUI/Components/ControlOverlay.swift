@@ -91,7 +91,8 @@ public struct ControlOverlay: View {
                 }
             }
             .padding(.horizontal, DesignSpacing.xl)
-            .padding(.vertical, DesignSpacing.base)
+            .padding(.top, DesignSpacing.xl)
+            .padding(.bottom, DesignSpacing.base)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(controllerBackground)
             .shadow(color: DesignColor.black.opacity(0.4), radius: 24, x: 0, y: 12)
@@ -201,10 +202,10 @@ public struct ControlOverlay: View {
         switch effect {
         case .ascii: return .effectASCII
         case .shapes: return .effectShapes
-        case .circles: return .effectCircle
-        case .squares: return .effectSquare
-        case .triangles: return .effectTriangle
-        case .diamonds: return .effectDiamond
+        case .circle: return .effectCircle
+        case .square: return .effectSquare
+        case .triangle: return .effectTriangle
+        case .diamond: return .effectDiamond
         }
     }
 }

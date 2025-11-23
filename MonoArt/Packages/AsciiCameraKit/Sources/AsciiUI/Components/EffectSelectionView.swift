@@ -36,58 +36,54 @@ public struct EffectSelectionView: View {
                                 isSelected: effect == selectedEffect,
                                 action: {
                                     onSelectEffect(effect)
-                                    onDismiss()
                                 }
                             )
                         }
                     }
-                    .padding(.horizontal, DesignSpacing.xl)
+                    .padding(.leading, DesignSpacing.xl)
+                    .padding(.trailing, 100)
                 }
                 .padding(.vertical, DesignSpacing.xl)
-                .background(DesignColor.black.opacity(0.92))
+                .background(DesignColor.black)
             }
 
             // Back button with gradient shadow overlay on the right
-            HStack {
+            HStack(spacing: 0) {
                 Spacer()
-                VStack {
-                    Spacer()
-                    backButtonWithShadow
-                        .padding(.trailing, DesignSpacing.xl)
-                        .padding(.bottom, DesignSpacing.xl)
-                }
+                backButtonWithShadow
             }
+            .padding(.bottom, DesignSpacing.xl)
         }
         .frame(height: 152)
     }
 
     private var backButtonWithShadow: some View {
         ZStack(alignment: .trailing) {
-            // Gradient shadow overlay
+            // Gradient shadow overlay extending to the right edge
             LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: DesignColor.black.opacity(0), location: 0),
-                    .init(color: DesignColor.black.opacity(0.87), location: 0.13)
+                    .init(color: DesignColor.black, location: 0.5)
                 ]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
-            .frame(width: 87)
+            .frame(width: 100, height: 120)
+            .frame(maxWidth: .infinity, alignment: .trailing)
 
-            // Back button
+            // Back button overlaid on top
             Button(action: onDismiss) {
-                VStack(spacing: DesignSpacing.s) {
-                    DesignIconView(.arrowBack, color: DesignColor.white, size: 24)
-                }
-                .frame(width: 64, height: 120)
-                .background(
-                    RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
-                        .fill(DesignColor.mainGrey)
-                        .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
-                )
+                DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
+                    .offset(x: -4)
+                    .frame(width: 64, height: 120)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                            .fill(DesignColor.mainGrey)
+                            .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
+                    )
             }
             .buttonStyle(DesignPressFeedbackStyle())
-            .padding(.leading, DesignSpacing.base)
+            .padding(.trailing, DesignSpacing.xl)
         }
     }
 }
@@ -114,11 +110,7 @@ private struct EffectTile: View {
 
     private var tileBackground: some View {
         RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
-            .fill(DesignColor.mainGrey)
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
-                    .stroke(isSelected ? DesignColor.white : Color.clear, lineWidth: 1)
-            )
+            .fill(isSelected ? DesignColor.greyActive : DesignColor.mainGrey)
             .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
     }
 
@@ -126,10 +118,10 @@ private struct EffectTile: View {
         switch effect {
         case .ascii: return .effectASCII
         case .shapes: return .effectShapes
-        case .circles: return .effectCircle
-        case .squares: return .effectSquare
-        case .triangles: return .effectTriangle
-        case .diamonds: return .effectDiamond
+        case .circle: return .effectCircle
+        case .square: return .effectSquare
+        case .triangle: return .effectTriangle
+        case .diamond: return .effectDiamond
         }
     }
 }
