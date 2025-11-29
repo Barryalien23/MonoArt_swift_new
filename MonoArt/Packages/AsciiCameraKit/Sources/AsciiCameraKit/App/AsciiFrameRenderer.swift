@@ -67,7 +67,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
         // Determine width factor dynamically to prevent overflow at high densities
         var widthFactor = RenderingConstants.baseCharWidthFactor - (CGFloat(columns) / 200.0) * 0.08
         widthFactor = max(0.52, widthFactor)
-        if effect == .circles {
+        if effect == .circle {
             widthFactor *= 0.92 // circles need slightly wider cells to stay round
         }
 
@@ -96,7 +96,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
 
         let renderer = UIGraphicsImageRenderer(size: canvasSize)
         let circleLookup: [Character: Int] = {
-            guard effect == .circles else { return [:] }
+            guard effect == .circle else { return [:] }
             var map: [Character: Int] = [:]
             let characters = effect.characterSet
             for (index, character) in characters.enumerated() {
@@ -113,7 +113,7 @@ public struct AsciiFrameRenderer: AsciiFrameRendering {
             // Clip to canvas bounds to prevent overflow
             cgContext.clip(to: CGRect(origin: .zero, size: canvasSize))
 
-            if effect == .circles {
+            if effect == .circle {
                 drawCircleGrid(
                     lines: lines,
                     columns: columns,

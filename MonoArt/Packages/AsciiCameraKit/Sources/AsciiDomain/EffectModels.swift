@@ -5,10 +5,10 @@ import Foundation
 public enum EffectType: String, CaseIterable, Codable, Sendable {
     case ascii
     case shapes
-    case circles
-    case squares
-    case triangles
-    case diamonds
+    case circle = "circle"
+    case square = "square"
+    case triangle = "triangle"
+    case diamond = "diamond"
 
     /// Parameters that are relevant to this effect.
     /// This allows the UI to selectively enable sliders while keeping the reducer generic.
@@ -18,13 +18,13 @@ public enum EffectType: String, CaseIterable, Codable, Sendable {
             return [.cell, .jitter, .softy]
         case .shapes:
             return [.cell, .jitter, .softy]
-        case .circles:
+        case .circle:
             return [.cell, .jitter, .softy]
-        case .squares:
+        case .square:
             return [.cell, .softy]
-        case .triangles:
+        case .triangle:
             return [.cell, .jitter, .softy]
-        case .diamonds:
+        case .diamond:
             return [.cell, .jitter, .softy]
         }
     }
@@ -41,13 +41,13 @@ public extension EffectType {
             return "h0\n1&"
         case .shapes:
             return "@*\n#+"
-        case .circles:
+        case .circle:
             return "oo\n()"
-        case .squares:
+        case .square:
             return "[]\n##"
-        case .triangles:
+        case .triangle:
             return "/\\\\\n<>"
-        case .diamonds:
+        case .diamond:
             return "<>\n/\\\\"
         }
     }

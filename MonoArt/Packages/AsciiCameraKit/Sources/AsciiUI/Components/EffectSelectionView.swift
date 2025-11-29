@@ -6,88 +6,119 @@ import SwiftUI
 public struct EffectSelectionView: View {
     let selectedEffect: EffectType
     let availableEffects: [EffectType]
+    let isCaptureInFlight: Bool
+    let isImportMode: Bool
     let onSelectEffect: (EffectType) -> Void
     let onDismiss: () -> Void
+    let onImport: () -> Void
+    let onCapture: () -> Void
+    let onFlip: () -> Void
+    let onSaveImport: () -> Void
+    let onCancelImport: () -> Void
 
     public init(
         selectedEffect: EffectType,
         availableEffects: [EffectType],
+        isCaptureInFlight: Bool = false,
+        isImportMode: Bool = false,
         onSelectEffect: @escaping (EffectType) -> Void,
-        onDismiss: @escaping () -> Void
+        onDismiss: @escaping () -> Void,
+        onImport: @escaping () -> Void,
+        onCapture: @escaping () -> Void,
+        onFlip: @escaping () -> Void,
+        onSaveImport: @escaping () -> Void,
+        onCancelImport: @escaping () -> Void
     ) {
         self.selectedEffect = selectedEffect
         self.availableEffects = availableEffects
+        self.isCaptureInFlight = isCaptureInFlight
+        self.isImportMode = isImportMode
         self.onSelectEffect = onSelectEffect
         self.onDismiss = onDismiss
+        self.onImport = onImport
+        self.onCapture = onCapture
+        self.onFlip = onFlip
+        self.onSaveImport = onSaveImport
+        self.onCancelImport = onCancelImport
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            // Black background container
-            VStack(spacing: 0) {
-                Spacer()
-                
-                // Horizontal scrollable effects list
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: DesignSpacing.s) {
-                        ForEach(availableEffects, id: \.self) { effect in
-                            EffectTile(
-                                effect: effect,
-                                isSelected: effect == selectedEffect,
-                                action: {
-                                    onSelectEffect(effect)
-                                    onDismiss()
-                                }
-                            )
+        VStack(spacing: DesignSpacing.s) {
+            // Action bar for import/capture/flip
+            DesignActionBar(
+                mode: isImportMode ? .import : .camera,
+                primaryState: isCaptureInFlight ? .processing : .idle,
+                isLocked: isCaptureInFlight,
+                onLeft: onImport,
+                onPrimary: isImportMode ? onSaveImport : onCapture,
+                onRight: isImportMode ? onCancelImport : onFlip
+            )
+            
+            // Effects selection container
+            ZStack(alignment: .bottom) {
+                // Black background container
+                VStack(spacing: 0) {
+                    Spacer()
+                    
+                    // Horizontal scrollable effects list
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: DesignSpacing.s) {
+                            ForEach(availableEffects, id: \.self) { effect in
+                                EffectTile(
+                                    effect: effect,
+                                    isSelected: effect == selectedEffect,
+                                    action: {
+                                        onSelectEffect(effect)
+                                    }
+                                )
+                            }
                         }
+                        .padding(.leading, DesignSpacing.xl)
+                        .padding(.trailing, 100)
                     }
-                    .padding(.horizontal, DesignSpacing.xl)
+                    .padding(.vertical, DesignSpacing.xl)
+                    .background(DesignColor.black)
                 }
-                .padding(.vertical, DesignSpacing.xl)
-                .background(DesignColor.black.opacity(0.92))
-            }
 
-            // Back button with gradient shadow overlay on the right
-            HStack {
-                Spacer()
-                VStack {
+                // Back button with gradient shadow overlay on the right
+                HStack(spacing: 0) {
                     Spacer()
                     backButtonWithShadow
-                        .padding(.trailing, DesignSpacing.xl)
-                        .padding(.bottom, DesignSpacing.xl)
                 }
+                .padding(.bottom, DesignSpacing.xl)
             }
+            .frame(height: 152)
+            .shadow(color: DesignColor.black.opacity(0.4), radius: 24, x: 0, y: 12)
         }
-        .frame(height: 152)
     }
 
     private var backButtonWithShadow: some View {
         ZStack(alignment: .trailing) {
-            // Gradient shadow overlay
+            // Gradient shadow overlay extending to the right edge
             LinearGradient(
                 gradient: Gradient(stops: [
                     .init(color: DesignColor.black.opacity(0), location: 0),
-                    .init(color: DesignColor.black.opacity(0.87), location: 0.13)
+                    .init(color: DesignColor.black, location: 0.5)
                 ]),
                 startPoint: .leading,
                 endPoint: .trailing
             )
-            .frame(width: 87)
+            .frame(width: 100, height: 120)
+            .frame(maxWidth: .infinity, alignment: .trailing)
 
-            // Back button
+            // Back button overlaid on top
             Button(action: onDismiss) {
-                VStack(spacing: DesignSpacing.s) {
-                    DesignIconView(.arrowBack, color: DesignColor.white, size: 24)
-                }
-                .frame(width: 64, height: 120)
-                .background(
-                    RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
-                        .fill(DesignColor.mainGrey)
-                        .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
-                )
+                DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
+                    .offset(x: -4)
+                    .frame(width: 64, height: 120)
+                    .background(
+                        RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                            .fill(DesignColor.mainGrey)
+                            .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
+                    )
             }
             .buttonStyle(DesignPressFeedbackStyle())
-            .padding(.leading, DesignSpacing.base)
+            .padding(.trailing, DesignSpacing.xl)
         }
     }
 }
@@ -114,11 +145,7 @@ private struct EffectTile: View {
 
     private var tileBackground: some View {
         RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
-            .fill(DesignColor.mainGrey)
-            .overlay(
-                RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
-                    .stroke(isSelected ? DesignColor.white : Color.clear, lineWidth: 1)
-            )
+            .fill(isSelected ? DesignColor.greyActive : DesignColor.mainGrey)
             .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
     }
 
@@ -126,10 +153,10 @@ private struct EffectTile: View {
         switch effect {
         case .ascii: return .effectASCII
         case .shapes: return .effectShapes
-        case .circles: return .effectCircle
-        case .squares: return .effectSquare
-        case .triangles: return .effectTriangle
-        case .diamonds: return .effectDiamond
+        case .circle: return .effectCircle
+        case .square: return .effectSquare
+        case .triangle: return .effectTriangle
+        case .diamond: return .effectDiamond
         }
     }
 }

@@ -86,8 +86,8 @@ public final class AppViewModel: ObservableObject {
 
     public func updateParameter(_ parameter: EffectParameter, value: Double) {
         let adjustedValue: Double
-        if selectedEffect == .circles && parameter == .jitter {
-            // Circles effect clamps jitter to multiples of five for deterministic animation, matching Android logic.
+        if selectedEffect == .circle && parameter == .jitter {
+            // Circle effect clamps jitter to multiples of five for deterministic animation, matching Android logic.
             adjustedValue = (value / 5.0).rounded() * 5.0
         } else {
             adjustedValue = value
@@ -370,10 +370,10 @@ public final class AppViewModel: ObservableObject {
     private static let effectDefaults: [EffectType: EffectParameters] = [
         .ascii: EffectParameters(),
         .shapes: EffectParameters(),
-        .circles: EffectParameters(),
-        .squares: EffectParameters(),
-        .triangles: EffectParameters(),
-        .diamonds: EffectParameters()
+        .circle: EffectParameters(),
+        .square: EffectParameters(),
+        .triangle: EffectParameters(),
+        .diamond: EffectParameters()
     ]
 }
 

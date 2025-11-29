@@ -96,8 +96,15 @@ public struct RootView: View {
                         EffectSelectionView(
                             selectedEffect: viewModel.selectedEffect,
                             availableEffects: EffectType.allCases,
+                            isCaptureInFlight: viewModel.isCaptureInFlight,
+                            isImportMode: viewModel.isImportMode,
                             onSelectEffect: viewModel.selectEffect,
-                            onDismiss: { viewModel.dismissEffectSelection() }
+                            onDismiss: { viewModel.dismissEffectSelection() },
+                            onImport: importAction,
+                            onCapture: captureTapped,
+                            onFlip: flipTapped,
+                            onSaveImport: saveImportAction,
+                            onCancelImport: cancelImportAction
                         )
                         .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom, internalVerticalPadding: DesignSpacing.xl))
                     } else {

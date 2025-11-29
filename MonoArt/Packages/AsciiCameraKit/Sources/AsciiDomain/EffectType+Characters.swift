@@ -8,13 +8,13 @@ public extension EffectType {
             return Array(" .'`\"^,:;Il!i><~+_-?][}{1)(|\\\\/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$")
         case .shapes:
             return [" ", "▁", "·", "▖", "▂", "∙", "▗", "▃", "•", "▘", "▅", "▙", "▛", "█"]
-        case .circles:
+        case .circle:
             return [" ", "·", "∙", "•", "●", "⬤"]
-        case .squares:
+        case .square:
             return [" ", "▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"]
-        case .triangles:
+        case .triangle:
             return [" ", "˙", "·", "▵", "△", "▴", "▲"]
-        case .diamonds:
+        case .diamond:
             return [" ", "▖", "▗", "▘", "▝", "▚", "▞", "▙", "▛", "▜", "▟", "█"]
         }
     }
