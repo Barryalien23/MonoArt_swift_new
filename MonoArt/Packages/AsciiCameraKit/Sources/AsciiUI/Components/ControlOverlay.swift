@@ -29,7 +29,7 @@ public struct ControlOverlay: View {
     public let onSelectEffect: (EffectType) -> Void
     public let onSelectColorTarget: (ColorTarget) -> Void
     public let onShowEffects: () -> Void
-    public let onShowSettings: () -> Void
+    public let onShowSettings: (EffectParameter) -> Void
     public let onShowColors: () -> Void
 
     public init(
@@ -47,7 +47,7 @@ public struct ControlOverlay: View {
         onSelectEffect: @escaping (EffectType) -> Void,
         onSelectColorTarget: @escaping (ColorTarget) -> Void,
         onShowEffects: @escaping () -> Void,
-        onShowSettings: @escaping () -> Void,
+        onShowSettings: @escaping (EffectParameter) -> Void,
         onShowColors: @escaping () -> Void
     ) {
         self.selectedEffect = selectedEffect
@@ -113,9 +113,9 @@ public struct ControlOverlay: View {
 
     private var settingsRow: some View {
         HStack(spacing: DesignSpacing.md) {
-            DesignParameterTile(icon: .settingCell, title: "CELL", action: onShowSettings)
-            DesignParameterTile(icon: .settingJitter, title: "JITTER", action: onShowSettings)
-            DesignParameterTile(icon: .settingContrast, title: "CONTRAST", action: onShowSettings)
+            DesignParameterTile(icon: .settingCell, title: "CELL", action: { onShowSettings(.cell) })
+            DesignParameterTile(icon: .settingJitter, title: "JITTER", action: { onShowSettings(.jitter) })
+            DesignParameterTile(icon: .settingContrast, title: "CONTRAST", action: { onShowSettings(.softy) })
         }
         .frame(maxWidth: .infinity)
     }

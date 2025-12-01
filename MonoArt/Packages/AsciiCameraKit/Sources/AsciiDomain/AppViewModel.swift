@@ -30,6 +30,8 @@ public final class AppViewModel: ObservableObject {
     @Published public var isSettingsPresented: Bool
     @Published public var isColorPickerPresented: Bool
     @Published public var isEffectSelectionPresented: Bool
+    @Published public var isParameterEditingPresented: Bool
+    @Published public var selectedEditingParameter: EffectParameter
 
     public init(
         selectedEffect: EffectType = .ascii,
@@ -43,7 +45,9 @@ public final class AppViewModel: ObservableObject {
         selectedColorTarget: ColorTarget = .symbols,
         isSettingsPresented: Bool = false,
         isColorPickerPresented: Bool = false,
-        isEffectSelectionPresented: Bool = false
+        isEffectSelectionPresented: Bool = false,
+        isParameterEditingPresented: Bool = false,
+        selectedEditingParameter: EffectParameter = .cell
     ) {
         self.selectedEffect = selectedEffect
         self.parameters = AppViewModel.normalizedParameters(for: selectedEffect, existing: parameters)
@@ -69,6 +73,8 @@ public final class AppViewModel: ObservableObject {
         self.isSettingsPresented = isSettingsPresented
         self.isColorPickerPresented = isColorPickerPresented
         self.isEffectSelectionPresented = isEffectSelectionPresented
+        self.isParameterEditingPresented = isParameterEditingPresented
+        self.selectedEditingParameter = selectedEditingParameter
 
         if previewFrame == nil && previewStatus == .running {
             self.previewStatus = .idle
@@ -237,6 +243,19 @@ public final class AppViewModel: ObservableObject {
 
     public func dismissEffectSelection() {
         isEffectSelectionPresented = false
+    }
+
+    public func presentParameterEditing(for parameter: EffectParameter) {
+        selectedEditingParameter = parameter
+        isParameterEditingPresented = true
+    }
+
+    public func dismissParameterEditing() {
+        isParameterEditingPresented = false
+    }
+
+    public func selectParameterForEditing(_ parameter: EffectParameter) {
+        selectedEditingParameter = parameter
     }
 
     // MARK: - Color Management

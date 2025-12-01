@@ -92,7 +92,19 @@ public struct RootView: View {
                 VStack(spacing: DesignSpacing.base) {
                     Spacer()
                     
-                    if viewModel.isEffectSelectionPresented {
+                    if viewModel.isParameterEditingPresented {
+                        ParameterEditingOverlay(
+                            viewModel: viewModel,
+                            selectedParameter: viewModel.selectedEditingParameter,
+                            onBack: { viewModel.dismissParameterEditing() },
+                            onImport: importAction,
+                            onCapture: captureTapped,
+                            onFlip: flipTapped,
+                            onSaveImport: saveImportAction,
+                            onCancelImport: cancelImportAction
+                        )
+                        .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
+                    } else if viewModel.isEffectSelectionPresented {
                         EffectSelectionView(
                             selectedEffect: viewModel.selectedEffect,
                             availableEffects: EffectType.allCases,
@@ -123,7 +135,7 @@ public struct RootView: View {
                             onSelectEffect: viewModel.selectEffect,
                             onSelectColorTarget: viewModel.selectColorTarget,
                             onShowEffects: { viewModel.presentEffectSelection() },
-                            onShowSettings: { viewModel.presentSettingsSheet() },
+                            onShowSettings: { parameter in viewModel.presentParameterEditing(for: parameter) },
                             onShowColors: { viewModel.presentColorPicker(for: viewModel.selectedColorTarget) }
                         )
                         .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
