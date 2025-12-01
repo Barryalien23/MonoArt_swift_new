@@ -109,6 +109,7 @@ public struct ParameterEditingOverlay: View {
                             DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
                         }
                         .frame(width: 50, height: 50)
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                 }
