@@ -104,6 +104,16 @@ public struct RootView: View {
                             onCancelImport: cancelImportAction
                         )
                         .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
+                    } else if viewModel.isColorPickerPresented {
+                        ColorPickerSheet(
+                            viewModel: viewModel,
+                            onImport: importAction,
+                            onCapture: captureTapped,
+                            onFlip: flipTapped,
+                            onSaveImport: saveImportAction,
+                            onCancelImport: cancelImportAction
+                        )
+                        .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom, internalVerticalPadding: DesignSpacing.xl))
                     } else if viewModel.isEffectSelectionPresented {
                         EffectSelectionView(
                             selectedEffect: viewModel.selectedEffect,
@@ -157,14 +167,6 @@ public struct RootView: View {
                     .presentationDetents([.medium, .large])
             } else {
                 EffectSettingsSheet(viewModel: viewModel)
-            }
-        }
-        .sheet(isPresented: $viewModel.isColorPickerPresented) {
-            if #available(iOS 16.0, *) {
-                ColorPickerSheet(viewModel: viewModel)
-                    .presentationDetents([.medium, .large])
-            } else {
-                ColorPickerSheet(viewModel: viewModel)
             }
         }
         // Альтернативный метод через .safeAreaInset (раскомментировать, если VStack не работает)

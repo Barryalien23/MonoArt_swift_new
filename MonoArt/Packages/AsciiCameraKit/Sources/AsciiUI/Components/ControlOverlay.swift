@@ -162,8 +162,9 @@ public struct ControlOverlay: View {
         switch palette.symbols {
         case .solid(let descriptor):
             return .solid(descriptor.swiftUIColor)
-        case .gradient(let stops):
-            return .gradient(gradient(from: stops))
+        case .gradient:
+            // When gradient is active, show white color in disabled state
+            return .solid(DesignColor.white)
         }
     }
 
@@ -330,6 +331,7 @@ private struct DesignColorIndicator: View {
                 .padding(innerPadding)
         }
         .frame(width: size, height: size)
+        .opacity(indicatorOpacity)
     }
 
     @ViewBuilder
@@ -338,11 +340,9 @@ private struct DesignColorIndicator: View {
         case .solid(let color):
             Circle()
                 .fill(color)
-                .opacity(fillOpacity)
         case .gradient(let gradient):
             Circle()
                 .fill(LinearGradient(gradient: gradient, startPoint: .topLeading, endPoint: .bottomTrailing))
-                .opacity(fillOpacity)
         }
     }
 
@@ -355,12 +355,12 @@ private struct DesignColorIndicator: View {
         }
     }
 
-    private var fillOpacity: Double {
+    private var indicatorOpacity: Double {
         switch state {
         case .default:
             return 1
         case .disabled:
-            return 0.6
+            return 0.4
         }
     }
 }

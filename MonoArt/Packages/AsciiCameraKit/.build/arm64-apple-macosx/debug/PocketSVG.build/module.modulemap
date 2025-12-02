@@ -1,4 +1,0 @@
-module PocketSVG {
-    umbrella header "/Users/barryalien/Documents/code/MonoArt/MonoArt/Packages/AsciiCameraKit/.build/checkouts/PocketSVG/Sources/include/PocketSVG.h"
-    export *
-}

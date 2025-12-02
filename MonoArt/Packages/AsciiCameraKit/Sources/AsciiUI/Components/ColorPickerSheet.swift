@@ -5,256 +5,574 @@ import SwiftUI
 import UIKit
 #endif
 
+/// Color picker sheet matching Figma design with HSV picker, opacity slider, and gradient support
 @available(iOS 16.0, *)
 public struct ColorPickerSheet: View {
     @ObservedObject private var viewModel: AppViewModel
-    @State private var selectedGradientIndex: Int = 0
-
-    public init(viewModel: AppViewModel) {
+    @State private var selectedTab: ColorTab = .bgColor
+    @State private var hue: Double = 0
+    @State private var saturation: Double = 1
+    @State private var brightness: Double = 1
+    @State private var opacity: Double = 1
+    @State private var selectedGradientKnob: Int = 0
+    
+    public let onImport: (() -> Void)?
+    public let onCapture: (() -> Void)?
+    public let onFlip: (() -> Void)?
+    public let onSaveImport: (() -> Void)?
+    public let onCancelImport: (() -> Void)?
+    
+    public init(
+        viewModel: AppViewModel,
+        onImport: (() -> Void)? = nil,
+        onCapture: (() -> Void)? = nil,
+        onFlip: (() -> Void)? = nil,
+        onSaveImport: (() -> Void)? = nil,
+        onCancelImport: (() -> Void)? = nil
+    ) {
         self._viewModel = ObservedObject(initialValue: viewModel)
-        if case .gradient(let stops) = viewModel.palette.symbols {
-            _selectedGradientIndex = State(initialValue: min(1, stops.count - 1))
+        self.onImport = onImport
+        self.onCapture = onCapture
+        self.onFlip = onFlip
+        self.onSaveImport = onSaveImport
+        self.onCancelImport = onCancelImport
+        
+        // Set initial tab based on what user clicked
+        // selectedColorTarget tells us which button was pressed
+        if viewModel.selectedColorTarget == .background {
+            _selectedTab = State(initialValue: .bgColor)
+        } else {
+            // User clicked COLOR #2 or GRADIENT
+            // Open color1 tab (user wants to edit mono color or switch from gradient)
+            _selectedTab = State(initialValue: .color1)
         }
     }
-
+    
     public var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: DesignSpacing.xl) {
-                    layerSelector
-                    presetsGrid
-                    gradientEditor
+        VStack(spacing: DesignSpacing.md) {
+            // Action bar (same as effect selection)
+            DesignActionBar(
+                mode: viewModel.isImportMode ? .import : .camera,
+                primaryState: viewModel.isCaptureInFlight ? .processing : .idle,
+                isLocked: false,
+                onLeft: onImport ?? {},
+                onPrimary: viewModel.isImportMode ? (onSaveImport ?? onCapture ?? {}) : (onCapture ?? {}),
+                onRight: viewModel.isImportMode ? (onCancelImport ?? onFlip ?? {}) : (onFlip ?? {})
+            )
+            
+            // Color picker block
+            colorPickerBlock
+        }
+        .onAppear {
+            updateHSVFromCurrentColor()
+        }
+    }
+    
+    private var colorPickerBlock: some View {
+        VStack(spacing: DesignSpacing.md) {
+            // Three-tab selector
+            tabSelector
+            
+            // Gradient slider (only visible in gradient mode)
+            if selectedTab == .gradient {
+                gradientSlider
+            }
+            
+            // Color picker panels
+            colorPickerPanels
+            
+            // Hue slider and back button
+            bottomControls
+        }
+        .padding(DesignSpacing.xl)
+        .background(DesignColor.black)
+        .shadow(color: DesignColor.black.opacity(0.4), radius: 24, x: 0, y: 12)
+    }
+    
+    private var tabSelector: some View {
+        HStack(spacing: DesignSpacing.md) {
+            tabButton(.bgColor, "BG COLOR", bgColorIndicator)
+            tabButton(.color1, "COLOR #2", color1Indicator)
+            tabButton(.gradient, "GRADIENT", gradientIndicator)
+        }
+    }
+    
+    private func tabButton(_ tab: ColorTab, _ title: String, _ indicator: some View) -> some View {
+        Button {
+            withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                selectedTab = tab
+                
+                // Initialize gradient when switching to gradient tab
+                if tab == .gradient, case .solid = viewModel.palette.symbols {
+                    viewModel.selectColorTarget(.symbols)
+                    viewModel.setSymbolGradientEnabled(true)
                 }
-                .padding(DesignSpacing.xl)
+                
+                updateHSVFromCurrentColor()
             }
-            .background(DesignColor.mainGrey.ignoresSafeArea())
-            .navigationTitle("Colors")
-            .toolbar { doneToolbarItem }
-        }
-        .onChange(of: viewModel.selectedColorTarget) { newValue in
-            if newValue == .background {
-                selectedGradientIndex = 0
+        } label: {
+            HStack(spacing: DesignSpacing.sm) {
+                indicator
+                    .frame(width: 16, height: 16)
+                DesignTokens.Typography.body2.text(title)
+                    .foregroundColor(selectedTab == tab ? DesignColor.white : DesignColor.white40)
             }
-        }
-    }
-
-    private var layerSelector: some View {
-        DesignSegmentedControl(
-            options: ColorTarget.allCases,
-            selection: Binding(
-                get: { viewModel.selectedColorTarget },
-                set: { target in viewModel.selectColorTarget(target) }
-            ),
-            spacing: DesignSpacing.md,
-            showsBackground: true,
-            configuration: { target in
-                DesignSegmentButton.Configuration(
-                    title: target == .background ? "BG COLOR" : "SYMBOLS"
-                )
-            }
-        )
-    }
-
-    private var presetsGrid: some View {
-        VStack(alignment: .leading, spacing: DesignSpacing.lg) {
-            DesignTokens.Typography.body2.text("PRESETS")
-                .foregroundColor(DesignColor.white60)
-
-            LazyVGrid(columns: presetColumns, spacing: DesignSpacing.lg) {
-                ForEach(ColorDescriptor.Preset.allCases, id: \.self, content: presetButton(preset:))
-            }
-
-            ColorPicker("Custom Color", selection: activeColorBinding, supportsOpacity: false)
-                .labelsHidden()
-                .scaleEffect(x: 1, y: 1, anchor: .leading)
-        }
-    }
-
-    private var gradientEditor: some View {
-        VStack(alignment: .leading, spacing: DesignSpacing.lg) {
-            Toggle(isOn: gradientEnabledBinding) {
-                DesignTokens.Typography.body2.text("SYMBOL GRADIENT")
-                    .foregroundColor(DesignColor.white)
-            }
-            .toggleStyle(.switch)
-            .disabled(!viewModel.isGradientEditingEnabled)
-            .tint(.orange)
-
-            if viewModel.isSymbolGradientEnabled {
-                gradientStopSelector
-                selectedGradientControls
-                gradientActions
-            }
-        }
-        .padding(DesignSpacing.lg)
-        .background(
-            RoundedRectangle(cornerRadius: DesignRadius.xl, style: .continuous)
-                .fill(DesignColor.greyActive)
-        )
-    }
-
-    private var gradientStopSelector: some View {
-        Picker("Editing Stop", selection: $selectedGradientIndex) {
-            ForEach(Array(viewModel.symbolGradientStops.enumerated()), id: \.offset) { index, stop in
-                Text("Stop \(index + 1) – \(formattedPercentage(stop.position))")
-                    .tag(index)
-            }
-        }
-        .pickerStyle(.segmented)
-        .onChange(of: viewModel.symbolGradientStops.count) { count in
-            selectedGradientIndex = min(selectedGradientIndex, max(count - 1, 0))
-        }
-    }
-
-    private var selectedGradientControls: some View {
-        ForEach(Array(viewModel.symbolGradientStops.enumerated()), id: \.offset) { index, stop in
-            if index == selectedGradientIndex {
-                VStack(alignment: .leading, spacing: DesignSpacing.lg) {
-                    DesignTokens.Typography.body2.text("Gradient Stop \(index + 1)")
-                        .foregroundColor(DesignColor.white)
-
-                    DesignSliderView(
-                        value: Binding(
-                            get: { viewModel.symbolGradientStops[index].position },
-                            set: { newValue in viewModel.updateSymbolGradientPosition(at: index, position: newValue) }
-                        ),
-                        range: 0...1,
-                        step: 0.01,
-                        label: "POSITION",
-                        minimumLabel: "START",
-                        maximumLabel: "END",
-                        valueFormatter: { formattedPercentage($0) }
-                    )
-                }
-            }
-        }
-    }
-
-    private var gradientActions: some View {
-        HStack(spacing: DesignSpacing.lg) {
-            Button("Add Stop", action: viewModel.addSymbolGradientStop)
-                .disabled(viewModel.symbolGradientStops.count >= 4)
-            Button("Remove Stop") {
-                viewModel.removeSymbolGradientStop(at: selectedGradientIndex)
-                selectedGradientIndex = max(0, selectedGradientIndex - 1)
-            }
-            .disabled(viewModel.symbolGradientStops.count <= 2)
-        }
-        .font(DesignTokens.Typography.body1.font())
-        .foregroundColor(DesignColor.white)
-    }
-
-    private var doneToolbarItem: some ToolbarContent {
-        ToolbarItem(placement: .cancellationAction) {
-            Button("Done") { viewModel.dismissColorPicker() }
-                .font(DesignTokens.Typography.body2.font())
-        }
-    }
-
-    private var gradientEnabledBinding: Binding<Bool> {
-        Binding(
-            get: { viewModel.isSymbolGradientEnabled },
-            set: { newValue in viewModel.setSymbolGradientEnabled(newValue) }
-        )
-    }
-
-    private var presetColumns: [GridItem] {
-        Array(repeating: GridItem(.flexible(), spacing: DesignSpacing.lg), count: 4)
-    }
-
-    private func presetButton(preset: ColorDescriptor.Preset) -> some View {
-        let descriptor = ColorDescriptor.preset(preset)
-
-        return Button(action: { handlePresetTap(descriptor) }) {
-            Circle()
-                .fill(descriptor.swiftUIColor)
-                .frame(width: 48, height: 48)
-                .overlay(selectionRing(for: descriptor))
-                .shadow(color: .black.opacity(0.35), radius: 4, x: 0, y: 2)
-                .overlay(
-                    Circle()
-                        .strokeBorder(Color.white.opacity(0.4), lineWidth: 1)
-                )
-                .accessibilityLabel("Select \(preset.rawValue.capitalized) color")
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, DesignSpacing.md)
+            .background(
+                RoundedRectangle(cornerRadius: DesignRadius.sm, style: .continuous)
+                    .fill(selectedTab == tab ? DesignColor.greyActive : DesignColor.greyDisable)
+            )
         }
         .buttonStyle(.plain)
     }
-
-    private func selectionRing(for descriptor: ColorDescriptor) -> some View {
-        Circle()
-            .stroke(currentSelectionEquals(descriptor) ? Color.white : Color.white.opacity(0.2), lineWidth: 3)
+    
+    private var bgColorIndicator: some View {
+        colorIndicatorView(for: viewModel.palette.background, isActive: selectedTab == .bgColor)
     }
-
-    private func currentSelectionEquals(_ descriptor: ColorDescriptor) -> Bool {
-        switch viewModel.selectedColorTarget {
-        case .background:
-            return viewModel.palette.background == descriptor
-        case .symbols:
-            if case let .solid(color) = viewModel.palette.symbols {
-                return color == descriptor
+    
+    private var color1Indicator: some View {
+        Group {
+            if case .solid(let color) = viewModel.palette.symbols {
+                colorIndicatorView(for: color, isActive: selectedTab == .color1)
+            } else {
+                // Disabled mono indicator when gradient is active
+                ZStack {
+                    Circle()
+                        .strokeBorder(DesignColor.white20, lineWidth: 1)
+                    Circle()
+                        .fill(DesignColor.white)
+                        .padding(3)
+                }
+                .opacity(0.4)
             }
-            return false
         }
     }
-
-    private func handlePresetTap(_ descriptor: ColorDescriptor) {
-        updateActiveColor(descriptor)
+    
+    private var gradientIndicator: some View {
+        Group {
+            if case .gradient(let stops) = viewModel.palette.symbols {
+                gradientIndicatorView(stops: stops, isActive: selectedTab == .gradient)
+            } else {
+                // Disabled gradient indicator
+                ZStack {
+                    Circle()
+                        .strokeBorder(DesignColor.white20, lineWidth: 1)
+                    Circle()
+                        .fill(
+                            LinearGradient(
+                                colors: [DesignColor.white40, DesignColor.white20],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .padding(3)
+                }
+                .opacity(0.4)
+            }
+        }
     }
-
-    private func formattedPercentage(_ value: Double) -> String {
-        String(format: "%.0f%%", value * 100)
+    
+    private func colorIndicatorView(for color: ColorDescriptor, isActive: Bool) -> some View {
+        ZStack {
+            Circle()
+                .strokeBorder(DesignColor.white, lineWidth: 1)
+            Circle()
+                .fill(color.swiftUIColor)
+                .padding(3)
+        }
+        .opacity(isActive ? 1.0 : 0.4)
     }
-
-    private var activeColorBinding: Binding<Color> {
-        Binding(
-            get: { activeColorDescriptor.swiftUIColor },
-            set: { newValue in updateActiveColor(descriptor(from: newValue)) }
+    
+    private func gradientIndicatorView(stops: [GradientStop], isActive: Bool) -> some View {
+        let colors = stops.map { $0.color.swiftUIColor }
+        return ZStack {
+            Circle()
+                .strokeBorder(DesignColor.white, lineWidth: 1)
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: colors.isEmpty ? [.white, .white] : colors,
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .padding(3)
+        }
+        .opacity(isActive ? 1.0 : 0.4)
+    }
+    
+    // MARK: - Gradient Slider
+    
+    private var gradientSlider: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Gradient background
+                if case .gradient(let stops) = viewModel.palette.symbols {
+                    let colors = stops.map { $0.color.swiftUIColor }
+                    RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                        .fill(
+                            LinearGradient(
+                                colors: colors.isEmpty ? [.white, .white] : colors,
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                        )
+                    
+                    // Two knobs
+                    ForEach(0..<stops.count, id: \.self) { index in
+                        gradientKnob(index: index, totalWidth: geometry.size.width)
+                    }
+                }
+            }
+        }
+        .frame(height: 40)
+    }
+    
+    private func gradientKnob(index: Int, totalWidth: CGFloat) -> some View {
+        let stops = viewModel.symbolGradientStops
+        guard stops.indices.contains(index) else {
+            return AnyView(EmptyView())
+        }
+        
+        let position = stops[index].position
+        let xOffset = position * (totalWidth - 40)
+        let isActive = selectedGradientKnob == index
+        
+        return AnyView(
+            ZStack {
+                RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                    .strokeBorder(isActive ? DesignColor.white : DesignColor.white60, lineWidth: 3)
+                    .padding(2)
+            }
+            .frame(width: 40, height: 40)
+            .offset(x: xOffset)
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        selectedGradientKnob = index
+                        let newPosition = max(0, min(1, value.location.x / totalWidth))
+                        viewModel.updateSymbolGradientPosition(at: index, position: newPosition)
+                        updateHSVFromGradientStop(index)
+                    }
+            )
+            .onTapGesture {
+                selectedGradientKnob = index
+                updateHSVFromGradientStop(index)
+            }
         )
     }
-
-    private var activeColorDescriptor: ColorDescriptor {
-        if viewModel.isGradientEditingEnabled && viewModel.isSymbolGradientEnabled {
-            let stops = viewModel.symbolGradientStops
-            guard stops.indices.contains(selectedGradientIndex) else {
-                return ColorDescriptor.preset(.white)
+    
+    // MARK: - Color Picker Panels
+    
+    private var colorPickerPanels: some View {
+        HStack(spacing: DesignSpacing.md) {
+            // Saturation/Value panel
+            saturationValuePanel
+            
+            // Opacity slider
+            opacitySlider
+        }
+        .frame(height: 118)
+    }
+    
+    private var saturationValuePanel: some View {
+        GeometryReader { geometry in
+            ZStack {
+                // Base hue color
+                Rectangle()
+                    .fill(Color(hue: hue, saturation: 1, brightness: 1))
+                
+                // White to transparent (saturation)
+                LinearGradient(
+                    colors: [.white, .clear],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                
+                // Transparent to black (brightness)
+                LinearGradient(
+                    colors: [.clear, .black],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                
+                // Knob with 2pt padding
+                ZStack {
+                    RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                        .strokeBorder(DesignColor.white, lineWidth: 3)
+                        .padding(2)
+                }
+                .frame(width: 40, height: 40)
+                .position(
+                    x: saturation * geometry.size.width,
+                    y: (1 - brightness) * geometry.size.height
+                )
             }
-            return stops[selectedGradientIndex].color
-        } else {
-            switch viewModel.selectedColorTarget {
-            case .background:
-                return viewModel.palette.background
-            case .symbols:
-                if case let .solid(color) = viewModel.palette.symbols {
-                    return color
+            .clipShape(RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous))
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        let widthValue = Double(geometry.size.width)
+                        let heightValue = Double(geometry.size.height)
+                        saturation = max(0, min(1, Double(value.location.x) / widthValue))
+                        brightness = max(0, min(1, 1.0 - (Double(value.location.y) / heightValue)))
+                        applyColorChange()
+                    }
+            )
+        }
+    }
+    
+    private var opacitySlider: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .top) {
+                // Checkerboard background
+                checkerboardPattern
+                
+                // Color with opacity gradient
+                LinearGradient(
+                    colors: [
+                        Color(hue: hue, saturation: saturation, brightness: brightness),
+                        Color(hue: hue, saturation: saturation, brightness: brightness).opacity(0)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                
+                // Knob with 2pt padding
+                ZStack {
+                    RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                        .strokeBorder(DesignColor.white, lineWidth: 3)
+                        .padding(2)
                 }
-                if case let .gradient(stops) = viewModel.palette.symbols, let first = stops.first {
-                    return first.color
+                .frame(width: 40, height: 40)
+                .offset(y: (1 - opacity) * (geometry.size.height - 40))
+            }
+            .clipShape(RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous))
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        let heightValue = Double(geometry.size.height)
+                        opacity = max(0, min(1, 1.0 - (Double(value.location.y) / heightValue)))
+                        applyColorChange()
+                    }
+            )
+        }
+        .frame(width: 40)
+    }
+    
+    private var checkerboardPattern: some View {
+        GeometryReader { geometry in
+            Canvas { context, size in
+                let squareSize: CGFloat = 8
+                let rows = Int(ceil(size.height / squareSize))
+                let cols = Int(ceil(size.width / squareSize))
+                
+                for row in 0..<rows {
+                    for col in 0..<cols {
+                        let isEven = (row + col) % 2 == 0
+                        let rect = CGRect(
+                            x: CGFloat(col) * squareSize,
+                            y: CGFloat(row) * squareSize,
+                            width: squareSize,
+                            height: squareSize
+                        )
+                        context.fill(
+                            Path(rect),
+                            with: .color(isEven ? Color(white: 0.9) : Color(white: 0.7))
+                        )
+                    }
                 }
-                return ColorDescriptor.preset(.white)
             }
         }
     }
-
-    private func updateActiveColor(_ descriptor: ColorDescriptor) {
-        if viewModel.isGradientEditingEnabled && viewModel.isSymbolGradientEnabled {
-            viewModel.updateSymbolGradientColor(at: selectedGradientIndex, color: descriptor)
-        } else {
-            viewModel.setSolidColor(descriptor)
+    
+    // MARK: - Bottom Controls
+    
+    private var bottomControls: some View {
+        HStack(spacing: DesignSpacing.md) {
+            // Hue slider
+            hueSlider
+            
+            // Back button - 24pt icon scaled to 16pt
+            Button {
+                viewModel.dismissColorPicker()
+            } label: {
+                RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                    .fill(DesignColor.mainGrey)
+                    .frame(width: 40, height: 40)
+                    .overlay(
+                        DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
+                    )
+            }
+            .buttonStyle(DesignPressFeedbackStyle())
+        }
+        .frame(height: 40)
+    }
+    
+    private var hueSlider: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                // Rainbow gradient
+                LinearGradient(
+                    gradient: Gradient(colors: [
+                        Color(hue: 0, saturation: 1, brightness: 1),
+                        Color(hue: 0.17, saturation: 1, brightness: 1),
+                        Color(hue: 0.33, saturation: 1, brightness: 1),
+                        Color(hue: 0.5, saturation: 1, brightness: 1),
+                        Color(hue: 0.67, saturation: 1, brightness: 1),
+                        Color(hue: 0.83, saturation: 1, brightness: 1),
+                        Color(hue: 1, saturation: 1, brightness: 1)
+                    ]),
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous))
+                
+                // Knob with 2pt padding
+                ZStack {
+                    RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
+                        .strokeBorder(DesignColor.white, lineWidth: 3)
+                        .padding(2)
+                }
+                .frame(width: 40, height: 40)
+                .offset(x: hue * (geometry.size.width - 40))
+            }
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        hue = max(0, min(1, value.location.x / geometry.size.width))
+                        applyColorChange()
+                    }
+            )
         }
     }
-
-    private func descriptor(from color: Color) -> ColorDescriptor {
+    
+    // MARK: - Color Management
+    
+    private func updateHSVFromCurrentColor() {
+        let color: ColorDescriptor
+        
+        switch selectedTab {
+        case .bgColor:
+            color = viewModel.palette.background
+        case .color1:
+            if case .solid(let solidColor) = viewModel.palette.symbols {
+                color = solidColor
+            } else {
+                color = .preset(.white)
+            }
+        case .gradient:
+            if case .gradient(let stops) = viewModel.palette.symbols {
+                if stops.isEmpty {
+                    color = .preset(.white)
+                } else if stops.indices.contains(selectedGradientKnob) {
+                    color = stops[selectedGradientKnob].color
+                } else {
+                    selectedGradientKnob = 0
+                    color = stops[0].color
+                }
+            } else {
+                // Fallback (should not happen as gradient is initialized in tabButton)
+                color = .preset(.white)
+            }
+        }
+        
+        let (h, s, b, a) = colorToHSV(color)
+        hue = h
+        saturation = s
+        brightness = b
+        opacity = a
+    }
+    
+    private func updateHSVFromGradientStop(_ index: Int) {
+        guard case .gradient(let stops) = viewModel.palette.symbols,
+              stops.indices.contains(index) else { return }
+        
+        let color = stops[index].color
+        let (h, s, b, a) = colorToHSV(color)
+        hue = h
+        saturation = s
+        brightness = b
+        opacity = a
+    }
+    
+    private func applyColorChange() {
+        let newColor = ColorDescriptor(
+            red: colorComponent(hue: hue, saturation: saturation, brightness: brightness, index: 0),
+            green: colorComponent(hue: hue, saturation: saturation, brightness: brightness, index: 1),
+            blue: colorComponent(hue: hue, saturation: saturation, brightness: brightness, index: 2),
+            alpha: opacity
+        )
+        
+        switch selectedTab {
+        case .bgColor:
+            // First set the target, then update the color
+            viewModel.selectColorTarget(.background)
+            viewModel.setSolidColor(newColor)
+        case .color1:
+            // First set the target, then update the color
+            viewModel.selectColorTarget(.symbols)
+            // When changing mono color, reset gradient
+            if case .gradient = viewModel.palette.symbols {
+                viewModel.setSymbolGradientEnabled(false)
+            }
+            viewModel.setSolidColor(newColor)
+        case .gradient:
+            viewModel.selectColorTarget(.symbols)
+            // Ensure gradient is enabled
+            if case .solid = viewModel.palette.symbols {
+                viewModel.setSymbolGradientEnabled(true)
+            }
+            viewModel.updateSymbolGradientColor(at: selectedGradientKnob, color: newColor)
+        }
+    }
+    
+    // MARK: - Color Conversion Helpers
+    
+    private func colorToHSV(_ color: ColorDescriptor) -> (h: Double, s: Double, b: Double, a: Double) {
         #if canImport(UIKit)
-        let uiColor = UIColor(color)
-        var r: CGFloat = 0
-        var g: CGFloat = 0
+        let uiColor = UIColor(red: color.red, green: color.green, blue: color.blue, alpha: color.alpha)
+        var h: CGFloat = 0
+        var s: CGFloat = 0
         var b: CGFloat = 0
         var a: CGFloat = 0
-        uiColor.getRed(&r, green: &g, blue: &b, alpha: &a)
-        return ColorDescriptor(red: Double(r), green: Double(g), blue: Double(b), alpha: Double(a))
+        uiColor.getHue(&h, saturation: &s, brightness: &b, alpha: &a)
+        return (Double(h), Double(s), Double(b), Double(a))
         #else
-        return ColorDescriptor.preset(.white)
+        return (0, 1, 1, 1)
+        #endif
+    }
+    
+    private func colorComponent(hue: Double, saturation: Double, brightness: Double, index: Int) -> Double {
+        #if canImport(UIKit)
+        let color = UIColor(hue: hue, saturation: saturation, brightness: brightness, alpha: 1)
+        var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0, a: CGFloat = 0
+        color.getRed(&r, green: &g, blue: &b, alpha: &a)
+        return [Double(r), Double(g), Double(b)][index]
+        #else
+        return 0
         #endif
     }
 }
+
+// MARK: - ColorTab Enum
+
+private enum ColorTab: String, CaseIterable {
+    case bgColor = "BG COLOR"
+    case color1 = "COLOR #1"
+    case gradient = "GRADIENT"
+}
+
+// MARK: - Helper Extension
+
+private extension SymbolColor {
+    var solidColor: ColorDescriptor? {
+        if case .solid(let color) = self {
+            return color
+        }
+        return nil
+    }
+}
+
 #endif

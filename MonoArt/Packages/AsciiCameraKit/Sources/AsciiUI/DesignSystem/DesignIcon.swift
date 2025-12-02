@@ -24,23 +24,21 @@ public enum DesignIcon: String, CaseIterable, Sendable {
 
     var folder: String {
         switch self {
-        case .effectASCII,
-             .effectCircle,
-             .effectDiamond,
-             .effectShapes,
-             .effectSquare,
-             .effectTriangle,
-             .settingCell,
-             .settingContrast,
-             .settingJitter,
-             .save:
-            return "16"
-        case .arrowBack,
-             .delete,
-             .question,
-             .rotateCamera,
-             .upload:
-            return "24"
+        case .effectASCII: return "16"
+        case .effectCircle: return "16"
+        case .effectDiamond: return "16"
+        case .effectShapes: return "16"
+        case .effectSquare: return "16"
+        case .effectTriangle: return "16"
+        case .settingCell: return "16"
+        case .settingContrast: return "16"
+        case .settingJitter: return "16"
+        case .save: return "16"
+        case .arrowBack: return "24"
+        case .delete: return "24"
+        case .question: return "24"
+        case .rotateCamera: return "24"
+        case .upload: return "24"
         }
     }
 
