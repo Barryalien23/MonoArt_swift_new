@@ -394,7 +394,7 @@ public struct ColorPickerSheet: View {
             // Hue slider
             hueSlider
             
-            // Back button - 24pt icon scaled to 16pt
+            // Back button with 16pt icon
             Button {
                 viewModel.dismissColorPicker()
             } label: {
@@ -402,7 +402,8 @@ public struct ColorPickerSheet: View {
                     .fill(DesignColor.mainGrey)
                     .frame(width: 40, height: 40)
                     .overlay(
-                        DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
+                        DesignIconView(.arrowBack16, color: DesignColor.white)
+                            .offset(x: -6, y: -2)
                     )
             }
             .buttonStyle(DesignPressFeedbackStyle())
