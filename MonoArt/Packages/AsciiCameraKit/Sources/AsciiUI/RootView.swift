@@ -136,6 +136,7 @@ public struct RootView: View {
                             isCaptureInFlight: viewModel.isCaptureInFlight,
                             isImportMode: viewModel.isImportMode,
                             palette: viewModel.palette,
+                            parameters: viewModel.parameters,
                             selectedColorTarget: viewModel.selectedColorTarget,
                             onImport: importAction,
                             onCapture: captureTapped,

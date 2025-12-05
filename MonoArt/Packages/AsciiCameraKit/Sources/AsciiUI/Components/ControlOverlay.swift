@@ -20,6 +20,7 @@ public struct ControlOverlay: View {
     public let isCaptureInFlight: Bool
     public let isImportMode: Bool
     public let palette: PaletteState
+    public let parameters: EffectParameters
     public let selectedColorTarget: ColorTarget
     public let onImport: () -> Void
     public let onCapture: () -> Void
@@ -38,6 +39,7 @@ public struct ControlOverlay: View {
         isCaptureInFlight: Bool,
         isImportMode: Bool,
         palette: PaletteState,
+        parameters: EffectParameters,
         selectedColorTarget: ColorTarget,
         onImport: @escaping () -> Void,
         onCapture: @escaping () -> Void,
@@ -55,6 +57,7 @@ public struct ControlOverlay: View {
         self.isCaptureInFlight = isCaptureInFlight
         self.isImportMode = isImportMode
         self.palette = palette
+        self.parameters = parameters
         self.selectedColorTarget = selectedColorTarget
         self.onImport = onImport
         self.onCapture = onCapture
@@ -113,9 +116,24 @@ public struct ControlOverlay: View {
 
     private var settingsRow: some View {
         HStack(spacing: DesignSpacing.md) {
-            DesignParameterTile(icon: .settingCell, title: "CELL", action: { onShowSettings(.cell) })
-            DesignParameterTile(icon: .settingJitter, title: "JITTER", action: { onShowSettings(.jitter) })
-            DesignParameterTile(icon: .settingContrast, title: "CONTRAST", action: { onShowSettings(.softy) })
+            DesignParameterTile(
+                icon: .settingCell,
+                title: "CELL",
+                progress: parameters.cell.rawValue / 100.0,
+                action: { onShowSettings(.cell) }
+            )
+            DesignParameterTile(
+                icon: .settingJitter,
+                title: "JITTER",
+                progress: parameters.jitter.rawValue / 100.0,
+                action: { onShowSettings(.jitter) }
+            )
+            DesignParameterTile(
+                icon: .settingContrast,
+                title: "CONTRAST",
+                progress: parameters.softy.rawValue / 100.0,
+                action: { onShowSettings(.softy) }
+            )
         }
         .frame(maxWidth: .infinity)
     }
@@ -242,20 +260,33 @@ private struct DesignEffectTile: View {
 private struct DesignParameterTile: View {
     let icon: DesignIcon
     let title: String
+    let progress: Double
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            VStack(spacing: DesignSpacing.s) {
-                DesignIconView(icon, color: DesignColor.white, size: 16)
-                DesignTokens.Typography.body1.text(title)
-                    .foregroundColor(DesignColor.white)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
+            ZStack(alignment: .leading) {
+                // Progress bar background
+                GeometryReader { geometry in
+                    Rectangle()
+                        .fill(DesignColor.greyActive)
+                        .frame(width: geometry.size.width * progress)
+                }
+                
+                // Content layer
+                VStack(spacing: DesignSpacing.s) {
+                    DesignIconView(icon, color: DesignColor.white, size: 16)
+                    DesignTokens.Typography.body1.text(title)
+                        .foregroundColor(DesignColor.white)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                }
+                .frame(maxWidth: .infinity)
             }
             .frame(minWidth: ControlOverlayMetrics.tileMinWidth, maxWidth: .infinity)
             .frame(height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
+            .clipShape(RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous))
         }
         .buttonStyle(DesignPressFeedbackStyle())
     }
