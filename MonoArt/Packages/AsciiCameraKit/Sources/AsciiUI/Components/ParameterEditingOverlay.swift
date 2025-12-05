@@ -1,5 +1,6 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiSupport
 import SwiftUI
 
 @available(iOS 15.0, *)
@@ -164,6 +165,11 @@ public struct ParameterEditingOverlay: View {
             finalValue = roundedValue
         }
         
+        // Play progressive haptic feedback if value changed
+        if finalValue != currentValue {
+            HapticManager.shared.playSliderFeedback(progress: progress)
+        }
+        
         viewModel.updateParameter(selectedParameter, value: finalValue)
     }
 }
@@ -176,7 +182,13 @@ private struct ParameterTabButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if isEnabled {
+                HapticManager.shared.playMicro()
+                SoundManager.shared.playClick()
+            }
+            action()
+        }) {
             HStack(spacing: DesignSpacing.sm) {
                 DesignIconView(
                     icon(for: parameter),

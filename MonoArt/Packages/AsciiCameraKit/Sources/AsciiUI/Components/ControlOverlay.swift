@@ -1,5 +1,6 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiSupport
 import SwiftUI
 
 private enum ControlOverlayMetrics {
@@ -236,7 +237,11 @@ private struct DesignEffectTile: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             VStack(spacing: DesignSpacing.s) {
                 DesignIconView(icon, color: DesignColor.white, size: 18)
                 DesignTokens.Typography.body1.text(title)
@@ -264,7 +269,11 @@ private struct DesignParameterTile: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             ZStack(alignment: .leading) {
                 // Progress bar background
                 GeometryReader { geometry in
@@ -307,7 +316,11 @@ private struct DesignColorTile: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             VStack(spacing: DesignSpacing.s) {
                 DesignColorIndicator(kind: indicator, state: indicatorState)
                 DesignTokens.Typography.body1.text(title)

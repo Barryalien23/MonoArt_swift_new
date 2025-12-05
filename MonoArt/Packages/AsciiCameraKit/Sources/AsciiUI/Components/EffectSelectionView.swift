@@ -1,5 +1,6 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiSupport
 import SwiftUI
 
 @available(iOS 15.0, *)
@@ -107,7 +108,11 @@ public struct EffectSelectionView: View {
             .frame(maxWidth: .infinity, alignment: .trailing)
 
             // Back button overlaid on top
-            Button(action: onDismiss) {
+            Button(action: {
+                HapticManager.shared.playMedium()
+                SoundManager.shared.playClick()
+                onDismiss()
+            }) {
                 DesignIconView(.arrowBack16, color: DesignColor.white)
                     .offset(x: -4)
                     .frame(width: 64, height: 120)
@@ -130,7 +135,11 @@ private struct EffectTile: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMicro()
+            SoundManager.shared.play8Bit()
+            action()
+        }) {
             VStack(spacing: DesignSpacing.s) {
                 DesignIconView(effectIcon(for: effect), color: DesignColor.white, size: 16)
                 DesignTokens.Typography.body1.text(effect.displayTitle)

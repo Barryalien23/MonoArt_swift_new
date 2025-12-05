@@ -1,4 +1,5 @@
 import SwiftUI
+import AsciiSupport
 
 private enum DesignSize {
     static let iconButton: CGFloat = 52
@@ -43,7 +44,11 @@ public struct DesignIconButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             ZStack {
                 backgroundLayer
                 DesignIconView(icon, color: iconColor, size: DesignSize.iconButtonIcon)
@@ -113,7 +118,18 @@ public struct DesignPrimaryButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            if mode == .capture {
+                // Capture button: short haptic + explosion sound
+                HapticManager.shared.playShort()
+                SoundManager.shared.playExplosion()
+            } else {
+                // Save button: short haptic + click sound
+                HapticManager.shared.playShort()
+                SoundManager.shared.playClick()
+            }
+            action()
+        }) {
             Group {
                 switch mode {
                 case .capture:

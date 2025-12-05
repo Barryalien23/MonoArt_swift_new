@@ -1,5 +1,6 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiSupport
 import SwiftUI
 import UIKit
 
@@ -54,7 +55,11 @@ public struct AboutSheet: View {
     private var titleBar: some View {
         HStack {
             // Close button
-            Button(action: { dismiss() }) {
+            Button(action: {
+                HapticManager.shared.playMedium()
+                SoundManager.shared.playClick()
+                dismiss()
+            }) {
                 Circle()
                     .fill(Color(red: 0.47, green: 0.47, blue: 0.50).opacity(0.18))
                     .frame(width: 44, height: 44)
@@ -214,7 +219,11 @@ private struct LinkButton: View {
     let action: () -> Void
     
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             HStack(spacing: DesignSpacing.base) {
                 // Icon
                 DesignIconView(icon, color: DesignColor.white, size: 24)

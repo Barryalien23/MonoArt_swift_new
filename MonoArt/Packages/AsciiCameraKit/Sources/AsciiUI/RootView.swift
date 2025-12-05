@@ -1,6 +1,7 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
 import AsciiEngine
+import AsciiSupport
 import Dispatch
 import SwiftUI
 import UIKit
@@ -310,7 +311,11 @@ private struct GalleryPreviewButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             DesignSurface(.glassButton, cornerRadius: DesignRadius.lg)
                 .overlay(
                     Group {
