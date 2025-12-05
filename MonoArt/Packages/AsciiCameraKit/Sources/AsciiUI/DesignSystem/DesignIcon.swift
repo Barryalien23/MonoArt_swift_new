@@ -23,6 +23,15 @@ public enum DesignIcon: CaseIterable, Sendable {
     case rotateCamera
     case upload
     
+    // About icons (24pt)
+    case arrowRight
+    case mail
+    case monoart
+    case raLogo
+    case shield
+    case star
+    case telegram
+    
     var fileName: String {
         switch self {
         case .effectASCII: return "Effect_ASCII"
@@ -41,6 +50,13 @@ public enum DesignIcon: CaseIterable, Sendable {
         case .question: return "Question"
         case .rotateCamera: return "Rotate camera"
         case .upload: return "Upload"
+        case .arrowRight: return "Arrow_right"
+        case .mail: return "Mail"
+        case .monoart: return "Monoart"
+        case .raLogo: return "Ralogo"
+        case .shield: return "Shield"
+        case .star: return "Star"
+        case .telegram: return "Telegram"
         }
     }
 
@@ -62,6 +78,13 @@ public enum DesignIcon: CaseIterable, Sendable {
         case .question: return "24"
         case .rotateCamera: return "24"
         case .upload: return "24"
+        case .arrowRight: return "24"
+        case .mail: return "24"
+        case .monoart: return "24"
+        case .raLogo: return "24"
+        case .shield: return "24"
+        case .star: return "24"
+        case .telegram: return "24"
         }
     }
 
