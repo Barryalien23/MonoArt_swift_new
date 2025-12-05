@@ -102,11 +102,11 @@ public struct ParameterEditingOverlay: View {
                     
                     Spacer()
                     
-                    // Back arrow button (50×50 container, 16px icon aligned to right)
+                    // Back arrow button (50×50 container, 16pt icon aligned to right)
                     Button(action: onBack) {
                         HStack(spacing: 0) {
                             Spacer()
-                            DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
+                            DesignIconView(.arrowBack16, color: DesignColor.white)
                         }
                         .frame(width: 50, height: 50)
                         .contentShape(Rectangle())

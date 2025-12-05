@@ -2,25 +2,63 @@ import SwiftUI
 import UIKit
 import PocketSVG
 
-public enum DesignIcon: String, CaseIterable, Sendable {
+public enum DesignIcon: CaseIterable, Sendable {
     // 16pt icons
-    case effectASCII = "Effect_ASCII"
-    case effectCircle = "Effect_Circle"
-    case effectDiamond = "Effect_Diamond"
-    case effectShapes = "Effect_Shapes"
-    case effectSquare = "Effect_Square"
-    case effectTriangle = "Effect_Triangle"
-    case settingCell = "Setting_Cell"
-    case settingContrast = "Setting_Contrast"
-    case settingJitter = "Setting_Jitter"
-    case save = "Save"
+    case effectASCII
+    case effectCircle
+    case effectDiamond
+    case effectShapes
+    case effectSquare
+    case effectTriangle
+    case settingCell
+    case settingContrast
+    case settingJitter
+    case save
+    case arrowBack16
 
     // 24pt icons
-    case arrowBack = "Arrow_back"
-    case delete = "Delete"
-    case question = "Question"
-    case rotateCamera = "Rotate camera"
-    case upload = "Upload"
+    case arrowBack
+    case delete
+    case question
+    case rotateCamera
+    case upload
+    
+    // About icons (24pt)
+    case arrowRight
+    case mail
+    case monoart
+    case raLogo
+    case shield
+    case star
+    case telegram
+    
+    var fileName: String {
+        switch self {
+        case .effectASCII: return "Effect_ASCII"
+        case .effectCircle: return "Effect_Circle"
+        case .effectDiamond: return "Effect_Diamond"
+        case .effectShapes: return "Effect_Shapes"
+        case .effectSquare: return "Effect_Square"
+        case .effectTriangle: return "Effect_Triangle"
+        case .settingCell: return "Setting_Cell"
+        case .settingContrast: return "Setting_Contrast"
+        case .settingJitter: return "Setting_Jitter"
+        case .save: return "Save"
+        case .arrowBack16: return "Arrow_back"
+        case .arrowBack: return "Arrow_back"
+        case .delete: return "Delete"
+        case .question: return "Question"
+        case .rotateCamera: return "Rotate camera"
+        case .upload: return "Upload"
+        case .arrowRight: return "Arrow_right"
+        case .mail: return "Mail"
+        case .monoart: return "Monoart"
+        case .raLogo: return "Ralogo"
+        case .shield: return "Shield"
+        case .star: return "Star"
+        case .telegram: return "Telegram"
+        }
+    }
 
     var folder: String {
         switch self {
@@ -34,11 +72,19 @@ public enum DesignIcon: String, CaseIterable, Sendable {
         case .settingContrast: return "16"
         case .settingJitter: return "16"
         case .save: return "16"
+        case .arrowBack16: return "16"
         case .arrowBack: return "24"
         case .delete: return "24"
         case .question: return "24"
         case .rotateCamera: return "24"
         case .upload: return "24"
+        case .arrowRight: return "24"
+        case .mail: return "24"
+        case .monoart: return "24"
+        case .raLogo: return "24"
+        case .shield: return "24"
+        case .star: return "24"
+        case .telegram: return "24"
         }
     }
 
@@ -47,7 +93,7 @@ public enum DesignIcon: String, CaseIterable, Sendable {
     }
 
     var resourcePath: String {
-        "Icons/\(folder)/\(rawValue).svg"
+        "Icons/\(folder)/\(fileName).svg"
     }
 
     public var defaultSize: CGFloat {
@@ -142,8 +188,8 @@ private final class SVGCache {
             #endif
 
             let subdirectory = "Icons/\(icon.folder)"
-            let resourceURL = bundle.url(forResource: icon.rawValue, withExtension: "svg", subdirectory: subdirectory)
-                ?? bundle.url(forResource: icon.rawValue, withExtension: "svg")
+            let resourceURL = bundle.url(forResource: icon.fileName, withExtension: "svg", subdirectory: subdirectory)
+                ?? bundle.url(forResource: icon.fileName, withExtension: "svg")
 
             guard let url = resourceURL else {
                 assertionFailure("Missing icon resource: \(icon.resourcePath)")
@@ -152,7 +198,7 @@ private final class SVGCache {
 
             let svgPaths = SVGBezierPath.pathsFromSVG(at: url)
             guard !svgPaths.isEmpty else {
-                assertionFailure("Icon \(icon.rawValue) produced an empty SVG path set")
+                assertionFailure("Icon \(icon.fileName) produced an empty SVG path set")
                 return nil
             }
 

@@ -54,7 +54,7 @@ public struct DesignIconButton: View {
         .buttonStyle(DesignPressFeedbackStyle())
         .disabled(!isEnabled)
         .opacity(isEnabled ? 1 : 0.45)
-        .accessibilityLabel(accessibilityLabel ?? icon.rawValue)
+        .accessibilityLabel(accessibilityLabel ?? icon.fileName)
     }
 
     @ViewBuilder

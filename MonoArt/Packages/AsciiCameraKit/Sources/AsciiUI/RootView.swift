@@ -169,6 +169,11 @@ public struct RootView: View {
                 EffectSettingsSheet(viewModel: viewModel)
             }
         }
+        .sheet(isPresented: $viewModel.isAboutPresented) {
+            if #available(iOS 16.0, *) {
+                AboutSheet(viewModel: viewModel)
+            }
+        }
         // Альтернативный метод через .safeAreaInset (раскомментировать, если VStack не работает)
         // .safeAreaInset(edge: .top, spacing: 0) {
         //     HStack(spacing: DesignSpacing.md) {
@@ -246,8 +251,8 @@ public struct RootView: View {
         HStack(spacing: DesignSpacing.md) {
             GalleryPreviewButton(image: galleryImage, action: openPhotosApp)
             Spacer(minLength: DesignSpacing.zero)
-            DesignIconButton(icon: .question, action: {})
-                .accessibilityLabel("Help")
+            DesignIconButton(icon: .question, action: { viewModel.presentAboutSheet() })
+                .accessibilityLabel("About")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, horizontalPadding(for: proxy.safeAreaInsets))

@@ -108,7 +108,7 @@ public struct EffectSelectionView: View {
 
             // Back button overlaid on top
             Button(action: onDismiss) {
-                DesignIconView(.arrowBack, color: DesignColor.white, size: 16)
+                DesignIconView(.arrowBack16, color: DesignColor.white)
                     .offset(x: -4)
                     .frame(width: 64, height: 120)
                     .background(
