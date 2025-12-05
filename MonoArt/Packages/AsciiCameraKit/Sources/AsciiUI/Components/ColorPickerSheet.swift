@@ -1,5 +1,6 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiSupport
 import SwiftUI
 #if canImport(UIKit)
 import UIKit
@@ -99,6 +100,8 @@ public struct ColorPickerSheet: View {
     
     private func tabButton(_ tab: ColorTab, _ title: String, _ indicator: some View) -> some View {
         Button {
+            HapticManager.shared.playMicro()
+            SoundManager.shared.playClick()
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectedTab = tab
                 
@@ -250,6 +253,9 @@ public struct ColorPickerSheet: View {
             .gesture(
                 DragGesture()
                     .onChanged { value in
+                        if selectedGradientKnob != index {
+                            HapticManager.shared.playMicro()
+                        }
                         selectedGradientKnob = index
                         let newPosition = max(0, min(1, value.location.x / totalWidth))
                         viewModel.updateSymbolGradientPosition(at: index, position: newPosition)
@@ -257,6 +263,8 @@ public struct ColorPickerSheet: View {
                     }
             )
             .onTapGesture {
+                HapticManager.shared.playMicro()
+                SoundManager.shared.playClick()
                 selectedGradientKnob = index
                 updateHSVFromGradientStop(index)
             }
@@ -315,8 +323,16 @@ public struct ColorPickerSheet: View {
                     .onChanged { value in
                         let widthValue = Double(geometry.size.width)
                         let heightValue = Double(geometry.size.height)
-                        saturation = max(0, min(1, Double(value.location.x) / widthValue))
-                        brightness = max(0, min(1, 1.0 - (Double(value.location.y) / heightValue)))
+                        let newSaturation = max(0, min(1, Double(value.location.x) / widthValue))
+                        let newBrightness = max(0, min(1, 1.0 - (Double(value.location.y) / heightValue)))
+                        
+                        // Play progressive haptic based on brightness level
+                        if abs(newSaturation - saturation) > 0.02 || abs(newBrightness - brightness) > 0.02 {
+                            HapticManager.shared.playSliderFeedback(progress: newBrightness)
+                        }
+                        
+                        saturation = newSaturation
+                        brightness = newBrightness
                         applyColorChange()
                     }
             )
@@ -353,7 +369,14 @@ public struct ColorPickerSheet: View {
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
                         let heightValue = Double(geometry.size.height)
-                        opacity = max(0, min(1, 1.0 - (Double(value.location.y) / heightValue)))
+                        let newOpacity = max(0, min(1, 1.0 - (Double(value.location.y) / heightValue)))
+                        
+                        // Play progressive haptic based on opacity level
+                        if abs(newOpacity - opacity) > 0.02 {
+                            HapticManager.shared.playSliderFeedback(progress: newOpacity)
+                        }
+                        
+                        opacity = newOpacity
                         applyColorChange()
                     }
             )
@@ -396,6 +419,8 @@ public struct ColorPickerSheet: View {
             
             // Back button with 16pt icon
             Button {
+                HapticManager.shared.playMedium()
+                SoundManager.shared.playClick()
                 viewModel.dismissColorPicker()
             } label: {
                 RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
@@ -442,7 +467,14 @@ public struct ColorPickerSheet: View {
             .gesture(
                 DragGesture(minimumDistance: 0)
                     .onChanged { value in
-                        hue = max(0, min(1, value.location.x / geometry.size.width))
+                        let newHue = max(0, min(1, value.location.x / geometry.size.width))
+                        
+                        // Play progressive haptic based on hue position
+                        if abs(newHue - hue) > 0.02 {
+                            HapticManager.shared.playSliderFeedback(progress: newHue)
+                        }
+                        
+                        hue = newHue
                         applyColorChange()
                     }
             )

@@ -1,5 +1,6 @@
 import SwiftUI
 import AsciiDomain
+import AsciiSupport
 
 public struct DesignSegmentButton: View {
     public struct Configuration: Hashable {
@@ -23,7 +24,11 @@ public struct DesignSegmentButton: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMicro()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             HStack(spacing: DesignSpacing.sm) {
                 if let icon = configuration.icon {
                     DesignIconView(icon,
@@ -276,7 +281,15 @@ public struct DesignSliderView: View {
                 let progress = Double(clampedX / totalWidth)
                 let rawValue = range.lowerBound + (range.upperBound - range.lowerBound) * progress
                 let stepped = (rawValue / step).rounded() * step
-                value = min(max(range.lowerBound, stepped), range.upperBound)
+                let newValue = min(max(range.lowerBound, stepped), range.upperBound)
+                
+                // Play progressive haptic feedback based on slider position
+                if newValue != value {
+                    let normalizedProgress = (newValue - range.lowerBound) / (range.upperBound - range.lowerBound)
+                    HapticManager.shared.playSliderFeedback(progress: normalizedProgress)
+                }
+                
+                value = newValue
             }
             .onEnded { _ in
                 isDragging = false
@@ -304,7 +317,11 @@ public struct DesignColorTab: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMicro()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             HStack(spacing: DesignSpacing.sm) {
                 indicatorView
                 DesignTokens.Typography.body2.text(title)
@@ -375,7 +392,11 @@ public struct DesignColorChip: View {
     }
 
     public var body: some View {
-        Button(action: action) {
+        Button(action: {
+            HapticManager.shared.playMicro()
+            SoundManager.shared.playClick()
+            action()
+        }) {
             VStack(alignment: .leading, spacing: DesignSpacing.sm) {
                 previewView
                     .frame(height: 64)

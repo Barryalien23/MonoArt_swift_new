@@ -1,5 +1,6 @@
 #if canImport(SwiftUI) && os(iOS)
 import AsciiDomain
+import AsciiSupport
 import SwiftUI
 
 @available(iOS 16.0, *)
@@ -24,7 +25,11 @@ public struct EffectSettingsSheet: View {
             .navigationTitle("Effect Settings")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Done") { viewModel.dismissSettingsSheet() }
+                    Button("Done") {
+                        HapticManager.shared.playMedium()
+                        SoundManager.shared.playClick()
+                        viewModel.dismissSettingsSheet()
+                    }
                         .font(DesignTypography.body2())
                 }
             }
@@ -76,6 +81,8 @@ public struct EffectSettingsSheet: View {
 
     private var resetButton: some View {
         Button {
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
             viewModel.resetParametersToDefaults()
         } label: {
             HStack {
