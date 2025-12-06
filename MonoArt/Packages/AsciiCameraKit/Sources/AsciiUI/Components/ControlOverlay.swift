@@ -33,6 +33,7 @@ public struct ControlOverlay: View {
     public let onShowEffects: () -> Void
     public let onShowSettings: (EffectParameter) -> Void
     public let onShowColors: () -> Void
+    public let onParameterChange: ((EffectParameter, Double) -> Void)?
 
     public init(
         selectedEffect: EffectType,
@@ -51,7 +52,8 @@ public struct ControlOverlay: View {
         onSelectColorTarget: @escaping (ColorTarget) -> Void,
         onShowEffects: @escaping () -> Void,
         onShowSettings: @escaping (EffectParameter) -> Void,
-        onShowColors: @escaping () -> Void
+        onShowColors: @escaping () -> Void,
+        onParameterChange: ((EffectParameter, Double) -> Void)? = nil
     ) {
         self.selectedEffect = selectedEffect
         self.availableEffects = availableEffects
@@ -70,6 +72,7 @@ public struct ControlOverlay: View {
         self.onShowEffects = onShowEffects
         self.onShowSettings = onShowSettings
         self.onShowColors = onShowColors
+        self.onParameterChange = onParameterChange
     }
 
     public var body: some View {
@@ -89,7 +92,9 @@ public struct ControlOverlay: View {
 
                     VStack(alignment: .leading, spacing: DesignSpacing.md) {
                         settingsRow
+                            .zIndex(10) // Settings row значительно выше
                         colorRow
+                            .zIndex(0) // Color row ниже
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -121,19 +126,28 @@ public struct ControlOverlay: View {
                 icon: .settingCell,
                 title: "CELL",
                 progress: parameters.cell.rawValue / 100.0,
-                action: { onShowSettings(.cell) }
+                action: { onShowSettings(.cell) },
+                onValueChange: { newValue in
+                    onParameterChange?(.cell, newValue)
+                }
             )
             DesignParameterTile(
                 icon: .settingJitter,
                 title: "JITTER",
                 progress: parameters.jitter.rawValue / 100.0,
-                action: { onShowSettings(.jitter) }
+                action: { onShowSettings(.jitter) },
+                onValueChange: { newValue in
+                    onParameterChange?(.jitter, newValue)
+                }
             )
             DesignParameterTile(
                 icon: .settingContrast,
                 title: "CONTRAST",
                 progress: parameters.softy.rawValue / 100.0,
-                action: { onShowSettings(.softy) }
+                action: { onShowSettings(.softy) },
+                onValueChange: { newValue in
+                    onParameterChange?(.softy, newValue)
+                }
             )
         }
         .frame(maxWidth: .infinity)
@@ -267,25 +281,38 @@ private struct DesignParameterTile: View {
     let title: String
     let progress: Double
     let action: () -> Void
+    let onValueChange: ((Double) -> Void)?
+    
+    @State private var isLongPressing: Bool = false
+    @State private var isDragging: Bool = false
+    @State private var currentProgress: Double
+    @State private var gestureStartProgress: Double = 0
+    @State private var gestureStartLocation: CGPoint = .zero
+    @State private var longPressTask: Task<Void, Never>?
+    
+    init(icon: DesignIcon, title: String, progress: Double, action: @escaping () -> Void, onValueChange: ((Double) -> Void)? = nil) {
+        self.icon = icon
+        self.title = title
+        self.progress = progress
+        self.action = action
+        self.onValueChange = onValueChange
+        _currentProgress = State(initialValue: progress)
+    }
 
     var body: some View {
-        Button(action: {
-            HapticManager.shared.playMedium()
-            SoundManager.shared.playClick()
-            action()
-        }) {
+        GeometryReader { geometry in
             ZStack(alignment: .leading) {
                 // Progress bar background
-                GeometryReader { geometry in
-                    Rectangle()
-                        .fill(DesignColor.greyActive)
-                        .frame(width: geometry.size.width * progress)
-                }
+                Rectangle()
+                    .fill(DesignColor.greyActive)
+                    .frame(width: geometry.size.width * currentProgress)
                 
                 // Content layer
-                VStack(spacing: DesignSpacing.s) {
-                    DesignIconView(icon, color: DesignColor.white, size: 16)
+                VStack(spacing: isElevated ? DesignSpacing.s + 2 : DesignSpacing.s) {
+                    DesignIconView(icon, color: DesignColor.white, size: isElevated ? 20 : 16)
+                    
                     DesignTokens.Typography.body1.text(title)
+                        .font(.system(size: isElevated ? 15 : 12, weight: .medium, design: .monospaced))
                         .foregroundColor(DesignColor.white)
                         .lineLimit(1)
                         .minimumScaleFactor(0.8)
@@ -296,14 +323,131 @@ private struct DesignParameterTile: View {
             .frame(height: ControlOverlayMetrics.tileHeight)
             .background(tileBackground)
             .clipShape(RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous))
+            .scaleEffect(isElevated ? 1.4 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isElevated)
+            .gesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { value in
+                        handleDragChanged(value, in: geometry)
+                    }
+                    .onEnded { _ in
+                        handleDragEnded()
+                    }
+            )
         }
-        .buttonStyle(DesignPressFeedbackStyle())
+        .frame(minWidth: ControlOverlayMetrics.tileMinWidth, maxWidth: .infinity)
+        .frame(height: ControlOverlayMetrics.tileHeight)
+        .zIndex(isElevated ? 9999 : 0)
+        .onChange(of: progress) { newValue in
+            if !isDragging {
+                currentProgress = newValue
+            }
+        }
+        .onDisappear {
+            cancelLongPress()
+            resetState()
+        }
+    }
+    
+    private var isElevated: Bool {
+        isLongPressing || isDragging
     }
 
     private var tileBackground: some View {
         RoundedRectangle(cornerRadius: DesignRadius.md, style: .continuous)
             .fill(DesignColor.mainGrey)
-            .shadow(color: DesignColor.black.opacity(0.25), radius: 12, x: 0, y: 6)
+            .shadow(
+                color: DesignColor.black.opacity(isElevated ? 0.8 : 0.25),
+                radius: isElevated ? 20 : 4,
+                x: 0,
+                y: isElevated ? 8 : 0
+            )
+    }
+    
+    private func handleDragChanged(_ value: DragGesture.Value, in geometry: GeometryProxy) {
+        // First touch - start long press timer
+        if !isLongPressing && !isDragging && longPressTask == nil {
+            gestureStartLocation = value.location
+            gestureStartProgress = currentProgress
+            
+            // Start async timer for long press
+            longPressTask = Task { @MainActor in
+                try? await Task.sleep(nanoseconds: 250_000_000) // 0.25 seconds
+                
+                guard !Task.isCancelled else { return }
+                
+                // Check if finger hasn't moved too much
+                let distance = hypot(value.location.x - gestureStartLocation.x,
+                                    value.location.y - gestureStartLocation.y)
+                
+                if distance < 10 {
+                    // Activate long press
+                    isLongPressing = true
+                    HapticManager.shared.playMedium()
+                    SoundManager.shared.playClick()
+                }
+            }
+        }
+        
+        // If already long pressing, check for drag
+        if isLongPressing && !isDragging {
+            let dragDistance = abs(value.location.x - gestureStartLocation.x)
+            if dragDistance > 3 {
+                isDragging = true
+            }
+        }
+        
+        // Update parameter while dragging
+        if isDragging {
+            let dragOffset = value.location.x - gestureStartLocation.x
+            let progressDelta = dragOffset / geometry.size.width
+            let newProgress = min(max(gestureStartProgress + progressDelta, 0), 1)
+            
+            if abs(newProgress - currentProgress) > 0.005 {
+                let oldProgress = currentProgress
+                currentProgress = newProgress
+                onValueChange?(newProgress * 100.0)
+                
+                // Haptic every 5%
+                if Int(newProgress * 20) != Int(oldProgress * 20) {
+                    HapticManager.shared.playMicro()
+                }
+            }
+        }
+    }
+    
+    private func handleDragEnded() {
+        // Check if it was a quick tap
+        let wasQuickTap = longPressTask != nil && !isLongPressing && !isDragging
+        
+        // Cancel the timer
+        cancelLongPress()
+        
+        if wasQuickTap {
+            // Quick tap - open sheet
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+            action()
+        } else if isLongPressing || isDragging {
+            // Was elevated - play feedback
+            HapticManager.shared.playMedium()
+            SoundManager.shared.playClick()
+        }
+        
+        // Reset state
+        resetState()
+    }
+    
+    private func cancelLongPress() {
+        longPressTask?.cancel()
+        longPressTask = nil
+    }
+    
+    private func resetState() {
+        isLongPressing = false
+        isDragging = false
+        gestureStartProgress = 0
+        gestureStartLocation = .zero
     }
 }
 

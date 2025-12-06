@@ -148,7 +148,10 @@ public struct RootView: View {
                             onSelectColorTarget: viewModel.selectColorTarget,
                             onShowEffects: { viewModel.presentEffectSelection() },
                             onShowSettings: { parameter in viewModel.presentParameterEditing(for: parameter) },
-                            onShowColors: { viewModel.presentColorPicker(for: viewModel.selectedColorTarget) }
+                            onShowColors: { viewModel.presentColorPicker(for: viewModel.selectedColorTarget) },
+                            onParameterChange: { parameter, value in
+                                viewModel.updateParameter(parameter, value: value)
+                            }
                         )
                         .padding(.bottom, bottomPadding(for: proxy.safeAreaInsets.bottom))
                     }
