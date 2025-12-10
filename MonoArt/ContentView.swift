@@ -7,14 +7,23 @@
 
 import SwiftUI
 import AsciiCameraKit
+import AsciiUI
 
 struct ContentView: View {
+    @State private var isLaunchScreenVisible = true
+
     var body: some View {
-        Group {
-            if #available(iOS 16.0, *) {
-                AsciiCameraExperience()
+        ZStack {
+            if isLaunchScreenVisible {
+                LaunchScreenView()
             } else {
-                UnsupportedVersionView()
+                AsciiCameraExperience()
+            }
+        }
+        .onAppear {
+            // Hide launch screen after a short delay to allow app initialization
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                isLaunchScreenVisible = false
             }
         }
     }
