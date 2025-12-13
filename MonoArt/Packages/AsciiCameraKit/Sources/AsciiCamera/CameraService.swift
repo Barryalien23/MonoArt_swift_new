@@ -15,6 +15,7 @@ public protocol CameraServiceProtocol: AnyObject {
     func startSession() async throws
     func stopSession()
     func switchCamera() async throws
+    func requestCameraPermission() async throws
 }
 
 @available(macOS 10.15, iOS 13, tvOS 13, *)
@@ -70,13 +71,23 @@ public final class CameraService: NSObject, CameraServiceProtocol, @unchecked Se
     }
 
     public func startSession() async throws {
-        try await requestAccessIfNeeded()
+        // Check authorization status but DON'T request if not determined
+        // Permission should be requested explicitly by the app
+        guard authorizationStatus == .authorized else {
+            throw CameraServiceError.authorizationDenied
+        }
+
         try await configureSessionIfNeeded()
         guard !isRunning else { return }
         isRunning = true
         sessionQueue.async { [weak self] in
             self?.session.startRunning()
         }
+    }
+
+    // Public method to explicitly request camera permission
+    public func requestCameraPermission() async throws {
+        try await requestAccessIfNeeded()
     }
 
     public func stopSession() {
@@ -241,6 +252,10 @@ public final class StubCameraService: CameraServiceProtocol {
     public func stopSession() {}
 
     public func switchCamera() async throws {}
+
+    public func requestCameraPermission() async throws {
+        // Stub always has permission
+    }
 
     public func emit(_ envelope: FrameEnvelope) {
         subject.send(envelope)
