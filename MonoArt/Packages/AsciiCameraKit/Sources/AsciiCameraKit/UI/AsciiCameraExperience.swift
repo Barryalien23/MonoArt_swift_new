@@ -41,8 +41,17 @@ public struct AsciiCameraExperience: View {
     public var body: some View {
         rootView
             .onAppear {
-                startPipelineIfNeeded()
                 checkAndShowOnboarding()
+                // Only start pipeline if onboarding is already completed
+                if !onboardingViewModel.shouldShowOnboarding {
+                    startPipelineIfNeeded()
+                }
+            }
+            .onChange(of: onboardingViewModel.isPresented) { isPresented in
+                // Start pipeline after onboarding is completed
+                if !isPresented && !onboardingViewModel.shouldShowOnboarding {
+                    startPipelineIfNeeded()
+                }
             }
             .onDisappear(perform: teardownPipeline)
             .photosPicker(
@@ -96,11 +105,18 @@ public struct AsciiCameraExperience: View {
     private func startPipelineIfNeeded() {
         guard gpuPipeline == nil && textPipeline == nil else { return }
 
-            let engine = engineFactory()
-            let camera = cameraFactory()
+        let engine = engineFactory()
+        let camera = cameraFactory()
         let mediaCoordinator = mediaCoordinatorFactory()
-            let renderer = frameRendererFactory()
+        let renderer = frameRendererFactory()
 
+        // Start pipeline - will only show preview if camera permission granted
+        // Don't request permission here - let user trigger it explicitly
+        startPipelineWithCamera(engine: engine, camera: camera, mediaCoordinator: mediaCoordinator, renderer: renderer)
+    }
+
+    @MainActor
+    private func startPipelineWithCamera(engine: AsciiEngineProtocol, camera: CameraServiceProtocol, mediaCoordinator: MediaCoordinatorProtocol, renderer: AsciiFrameRendering) {
         // Try to use GPU pipeline first
         if useGPUPreview, let asciiEngine = engine as? AsciiEngine {
             let newGPUPipeline = GPUPreviewPipeline(
@@ -204,13 +220,54 @@ public struct AsciiCameraExperience: View {
     }
 
     private func captureTapped() {
-        if let gpuPipeline = gpuPipeline {
-            gpuPipeline.capture()
-        } else if let textPipeline = textPipeline {
-            textPipeline.capture()
-        } else {
-            viewModel.simulateCapture()
+        // Check camera permission before capturing
+        let camera = cameraFactory()
+
+        Task {
+            do {
+                // Request permission if not granted
+                if camera.authorizationStatus != .authorized {
+                    try await camera.requestCameraPermission()
+
+                    // After granting permission, start pipeline if needed
+                    await MainActor.run {
+                        if gpuPipeline == nil && textPipeline == nil {
+                            startPipelineIfNeeded()
+                        }
+                    }
+
+                    // Wait a bit for pipeline to start
+                    try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                }
+
+                // Now attempt capture
+                await MainActor.run {
+                    if let gpuPipeline = gpuPipeline {
+                        gpuPipeline.capture()
+                    } else if let textPipeline = textPipeline {
+                        textPipeline.capture()
+                    } else {
+                        viewModel.simulateCapture()
+                    }
+                }
+            } catch {
+                print("❌ Camera permission required for capture: \(error)")
+                // Permission denied - open Settings
+                await MainActor.run {
+                    openSettings()
+                }
+            }
         }
+    }
+
+    private func openSettings() {
+        #if canImport(UIKit)
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
+              UIApplication.shared.canOpenURL(settingsUrl) else {
+            return
+        }
+        UIApplication.shared.open(settingsUrl)
+        #endif
     }
 
     private func saveImportedPhoto() {

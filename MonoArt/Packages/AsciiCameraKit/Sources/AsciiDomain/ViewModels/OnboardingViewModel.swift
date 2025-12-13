@@ -58,19 +58,63 @@ public final class OnboardingViewModel: ObservableObject {
 
     #if canImport(UIKit)
     public func requestCameraPermission() {
-        AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
-            DispatchQueue.main.async {
-                self?.hasCameraPermission = granted
+        let status = AVCaptureDevice.authorizationStatus(for: .video)
+
+        switch status {
+        case .notDetermined:
+            // Request permission for the first time
+            AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+                DispatchQueue.main.async {
+                    self?.hasCameraPermission = granted
+                    if !granted {
+                        self?.openSettings()
+                    }
+                }
             }
+        case .denied, .restricted:
+            // Permission previously denied - open Settings
+            DispatchQueue.main.async { [weak self] in
+                self?.openSettings()
+            }
+        case .authorized:
+            hasCameraPermission = true
+        @unknown default:
+            break
         }
     }
 
     public func requestPhotoLibraryPermission() {
-        PHPhotoLibrary.requestAuthorization { [weak self] status in
-            DispatchQueue.main.async {
-                self?.hasPhotoLibraryPermission = status == .authorized || status == .limited
+        let status = PHPhotoLibrary.authorizationStatus()
+
+        switch status {
+        case .notDetermined:
+            // Request permission for the first time
+            PHPhotoLibrary.requestAuthorization { [weak self] newStatus in
+                DispatchQueue.main.async {
+                    self?.hasPhotoLibraryPermission = newStatus == .authorized || newStatus == .limited
+                    if newStatus == .denied || newStatus == .restricted {
+                        self?.openSettings()
+                    }
+                }
             }
+        case .denied, .restricted:
+            // Permission previously denied - open Settings
+            DispatchQueue.main.async { [weak self] in
+                self?.openSettings()
+            }
+        case .authorized, .limited:
+            hasPhotoLibraryPermission = true
+        @unknown default:
+            break
         }
+    }
+
+    private func openSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
+              UIApplication.shared.canOpenURL(settingsUrl) else {
+            return
+        }
+        UIApplication.shared.open(settingsUrl)
     }
     #endif
 

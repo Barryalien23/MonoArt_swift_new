@@ -28,6 +28,13 @@ struct PermissionRow: View {
                     .lineSpacing(0)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                // Request permission when tapping the text area
+                if !isGranted {
+                    onToggle()
+                }
+            }
 
             // Toggle switch
             PermissionToggleSwitch(isOn: $isGranted, action: onToggle)
