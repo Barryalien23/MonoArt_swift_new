@@ -32,6 +32,7 @@ public final class AppViewModel: ObservableObject {
     @Published public var isEffectSelectionPresented: Bool
     @Published public var isParameterEditingPresented: Bool
     @Published public var isAboutPresented: Bool
+    @Published public var isOnboardingPresented: Bool
     @Published public var selectedEditingParameter: EffectParameter
 
     public init(
@@ -49,6 +50,7 @@ public final class AppViewModel: ObservableObject {
         isEffectSelectionPresented: Bool = false,
         isParameterEditingPresented: Bool = false,
         isAboutPresented: Bool = false,
+        isOnboardingPresented: Bool = false,
         selectedEditingParameter: EffectParameter = .cell
     ) {
         self.selectedEffect = selectedEffect
@@ -77,6 +79,7 @@ public final class AppViewModel: ObservableObject {
         self.isEffectSelectionPresented = isEffectSelectionPresented
         self.isParameterEditingPresented = isParameterEditingPresented
         self.isAboutPresented = isAboutPresented
+        self.isOnboardingPresented = isOnboardingPresented
         self.selectedEditingParameter = selectedEditingParameter
 
         if previewFrame == nil && previewStatus == .running {
@@ -267,6 +270,14 @@ public final class AppViewModel: ObservableObject {
 
     public func dismissAboutSheet() {
         isAboutPresented = false
+    }
+
+    public func presentOnboarding() {
+        isOnboardingPresented = true
+    }
+
+    public func dismissOnboarding() {
+        isOnboardingPresented = false
     }
 
     // MARK: - Color Management

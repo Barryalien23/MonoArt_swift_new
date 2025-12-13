@@ -10,6 +10,7 @@ import AsciiCamera
 @available(macOS 11.0, iOS 16.0, tvOS 16.0, *)
 public struct AsciiCameraExperience: View {
     @StateObject private var viewModel: AppViewModel
+    @StateObject private var onboardingViewModel = OnboardingViewModel()
     @State private var gpuPipeline: GPUPreviewPipeline?
     @State private var textPipeline: PreviewPipeline?
     @State private var isImportPickerPresented = false
@@ -39,7 +40,10 @@ public struct AsciiCameraExperience: View {
 
     public var body: some View {
         rootView
-            .onAppear(perform: startPipelineIfNeeded)
+            .onAppear {
+                startPipelineIfNeeded()
+                checkAndShowOnboarding()
+            }
             .onDisappear(perform: teardownPipeline)
             .photosPicker(
                 isPresented: $isImportPickerPresented,
@@ -51,6 +55,9 @@ public struct AsciiCameraExperience: View {
             }
             .sheet(isPresented: $isShareSheetPresented, onDismiss: { shareImage = nil }) {
                 shareSheetContent
+            }
+            .fullScreenCover(isPresented: $onboardingViewModel.isPresented) {
+                OnboardingView(viewModel: onboardingViewModel)
             }
     }
 
@@ -228,6 +235,14 @@ public struct AsciiCameraExperience: View {
 
     private func shareTapped() {
         isShareSheetPresented = shareImage != nil
+    }
+
+    private func checkAndShowOnboarding() {
+        if onboardingViewModel.shouldShowOnboarding {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                onboardingViewModel.startOnboarding()
+            }
+        }
     }
 }
 
