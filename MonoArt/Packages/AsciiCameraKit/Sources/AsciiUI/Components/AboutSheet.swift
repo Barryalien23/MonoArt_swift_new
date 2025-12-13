@@ -8,7 +8,8 @@ import UIKit
 public struct AboutSheet: View {
     @ObservedObject private var viewModel: AppViewModel
     @Environment(\.dismiss) private var dismiss
-    
+    @State private var showOnboarding = false
+
     public init(viewModel: AppViewModel) {
         self._viewModel = ObservedObject(initialValue: viewModel)
     }
@@ -42,6 +43,9 @@ public struct AboutSheet: View {
         }
         .presentationDetents([.height(740)])
         .presentationDragIndicator(.hidden)
+        .fullScreenCover(isPresented: $showOnboarding) {
+            OnboardingView(viewModel: OnboardingViewModel())
+        }
     }
     
     // MARK: - Components
@@ -147,7 +151,7 @@ public struct AboutSheet: View {
                     icon: .question,
                     title: "How It Works",
                     action: {
-                        // TODO: Implement onboarding later
+                        showOnboarding = true
                     }
                 )
                 
