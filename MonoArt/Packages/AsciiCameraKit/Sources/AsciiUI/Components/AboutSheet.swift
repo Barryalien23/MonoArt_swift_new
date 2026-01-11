@@ -41,7 +41,7 @@ public struct AboutSheet: View {
             }
             .scrollIndicators(.hidden)
         }
-        .presentationDetents([.height(740)])
+        .presentationDetents([.height(780)])
         .presentationDragIndicator(.hidden)
         .fullScreenCover(isPresented: $showOnboarding) {
             OnboardingView(viewModel: OnboardingViewModel())
@@ -167,7 +167,15 @@ public struct AboutSheet: View {
                     icon: .shield,
                     title: "Privacy Policy",
                     action: {
-                        // TODO: Add Privacy Policy link later
+                        openURL("https://monoart.framer.ai/privacy-policy")
+                    }
+                )
+                
+                LinkButton(
+                    icon: .termsOfUse,
+                    title: "Terms of use",
+                    action: {
+                        openURL("https://monoart.framer.ai/terms-of-use")
                     }
                 )
                 
@@ -175,7 +183,7 @@ public struct AboutSheet: View {
                     icon: .monoart,
                     title: "App Website",
                     action: {
-                        openURL("https://raux.framer.website")
+                        openURL("https://monoart.framer.ai/")
                     }
                 )
                 
