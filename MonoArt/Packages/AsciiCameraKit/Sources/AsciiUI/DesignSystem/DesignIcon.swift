@@ -31,6 +31,7 @@ public enum DesignIcon: CaseIterable, Sendable {
     case shield
     case star
     case telegram
+    case termsOfUse
     
     var fileName: String {
         switch self {
@@ -57,6 +58,7 @@ public enum DesignIcon: CaseIterable, Sendable {
         case .shield: return "Shield"
         case .star: return "Star"
         case .telegram: return "Telegram"
+        case .termsOfUse: return "Terms_of_use"
         }
     }
 
@@ -85,6 +87,7 @@ public enum DesignIcon: CaseIterable, Sendable {
         case .shield: return "24"
         case .star: return "24"
         case .telegram: return "24"
+        case .termsOfUse: return "24"
         }
     }
 
@@ -192,13 +195,21 @@ private final class SVGCache {
                 ?? bundle.url(forResource: icon.fileName, withExtension: "svg")
 
             guard let url = resourceURL else {
+                #if DEBUG
                 assertionFailure("Missing icon resource: \(icon.resourcePath)")
+                #else
+                print("⚠️ Missing icon resource: \(icon.resourcePath)")
+                #endif
                 return nil
             }
 
             let svgPaths = SVGBezierPath.pathsFromSVG(at: url)
             guard !svgPaths.isEmpty else {
+                #if DEBUG
                 assertionFailure("Icon \(icon.fileName) produced an empty SVG path set")
+                #else
+                print("⚠️ Icon \(icon.fileName) produced an empty SVG path set")
+                #endif
                 return nil
             }
 
